@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import TopNavigationMainPage from '../Navigation/TopNavigation/TopNavigationMainPage';
 import SideNavigationMainPage from '../Navigation/SideNavigation/SideNavigationMainPage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import ManDaySelectMain from './MainDayContainer/ManDaySelect/ManDaySelectMain';
+import { AllManDayItemfetchData } from '../../Models/ReduxThunks/ManDaySelectItemReducer';
 
 export const AnnualLeaveContainerMainPageMainDivBox = styled.div`
     .Personal_Main_Float {
@@ -21,6 +23,10 @@ export const AnnualLeaveContainerMainPageMainDivBox = styled.div`
     }
 `;
 const ManDayMainPage = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(AllManDayItemfetchData());
+    }, []);
     return (
         <AnnualLeaveContainerMainPageMainDivBox>
             <TopNavigationMainPage></TopNavigationMainPage>
@@ -29,7 +35,9 @@ const ManDayMainPage = () => {
                     <SideNavigationMainPage NavState={'Man_Day'}></SideNavigationMainPage>
                 </div>
 
-                <div className="Personal_Main_Float_Right">{/* <ToolSelect></ToolSelect> */}</div>
+                <div className="Personal_Main_Float_Right">
+                    <ManDaySelectMain></ManDaySelectMain>
+                </div>
             </div>
         </AnnualLeaveContainerMainPageMainDivBox>
     );

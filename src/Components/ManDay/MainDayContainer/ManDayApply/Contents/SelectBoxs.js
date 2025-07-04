@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-const SelectBoxsMainDivBox = styled.div`
+export const SelectBoxsMainDivBox = styled.div`
     margin-bottom: 30px;
     .Input_GR {
         border: 1px solid lightgray;
@@ -32,11 +33,9 @@ const SelectBoxsMainDivBox = styled.div`
     }
 `;
 
-const SelectBoxs = ({ Input_Title_Lists, WeekContainer, setWeekContainer, Now_Data, Divide_Lists }) => {
-    useEffect(() => {
-        handleFieldChange(null, 'sub_depart');
-    }, [Now_Data.depart]);
-
+const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
+    const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
+    const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
     const handleFieldChange = (e, fieldName) => {
         const newValue = e?.target?.value;
 
@@ -73,7 +72,14 @@ const SelectBoxs = ({ Input_Title_Lists, WeekContainer, setWeekContainer, Now_Da
             <div className="Input_GR">
                 <div className="Title">대분류</div>
                 <div className="Answer">
-                    <select name="depart" value={Now_Data.depart} onChange={e => handleFieldChange(e, 'depart')}>
+                    <select
+                        name="depart"
+                        value={Now_Data.depart}
+                        onChange={e => {
+                            handleFieldChange(e, 'depart');
+                            handleFieldChange(null, 'sub_depart');
+                        }}
+                    >
                         <option value={null}></option>
                         {Input_Title_Lists.map(list => {
                             return (

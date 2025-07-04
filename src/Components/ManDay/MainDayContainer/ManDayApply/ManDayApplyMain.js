@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AnnualLeaveContainerMainPageMainDivBox } from '../../ManDayMainPage';
 import TopNavigationMainPage from '../../../Navigation/TopNavigation/TopNavigationMainPage';
 import SideNavigationMainPage from '../../../Navigation/SideNavigation/SideNavigationMainPage';
 import ContentMainPage from './Contents/ContentMainPage';
+import { AllManDayItemfetchData } from '../../../../Models/ReduxThunks/ManDaySelectItemReducer';
+import { useDispatch } from 'react-redux';
 
 const ManDayApplyMain = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(AllManDayItemfetchData());
+    }, []);
+
     return (
         <AnnualLeaveContainerMainPageMainDivBox>
             <TopNavigationMainPage></TopNavigationMainPage>

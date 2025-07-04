@@ -5,10 +5,11 @@ import styled from 'styled-components';
 import moment from 'moment';
 import 'moment/locale/ko';
 import { MdDeleteForever } from 'react-icons/md';
+import ReadingBoxs from './ReadingBoxs';
 
 moment.locale('ko');
 
-const InputPageMainDivBox = styled.div`
+export const InputPageMainDivBox = styled.div`
     width: 18%;
     .Plus_Container {
         border: 1px solid #efefef;
@@ -35,7 +36,7 @@ const InputPageMainDivBox = styled.div`
     }
 `;
 
-const InputPage = ({ List_Items, Input_Title_Lists, WeekContainer, setWeekContainer, Divide_Lists }) => {
+const InputPage = ({ List_Items, WeekContainer, setWeekContainer }) => {
     const HandleClicksAddChild = () => {
         const Insert_Data = {
             index: `${moment().format('YYYYMMDDHHmmss')}`,
@@ -99,11 +100,9 @@ const InputPage = ({ List_Items, Input_Title_Lists, WeekContainer, setWeekContai
                                 </div>
                             </div>
                             <SelectBoxs
-                                Input_Title_Lists={Input_Title_Lists}
                                 WeekContainer={WeekContainer}
                                 setWeekContainer={data => setWeekContainer(data)}
                                 Now_Data={list}
-                                Divide_Lists={Divide_Lists}
                             ></SelectBoxs>
                         </div>
                     );

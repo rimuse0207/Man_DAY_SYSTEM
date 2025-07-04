@@ -6,6 +6,10 @@ import styled from 'styled-components';
 import { Request_Get_Axios, Request_Post_Axios } from '../../../../../API';
 import { toast } from '../../../../ToastMessage/ToastManager';
 import { useSelector } from 'react-redux';
+import Loader from '../../../../Loader/Loader';
+import ReadingBoxs from './ReadingBoxs';
+import { MdOutlineArrowBackIosNew } from 'react-icons/md';
+import { MdArrowForwardIos } from 'react-icons/md';
 
 moment.locale('ko');
 
@@ -37,12 +41,73 @@ const ContentMainPageMainDivBox = styled.div`
             }
         }
     }
+    .Update_Button_Container {
+        margin-bottom: 50px;
+        text-align: end;
+        margin-right: 50px;
+        button {
+            width: 150px;
+            margin: 0 auto;
+            border-radius: 5px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 1.1em;
+            text-align: center;
+            background: green;
+            font-weight: bolder;
+            border: 1px solid lightgray;
+            color: #fff;
+            &:hover {
+                cursor: pointer;
+                background: #04cd00;
+            }
+        }
+    }
+    .Cancel_Button_Container {
+        margin-bottom: 50px;
+        text-align: end;
+        margin-right: 50px;
+        button {
+            width: 150px;
+            margin: 0 auto;
+            border-radius: 5px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 1.1em;
+            text-align: center;
+            background: red;
+            font-weight: bolder;
+            border: 1px solid lightgray;
+            color: #fff;
+            &:hover {
+                cursor: pointer;
+                background: #ff4100;
+            }
+        }
+    }
+    .Change_Date_Container {
+        font-size: 1.8em;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg {
+            height: 100%;
+        }
+        &:hover {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+    }
 `;
 
 const ContentMainPage = () => {
+    const Today_Date = moment().clone().startOf('isoWeek').format('YYYY-MM-DD');
     const Login_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
+    const [Select_Date, setSelect_Date] = useState(moment().clone().startOf('isoWeek').format('YYYY-MM-DD'));
     const [WeekContainer, setWeekContainer] = useState({
         represent_Date: moment().clone().startOf('isoWeek').format('YYYY-MM-DD'),
+        Mode: 'writing',
         Date_Lists: [
             {
                 date: moment().clone().startOf('isoWeek').format('YYYY-MM-DD'),
@@ -111,19 +176,21 @@ const ContentMainPage = () => {
             },
         ],
     });
-    const [Input_Title_Lists, setInput_Title_Lists] = useState([]);
-    const [Divide_Lists, setDivide_Lists] = useState([]);
-    useEffect(() => {
-        Getting_data_for_item_Func();
-    }, []);
-    const Getting_data_for_item_Func = async () => {
-        const Getting_Data_For_Item_Axios = await Request_Get_Axios('/API/PLM/Getting_data_for_item');
+    const [Loading_Check, setLoadin_Check] = useState(false);
 
-        if (Getting_Data_For_Item_Axios.status) {
-            setInput_Title_Lists(Getting_Data_For_Item_Axios.data.Getting_Equipment_Lists);
-            setDivide_Lists(Getting_Data_For_Item_Axios.data.Getting_divide_Lists_SQL);
+    useEffect(() => {
+        Getting_Man_Day_Info_Befroe_Data();
+    }, [Select_Date]);
+
+    const Getting_Man_Day_Info_Befroe_Data = async () => {
+        const Getting_Man_Day_Info_Before_Data_Axios = await Request_Get_Axios(`/API/PLM/Getting_Man_Day_Info_Before_Data`, {
+            Select_Date,
+        });
+        if (Getting_Man_Day_Info_Before_Data_Axios.status) {
+            setWeekContainer(Getting_Man_Day_Info_Before_Data_Axios.data);
         }
     };
+
     // 월단위로 몇주차 인지 계산
     const getWeekOfMonth = dateStr => {
         const date = moment(dateStr);
@@ -136,7 +203,27 @@ const ContentMainPage = () => {
 
         return Math.ceil((dayOfMonth + offset) / 7);
     };
+    // 수정모드로 변경
+    const Change_the_Mode = () => {
+        toast.show({
+            title: `수정모드로 변경처리 되었습니다.`,
+            successCheck: true,
+            duration: 2000,
+        });
+        setWeekContainer({ ...WeekContainer, Mode: 'updating' });
+    };
 
+    // 수정모드 취소
+    const Cancel_Man_Day_Data = async () => {
+        await Getting_Man_Day_Info_Befroe_Data();
+        toast.show({
+            title: `수정모드가 취소 되었습니다.`,
+            successCheck: true,
+            duration: 2000,
+        });
+    };
+
+    // man_day 저장
     const Save_Man_Day_Data = async () => {
         /// 일별로 항목이 공란이 있는지 확인
         const ChcekNull = WeekContainer.Date_Lists.map(list => {
@@ -164,39 +251,107 @@ const ContentMainPage = () => {
             });
             return;
         }
-
+        setLoadin_Check(true);
         const Sending_Man_Day_Real_Data = await Request_Post_Axios('/API/PLM/Sending_Man_Day_Real_Data', {
             WeekContainer,
             Login_Info,
         });
-        console.log(Sending_Man_Day_Real_Data);
+        if (Sending_Man_Day_Real_Data.status) {
+            toast.show({
+                title: `${moment(WeekContainer.represent_Date).format('M월')}${
+                    getWeekOfMonth(moment(WeekContainer.represent_Date).format('YYYY-MM-DD')) - 1
+                }주차 Man_Day ${WeekContainer.Mode === 'updating' ? `수정` : `입력`} 완료되었습니다.`,
+                successCheck: true,
+                duration: 6000,
+            });
+            await Getting_Man_Day_Info_Befroe_Data();
+        }
+        setLoadin_Check(false);
     };
 
     return (
         <ContentMainPageMainDivBox>
-            <h2 style={{ borderBottom: '1px solid lightgray', paddingBottom: '20px', paddingTop: '20px' }}>
-                {moment(WeekContainer.represent_Date).format('M월')}{' '}
-                {getWeekOfMonth(moment(WeekContainer.represent_Date).format('YYYY-MM-DD')) - 1}주차
-            </h2>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    borderBottom: '1px solid lightgray',
+                    paddingBottom: '20px',
+                    paddingTop: '20px',
+                }}
+            >
+                <div
+                    className="Change_Date_Container"
+                    style={{ marginRight: '20px', lineHeight: '' }}
+                    onClick={() => {
+                        setSelect_Date(moment(Select_Date).subtract(7, 'days').format('YYYY-MM-DD'));
+                    }}
+                >
+                    <MdOutlineArrowBackIosNew />
+                </div>
+                <h2>
+                    {moment(WeekContainer.represent_Date).format('M월')}{' '}
+                    {getWeekOfMonth(moment(WeekContainer.represent_Date).format('YYYY-MM-DD')) - 1}주차
+                </h2>
+                {Today_Date === Select_Date ? (
+                    ''
+                ) : (
+                    <div
+                        className="Change_Date_Container"
+                        style={{ marginLeft: '20px', lineHeight: '' }}
+                        onClick={() => {
+                            setSelect_Date(moment(Select_Date).add(7, 'days').format('YYYY-MM-DD'));
+                        }}
+                    >
+                        <MdArrowForwardIos />
+                    </div>
+                )}
+            </div>
             <div>
                 <div className="Input_Cotainer">
                     {WeekContainer.Date_Lists.map(list => {
-                        return (
+                        return WeekContainer.Mode === 'reading' ? (
+                            <ReadingBoxs
+                                List_Items={list}
+                                key={list.date}
+                                WeekContainer={WeekContainer}
+                                setWeekContainer={data => setWeekContainer(data)}
+                            ></ReadingBoxs>
+                        ) : (
                             <InputPage
                                 List_Items={list}
                                 key={list.date}
-                                Input_Title_Lists={Input_Title_Lists}
                                 WeekContainer={WeekContainer}
                                 setWeekContainer={data => setWeekContainer(data)}
-                                Divide_Lists={Divide_Lists}
                             ></InputPage>
                         );
                     })}
                 </div>
-                <div className="Save_Button_Container">
-                    <button onClick={() => Save_Man_Day_Data()}>저장</button>
-                </div>
+                {WeekContainer.Mode === 'reading' ? (
+                    Today_Date === Select_Date ? (
+                        <div className="Update_Button_Container">
+                            <button onClick={() => Change_the_Mode()}>수정</button>
+                        </div>
+                    ) : (
+                        <></>
+                    )
+                ) : WeekContainer.Mode === 'updating' ? (
+                    <div style={{ display: 'flex', justifyContent: 'end' }}>
+                        <div className="Cancel_Button_Container">
+                            <button onClick={() => Cancel_Man_Day_Data()}>취소</button>
+                        </div>
+                        <div className="Save_Button_Container">
+                            <button onClick={() => Save_Man_Day_Data()}>수정 완료</button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="Save_Button_Container">
+                        <button onClick={() => Save_Man_Day_Data()}>저장</button>
+                    </div>
+                )}
             </div>
+            <Loader loading={Loading_Check}></Loader>
         </ContentMainPageMainDivBox>
     );
 };
