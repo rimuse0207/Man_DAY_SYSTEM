@@ -6,6 +6,7 @@ import LoginMainPage from '../Login/LoginMainPage';
 import HomeMainPage from '../../Components/HomeMain/HomeMainPage';
 import ManDayMainPage from '../ManDay/ManDayMainPage';
 import ManDayApplyMain from '../ManDay/MainDayContainer/ManDayApply/ManDayApplyMain';
+import UserMainPage from '../User/UserMainPage';
 const RouterMainPage = () => {
     const User_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [RouterInfo, setRouterInfo] = useState([
@@ -30,6 +31,12 @@ const RouterMainPage = () => {
         {
             path: '/Man_Day/Apply',
             element: <ManDayApplyMain></ManDayApplyMain>,
+            withAuthorization: true,
+            withAdminAuthorization: false,
+        },
+        {
+            path: '/User_Manage/:Select_Menus',
+            element: <UserMainPage></UserMainPage>,
             withAuthorization: true,
             withAdminAuthorization: false,
         },

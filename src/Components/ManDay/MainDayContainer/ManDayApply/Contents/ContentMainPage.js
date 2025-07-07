@@ -13,7 +13,8 @@ import { MdArrowForwardIos } from 'react-icons/md';
 
 moment.locale('ko');
 
-const ContentMainPageMainDivBox = styled.div`
+export const ContentMainPageMainDivBox = styled.div`
+    position: relative;
     .Input_Cotainer {
         display: flex;
         padding-right: 30px;
@@ -99,6 +100,28 @@ const ContentMainPageMainDivBox = styled.div`
             opacity: 0.7;
         }
     }
+
+    .Button_Group {
+        position: absolute;
+        top: 30px;
+        right: 50px;
+        ul {
+            display: flex;
+            li {
+                margin-left: 30px;
+                button {
+                    padding: 10px;
+                    border: none;
+                    border-radius: 5px;
+                    color: #fff;
+                    font-weight: bolder;
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
 `;
 
 const ContentMainPage = () => {
@@ -182,12 +205,15 @@ const ContentMainPage = () => {
         Getting_Man_Day_Info_Befroe_Data();
     }, [Select_Date]);
 
+    // 이전 데이터 불러오기
     const Getting_Man_Day_Info_Befroe_Data = async () => {
         const Getting_Man_Day_Info_Before_Data_Axios = await Request_Get_Axios(`/API/PLM/Getting_Man_Day_Info_Before_Data`, {
             Select_Date,
         });
         if (Getting_Man_Day_Info_Before_Data_Axios.status) {
-            setWeekContainer(Getting_Man_Day_Info_Before_Data_Axios.data);
+            if (Getting_Man_Day_Info_Before_Data_Axios.data.Date_Lists.length > 0) {
+                setWeekContainer(Getting_Man_Day_Info_Before_Data_Axios.data);
+            }
         }
     };
 
@@ -269,6 +295,85 @@ const ContentMainPage = () => {
         setLoadin_Check(false);
     };
 
+    // 한달 이내의 이전 데이터 가져오기
+    const Handle_Getting_Before_Data = async () => {
+        const Handle_Getting_Before_Man_Day_Data = await Request_Get_Axios(`/API/PLM/Handle_Getting_Before_Man_Day_Data`, { Select_Date });
+        if (Handle_Getting_Before_Man_Day_Data.status) {
+            if (Handle_Getting_Before_Man_Day_Data.data.Have_Previous_data) {
+                setWeekContainer(Handle_Getting_Before_Man_Day_Data.data.data);
+                toast.show({
+                    title: `이전 데이터를 불러왔습니다.`,
+                    successCheck: true,
+                    duration: 3000,
+                });
+            } else {
+                toast.show({
+                    title: `최근 1한달 내 저장한 데이터가 없습니다.`,
+                    successCheck: false,
+                    duration: 5000,
+                });
+            }
+        } else {
+            toast.show({
+                title: `오류 발생. IT팀에 문의바랍니다.`,
+                successCheck: false,
+                duration: 5000,
+            });
+        }
+    };
+
+    // 임시 저장
+    const Save_Temporarily_Man_Data_Info_Data = async () => {
+        const Save_Temporarily_Man_Dat_Info_Data_Axios = await Request_Post_Axios('/API/PLM/Save_Temporarily_Man_Dat_Info_Data', {
+            WeekContainer,
+        });
+        if (Save_Temporarily_Man_Dat_Info_Data_Axios.status) {
+            toast.show({
+                title: `${moment(Select_Date).format('MM월 DD일')}의 데이터를 임시 저장 완료하였습니다.`,
+                successCheck: true,
+                duration: 5000,
+            });
+        } else {
+            toast.show({
+                title: `${moment(Select_Date).format('MM월 DD일')}의 데이터를 임시 저장에 실패하였습니다.`,
+                successCheck: false,
+                duration: 5000,
+            });
+        }
+    };
+
+    // 임시 저장 된 데이터 불러오기
+    const Handle_Getting_Save_Temporarily_Man_Dat_Data = async () => {
+        const Handle_Getting_Save_Temporarily_Man_Dat_Data = await Request_Get_Axios(
+            `/API/PLM/Handle_Getting_Save_Temporarily_Man_Dat_Data`,
+            {
+                Select_Date,
+            }
+        );
+        if (Handle_Getting_Save_Temporarily_Man_Dat_Data.status) {
+            if (Handle_Getting_Save_Temporarily_Man_Dat_Data.data.Have_Temporarily_Data) {
+                setWeekContainer(Handle_Getting_Save_Temporarily_Man_Dat_Data.data.data);
+                toast.show({
+                    title: `임시 저장된 데이터를 불러왔습니다.`,
+                    successCheck: true,
+                    duration: 3000,
+                });
+            } else {
+                toast.show({
+                    title: `임시 저장된 데이터가 없습니다.`,
+                    successCheck: false,
+                    duration: 3000,
+                });
+            }
+        } else {
+            toast.show({
+                title: `오류 발생. IT팀에 문의바랍니다.`,
+                successCheck: false,
+                duration: 5000,
+            });
+        }
+    };
+
     return (
         <ContentMainPageMainDivBox>
             <div
@@ -308,6 +413,25 @@ const ContentMainPage = () => {
                     </div>
                 )}
             </div>
+            {Today_Date === Select_Date ? (
+                <div className="Button_Group">
+                    <ul>
+                        <li>
+                            <button style={{ backgroundColor: 'green' }} onClick={() => Handle_Getting_Save_Temporarily_Man_Dat_Data()}>
+                                임시저장 불러오기
+                            </button>
+                        </li>
+                        <li>
+                            <button style={{ backgroundColor: 'orange' }} onClick={() => Handle_Getting_Before_Data()}>
+                                이전 데이터 불러오기
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            ) : (
+                <></>
+            )}
+
             <div>
                 <div className="Input_Cotainer">
                     {WeekContainer.Date_Lists.map(list => {
@@ -346,8 +470,13 @@ const ContentMainPage = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="Save_Button_Container">
-                        <button onClick={() => Save_Man_Day_Data()}>저장</button>
+                    <div style={{ display: 'flex', justifyContent: 'end' }}>
+                        <div className="Update_Button_Container">
+                            <button onClick={() => Save_Temporarily_Man_Data_Info_Data()}>임시 저장</button>
+                        </div>
+                        <div className="Save_Button_Container">
+                            <button onClick={() => Save_Man_Day_Data()}>저장</button>
+                        </div>
                     </div>
                 )}
             </div>

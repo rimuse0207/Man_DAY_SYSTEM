@@ -1,10 +1,10 @@
 export const MAN_DAY_SELCET_FILTER_STATE_REDUCER_GET = 'MAN_DAY_SELCET_FILTER_STATE_REDUCER_GET';
 export const MAN_DAY_SELCET_FILTER_INITIAL_STATE_REDUCER_GET = 'MAN_DAY_SELCET_FILTER_INITIAL_STATE_REDUCER_GET';
 
-const initState = {
+export const initState = {
     Filters_State: {
         period: {
-            start: new Date(),
+            start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
             end: new Date(),
         },
         depart: null,

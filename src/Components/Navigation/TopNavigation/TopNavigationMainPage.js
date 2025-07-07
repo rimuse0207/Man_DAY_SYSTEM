@@ -121,20 +121,24 @@ const TopNavigationMainPage = () => {
         localStorage.removeItem('Token');
         return Navigate('/');
     };
-    const User_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
+
+    const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [Nav_Select_Options_Menus, setNav_Select_Options_Menus] = useState([
         {
             value: '/Home',
             label: '홈(메인)',
+            role: 'all',
         },
         {
             value: '/Man_Day',
             label: 'Man_Day',
+            role: 'all',
         },
-        // {
-        //     value: '/Safety_Management',
-        //     label: '안전교육',
-        // },
+        {
+            value: '/User_Manage',
+            label: '사용자',
+            role: 'user',
+        },
     ]);
     const [Now_Select, setNow_Select] = useState({ value: location.pathname });
     const [open, setOpen] = useState(false);
@@ -154,7 +158,9 @@ const TopNavigationMainPage = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
+    const filteredNav = Nav_Select_Options_Menus.filter(navItem => {
+        return navItem.role === 'all' || Login_Info_State.user_access.some(access => access.accessMenuCode === navItem.role);
+    });
     return (
         <NavigationMainPageMainDivBox>
             <div className="NavigationMainFlexdiv">
@@ -172,7 +178,7 @@ const TopNavigationMainPage = () => {
                                 value={'/' + location.pathname.split('/')[1]}
                                 onChange={event => Handle_Change_Move_To_Go(event)}
                             >
-                                {Nav_Select_Options_Menus.map(list => {
+                                {filteredNav.map(list => {
                                     return (
                                         <MenuItem value={list.value} key={list.value}>
                                             {list.label}

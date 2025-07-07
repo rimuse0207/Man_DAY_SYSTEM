@@ -12,6 +12,8 @@ import { GiMeal } from 'react-icons/gi';
 import { FaTools } from 'react-icons/fa';
 import { GrLicense } from 'react-icons/gr';
 import { TbCalendarClock } from 'react-icons/tb';
+import { FaUserCog } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 const HomeNavigationMainPageMainDivBox = styled.div`
     .BodyMenbar {
         font-size: 0.8em;
@@ -80,24 +82,30 @@ const HomeNavigationMainPageMainDivBox = styled.div`
 `;
 
 const IconNavigationMainPage = () => {
+    const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [Icon_Nav_Info, setIcon_Nav_Info] = useState([
         {
             path: '/Man_Day',
             icon: <TbCalendarClock></TbCalendarClock>,
             name: 'Man_Day',
+            role: 'all',
         },
-        // {
-        //     path: '/Safety_Management',
-        //     icon: <GrLicense></GrLicense>,
-        //     name: '안전교육',
-        // },
+        {
+            path: '/User_Manage',
+            icon: <FaUserCog />,
+            name: '사용자',
+            role: 'user',
+        },
     ]);
+    const filteredNav = Icon_Nav_Info.filter(navItem => {
+        return navItem.role === 'all' || Login_Info_State.user_access.some(access => access.accessMenuCode === navItem.role);
+    });
     return (
         <HomeNavigationMainPageMainDivBox>
             <div className="BodyMenbar">
                 <div className="BodyContentBox">
                     <ul className="BodyContnetListsShow">
-                        {Icon_Nav_Info.map(nav => {
+                        {filteredNav.map(nav => {
                             return (
                                 <li key={nav.path}>
                                     <Link to={nav.path}>
