@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Request_Get_Axios } from '../../../API';
+import { Request_Get_Axios, Request_Post_Axios } from '../../../API';
 import ParentTree from './TreeMenu/ParentTree';
 import styled from 'styled-components';
 import SelectDepartment from './Contents/SelectDepartment';
+import { toast } from '../../ToastMessage/ToastManager';
 
-const DepartmentMainPageMainDivBox = styled.div`
+export const DepartmentMainPageMainDivBox = styled.div`
     .All_Container {
         ::after {
             display: block;
@@ -24,6 +25,9 @@ const DepartmentMainPageMainDivBox = styled.div`
                 background-color: #fff;
                 padding-left: 10px;
                 padding-right: 10px;
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
         .Right_Content {
@@ -38,15 +42,43 @@ const DepartmentMainPage = () => {
     const [Department_State, setDepartment_State] = useState([]);
     const [NowSelect, setNowSelect] = useState(null);
     const [Select_Menus, setSelect_Menus] = useState('company');
+    const [Update_Mode, setUpdate_Mode] = useState(false);
+    const [New_DepartMent_State, setNew_DepartMent_State] = useState('');
     useEffect(() => {
         Getting_Department_Data();
     }, []);
+
     const Getting_Department_Data = async () => {
         const Getting_Department_Data_Axios = await Request_Get_Axios('/API/PLM/user/Getting_Department_Data');
         if (Getting_Department_Data_Axios.status) {
             setDepartment_State(Getting_Department_Data_Axios.data);
         }
     };
+
+    // 부서 추가
+    const Add_Department_Data = async () => {
+        const Add_Department_Data_Axios = await Request_Post_Axios('/API/PLM/user/Add_Department_Data', {
+            New_DepartMent_State,
+            NowSelect,
+        });
+        if (Add_Department_Data_Axios.status) {
+            toast.show({
+                title: `${New_DepartMent_State}의 부서를 추가하였습니다.`,
+                successCheck: true,
+                duration: 6000,
+            });
+            setUpdate_Mode(false);
+            Getting_Department_Data();
+            setNew_DepartMent_State('');
+        } else {
+            toast.show({
+                title: `오류가 발생하였습니다. IT팀에 문의바랍니다.`,
+                successCheck: false,
+                duration: 6000,
+            });
+        }
+    };
+
     return (
         <DepartmentMainPageMainDivBox>
             <div style={{ borderBottom: '1px solid lightgray', paddingBottom: '10px' }}>
@@ -56,7 +88,7 @@ const DepartmentMainPage = () => {
             <div className="All_Container">
                 <div className="Left_Content">
                     <div style={{ textAlign: 'end', marginBottom: '10px' }}>
-                        <button> 추 가 </button>
+                        <button onClick={() => setUpdate_Mode(true)}> 추 가 </button>
                     </div>
                     <ParentTree
                         TreeMenu={Department_State}
@@ -67,9 +99,16 @@ const DepartmentMainPage = () => {
                 </div>
                 <div className="Right_Content">
                     <SelectDepartment
+                        New_DepartMent_State={New_DepartMent_State}
+                        setNew_DepartMent_State={data => setNew_DepartMent_State(data)}
+                        Update_Mode={Update_Mode}
+                        setUpdate_Mode={() => setUpdate_Mode(false)}
+                        Department_State={Department_State}
+                        setDepartment_State={data => setDepartment_State(data)}
                         Select_Menus={Select_Menus}
                         setSelect_Menus={data => setSelect_Menus(data)}
                         NowSelect={NowSelect}
+                        Add_Department_Data={() => Add_Department_Data()}
                     ></SelectDepartment>
                 </div>
             </div>

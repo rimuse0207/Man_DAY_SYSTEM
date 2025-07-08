@@ -7,7 +7,7 @@ import { AiFillCalendar } from 'react-icons/ai';
 import { RiListOrdered2 } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import DepartmentMainPage from './Department/DepartmentMainPage';
-
+import UserContentMainPage from './User/UserContentMainPage';
 const UserMainPage = () => {
     const { Select_Menus } = useParams();
     const { pathname } = useLocation();
@@ -97,6 +97,7 @@ const UserMainPage = () => {
 
                 <div className="Personal_Main_Float_Right">
                     {Select_Menus === 'department' ? <DepartmentMainPage></DepartmentMainPage> : ''}
+                    {Select_Menus === 'user' ? <UserContentMainPage></UserContentMainPage> : ''}
                 </div>
             </div>
         </AnnualLeaveContainerMainPageMainDivBox>

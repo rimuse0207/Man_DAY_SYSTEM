@@ -33,7 +33,18 @@ const SelectDepartmentMainDivBox = styled.div`
     }
 `;
 
-const SelectDepartment = ({ Select_Menus, setSelect_Menus, NowSelect }) => {
+const SelectDepartment = ({
+    Select_Menus,
+    setSelect_Menus,
+    NowSelect,
+    Department_State,
+    setDepartment_State,
+    Update_Mode,
+    setUpdate_Mode,
+    New_DepartMent_State,
+    setNew_DepartMent_State,
+    Add_Department_Data,
+}) => {
     return (
         <SelectDepartmentMainDivBox>
             <div className="Menu_Container">
@@ -50,8 +61,27 @@ const SelectDepartment = ({ Select_Menus, setSelect_Menus, NowSelect }) => {
                 </ul>
             </div>
             <div className="Content_Info_Container">
-                {Select_Menus === 'company' ? <DepartmentInfo NowSelect={NowSelect}></DepartmentInfo> : <></>}
-                {Select_Menus === 'user' ? <UsersInfo NowSelect={NowSelect}></UsersInfo> : <></>}
+                {Select_Menus === 'company' ? (
+                    <DepartmentInfo
+                        NowSelect={NowSelect}
+                        Update_Mode={Update_Mode}
+                        setUpdate_Mode={() => setUpdate_Mode(false)}
+                        New_DepartMent_State={New_DepartMent_State}
+                        setNew_DepartMent_State={data => setNew_DepartMent_State(data)}
+                        Add_Department_Data={() => Add_Department_Data()}
+                    ></DepartmentInfo>
+                ) : (
+                    <></>
+                )}
+                {Select_Menus === 'user' ? (
+                    <UsersInfo
+                        Department_State={Department_State}
+                        NowSelect={NowSelect}
+                        setDepartment_State={data => setDepartment_State(data)}
+                    ></UsersInfo>
+                ) : (
+                    <></>
+                )}
             </div>
         </SelectDepartmentMainDivBox>
     );

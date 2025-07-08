@@ -254,8 +254,10 @@ const LoginMainPage = () => {
                             id: Login_Check.data.Select_User_Info_Data_SQL.email,
                             team: Login_Check.data.Select_User_Info_Data_SQL.department,
                             name: Login_Check.data.Select_User_Info_Data_SQL.name,
+                            position: Login_Check.data.Select_User_Info_Data_SQL.position,
                             user_access: Login_Check.data.User_Access_Lists,
                             admin_access: Login_Check.data.Admin_Access_Lists,
+
                             // employeeNumber: Login_Check.data.employeeNumber,
                         })
                     );
