@@ -41,7 +41,7 @@ export const DepartmentMainPageMainDivBox = styled.div`
 const DepartmentMainPage = () => {
     const [Department_State, setDepartment_State] = useState([]);
     const [NowSelect, setNowSelect] = useState(null);
-    const [Select_Menus, setSelect_Menus] = useState('company');
+    const [Select_Menus, setSelect_Menus] = useState('user');
     const [Update_Mode, setUpdate_Mode] = useState(false);
     const [New_DepartMent_State, setNew_DepartMent_State] = useState('');
     useEffect(() => {

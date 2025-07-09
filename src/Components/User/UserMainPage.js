@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnnualLeaveContainerMainPageMainDivBox } from '../ManDay/ManDayMainPage';
 import TopNavigationMainPage from '../Navigation/TopNavigation/TopNavigationMainPage';
 import SideNavigationMainPage, { AnnualLeaveNavigationMainPageMainDivBox } from '../Navigation/SideNavigation/SideNavigationMainPage';
@@ -8,12 +8,18 @@ import { RiListOrdered2 } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import DepartmentMainPage from './Department/DepartmentMainPage';
 import UserContentMainPage from './User/UserContentMainPage';
+import AccessMainPage from './Access/AccessMainPage';
 const UserMainPage = () => {
     const { Select_Menus } = useParams();
     const { pathname } = useLocation();
     const Navigate = useNavigate();
     const Login_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [NavState, setNavState] = useState('');
+
+    useEffect(() => {
+        if (!Select_Menus) Navigate('user');
+    }, [Select_Menus]);
+
     const [User_Side_Menu_List, setUser_Side_Menu_List] = useState([
         {
             Menu_Select: 'user',
@@ -37,27 +43,14 @@ const UserMainPage = () => {
                 },
             ],
         },
-    ]);
-    const [Admin_Side_Menu_List, setAdmin_Side_Menu_List] = useState([
         {
-            Menu_Select: 'Tool',
+            Menu_Select: 'access',
             Menu_List: [
                 {
-                    menu_name: '관리자 Tool 리스트',
-                    menu_path: '/Tool/Administrator/Select',
-                    menu_title: '/Tool',
-                    menu_show_access: 'admin',
-                    menu_icon: <RiListOrdered2 />,
-                },
-            ],
-        },
-        {
-            Menu_Select: 'board',
-            Menu_List: [
-                {
-                    menu_name: '관리자 Tool 리스트',
-                    menu_path: '/Tool/Administrator/Select',
-                    menu_title: '/Tool',
+                    menu_name: '권한 관리',
+                    menu_path: '/User_Manage/access',
+                    menu_title: '/User_Manage/access',
+                    menu_show_access: 'user',
                 },
             ],
         },
@@ -98,6 +91,7 @@ const UserMainPage = () => {
                 <div className="Personal_Main_Float_Right">
                     {Select_Menus === 'department' ? <DepartmentMainPage></DepartmentMainPage> : ''}
                     {Select_Menus === 'user' ? <UserContentMainPage></UserContentMainPage> : ''}
+                    {Select_Menus === 'access' ? <AccessMainPage></AccessMainPage> : ''}
                 </div>
             </div>
         </AnnualLeaveContainerMainPageMainDivBox>

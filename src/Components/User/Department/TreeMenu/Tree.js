@@ -127,7 +127,7 @@ const Tree = ({ TreeMenu, setDepartment_State, list, depth = 0, NowSelect, setNo
                             : {}
                     }
                 >
-                    <span>{list.itemName}</span>
+                    <span style={{ marginLeft: '10px' }}>{list.itemName}</span>
                 </SbTitle>
             </>
         );

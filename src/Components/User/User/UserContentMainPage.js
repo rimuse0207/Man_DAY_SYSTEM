@@ -4,6 +4,7 @@ import { UserInfoMainDivBox } from '../Department/Contents/UsersInfo';
 import { Request_Get_Axios } from '../../../API';
 import styled from 'styled-components';
 import UserModal from './Contents/UserModal';
+import AddUserModal from './Contents/AddUserModal';
 
 export const UserContentMainPageButtonContainer = styled.div`
     text-align: end;
@@ -29,12 +30,15 @@ const UserContentMainPage = () => {
     const [Select_User, setSelect_User] = useState(null);
     const [User_Modal_IsOpen, setUser_Modal_IsOpen] = useState(false);
     const [Update_Mode, setUpdate_Mode] = useState(false);
+    const [AddUserModalOpen, setAddUserModalOpen] = useState(false);
     useEffect(() => {
         Getting_All_User_Info();
     }, []);
     const Getting_All_User_Info = async () => {
         const Getting_All_User_Info_Axios = await Request_Get_Axios('/API/PLM/user/Getting_All_User_Info');
-        setUser_Lists_State(Getting_All_User_Info_Axios.data);
+        if (Getting_All_User_Info_Axios.status) {
+            setUser_Lists_State(Getting_All_User_Info_Axios.data);
+        }
     };
     return (
         <DepartmentMainPageMainDivBox>
@@ -44,7 +48,7 @@ const UserContentMainPage = () => {
             </div>
             <UserInfoMainDivBox>
                 <div>
-                    <div style={{ fontSize: '0.9em', marginBottom: '20px' }}>
+                    <div style={{ fontSize: '0.9em' }}>
                         <span>사용자 수 ({User_Lists_State.length})</span>
                         <span style={{ marginLeft: '20px' }}>
                             <input
@@ -63,49 +67,49 @@ const UserContentMainPage = () => {
                     </div>
 
                     <UserContentMainPageButtonContainer>
-                        <button>추 가</button>
+                        <button onClick={() => setAddUserModalOpen(true)}>추 가</button>
                     </UserContentMainPageButtonContainer>
                 </div>
-                <table>
-                    <table style={{ fontSize: '1em' }}>
-                        <thead>
-                            <tr style={{ backgroundColor: 'RGB(239, 244, 252)' }}>
-                                <th>이름</th>
-                                <th>부서</th>
-                                <th>호봉</th>
-                                <th>연차</th>
-                                <th>ID</th>
-                                <th>직군</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {User_Lists_State.filter(
-                                item =>
-                                    item.name.toLowerCase().includes(SearchInput.toLowerCase()) ||
-                                    item.email.toLowerCase().includes(SearchInput.toLowerCase()) ||
-                                    item.user_department.toLowerCase().includes(SearchInput.toLowerCase())
-                            ).map(list => {
-                                return (
-                                    <tr
-                                        key={list.email}
-                                        onClick={() => {
-                                            setSelect_User(list);
-                                            setUser_Modal_IsOpen(true);
-                                        }}
-                                        style={list.email === Select_User?.email ? { backgroundColor: 'RGB(239, 244, 252)' } : {}}
-                                    >
-                                        <td>{list.name}</td>
-                                        <td>{list.user_department}</td>
-                                        <td>{list.user_salarygrade}</td>
-                                        <td>{list.user_gradebounce}</td>
-                                        <td>{list.email}</td>
-                                        <td>{list.user_occupational}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+
+                <table style={{ fontSize: '0.9em' }}>
+                    <thead>
+                        <tr style={{ backgroundColor: 'RGB(239, 244, 252)' }}>
+                            <th>이름</th>
+                            <th>부서</th>
+                            <th>호봉</th>
+                            <th>연차</th>
+                            <th>ID</th>
+                            <th>직군</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {User_Lists_State.filter(
+                            item =>
+                                item.name.toLowerCase().includes(SearchInput.toLowerCase()) ||
+                                item.email.toLowerCase().includes(SearchInput.toLowerCase()) ||
+                                item.user_department.toLowerCase().includes(SearchInput.toLowerCase())
+                        ).map(list => {
+                            return (
+                                <tr
+                                    key={list.email}
+                                    onClick={() => {
+                                        setSelect_User(list);
+                                        setUser_Modal_IsOpen(true);
+                                    }}
+                                    style={list.email === Select_User?.email ? { backgroundColor: 'RGB(239, 244, 252)' } : {}}
+                                >
+                                    <td>{list.name}</td>
+                                    <td>{list.user_department}</td>
+                                    <td>{list.user_salarygrade}</td>
+                                    <td>{list.user_gradebounce}</td>
+                                    <td>{list.email}</td>
+                                    <td>{list.user_occupational}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
                 </table>
+
                 <div style={{ marginBottom: '50px' }}></div>
             </UserInfoMainDivBox>
             {User_Modal_IsOpen ? (
@@ -114,10 +118,23 @@ const UserContentMainPage = () => {
                     Select_User={Select_User}
                     setSelect_User={data => setSelect_User(data)}
                     isOpen={User_Modal_IsOpen}
-                    onClose={data => setUser_Modal_IsOpen(false)}
+                    onClose={data => {
+                        setUser_Modal_IsOpen(false);
+                        setSelect_User(null);
+                    }}
                     Update_Mode={Update_Mode}
                     setUpdate_Mode={data => setUpdate_Mode(data)}
                 ></UserModal>
+            ) : (
+                <></>
+            )}
+            {AddUserModalOpen ? (
+                <AddUserModal
+                    Getting_All_User_Info={() => Getting_All_User_Info()}
+                    onClose={data => {
+                        setAddUserModalOpen(false);
+                    }}
+                ></AddUserModal>
             ) : (
                 <></>
             )}

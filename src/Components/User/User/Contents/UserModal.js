@@ -6,7 +6,7 @@ import { Request_Get_Axios, Request_Post_Axios } from '../../../../API';
 import Select from 'react-select';
 import { toast } from '../../../ToastMessage/ToastManager';
 
-const UserModalMainDivBox = styled.div`
+export const UserModalMainDivBox = styled.div`
     .Float_Top_Container {
         display: flex;
         justify-content: space-between;

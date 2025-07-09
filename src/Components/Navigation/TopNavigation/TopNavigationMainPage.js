@@ -143,7 +143,6 @@ const TopNavigationMainPage = () => {
     const [Now_Select, setNow_Select] = useState({ value: location.pathname });
     const [open, setOpen] = useState(false);
     const Handle_Change_Move_To_Go = e => {
-        // history.push(`${e.target.value}`);
         Navigate(e.target.value);
     };
 
@@ -166,12 +165,10 @@ const TopNavigationMainPage = () => {
             <div className="NavigationMainFlexdiv">
                 <div className="Main_Logo_Container">
                     <Link to="/Home">
-                        {/* <h2>DHK</h2> */}
                         <img src="/01_EXICON_CYMK_FULL-COLOR.png" width="100px"></img>
                     </Link>
                     <div className="Main_Menu_Move_Container">
                         <FormControl sx={{ m: 1, minWidth: 100, margin: 0, width: '100%' }} size="small">
-                            {/* <InputLabel id="demo-select-small">메뉴 이동</InputLabel> */}
                             <Select
                                 labelId="demo-select-small"
                                 id="demo-select-small"

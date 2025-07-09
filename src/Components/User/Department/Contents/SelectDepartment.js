@@ -49,14 +49,14 @@ const SelectDepartment = ({
         <SelectDepartmentMainDivBox>
             <div className="Menu_Container">
                 <ul>
+                    <li style={Select_Menus === 'user' ? { borderBottom: '2px solid black' } : {}} onClick={() => setSelect_Menus('user')}>
+                        <h4>부서원 정보</h4>
+                    </li>
                     <li
                         style={Select_Menus === 'company' ? { borderBottom: '2px solid black' } : {}}
                         onClick={() => setSelect_Menus('company')}
                     >
                         <h4>부서 정보</h4>
-                    </li>
-                    <li style={Select_Menus === 'user' ? { borderBottom: '2px solid black' } : {}} onClick={() => setSelect_Menus('user')}>
-                        <h4>부서원 정보</h4>
                     </li>
                 </ul>
             </div>

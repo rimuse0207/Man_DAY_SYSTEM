@@ -25,7 +25,6 @@ const DepartmentInfoMainDivBox = styled.div`
 `;
 
 const DepartmentInfo = ({ NowSelect, Update_Mode, setUpdate_Mode, New_DepartMent_State, setNew_DepartMent_State, Add_Department_Data }) => {
-    console.log(NowSelect);
     return Update_Mode ? (
         <DepartmentInfoMainDivBox>
             <div className="Content_Container">

@@ -43,7 +43,7 @@ const Table = ({ Table_State }) => {
                 <tbody>
                     {Table_State.map(list => {
                         return (
-                            <tr key={list.index}>
+                            <tr key={list.indexs}>
                                 <td>{moment(list.date).format('YYYY')}</td>
                                 <td>{moment(list.date).format('MM')}</td>
                                 <td>{moment(list.date).format('DD')}</td>

@@ -91,7 +91,7 @@ const IconNavigationMainPage = () => {
             role: 'all',
         },
         {
-            path: '/User_Manage',
+            path: '/User_Manage/user',
             icon: <FaUserCog />,
             name: '사용자',
             role: 'user',

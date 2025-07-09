@@ -35,6 +35,12 @@ const RouterMainPage = () => {
             withAdminAuthorization: false,
         },
         {
+            path: '/User_Manage',
+            element: <UserMainPage></UserMainPage>,
+            withAuthorization: true,
+            withAdminAuthorization: false,
+        },
+        {
             path: '/User_Manage/:Select_Menus',
             element: <UserMainPage></UserMainPage>,
             withAuthorization: true,
