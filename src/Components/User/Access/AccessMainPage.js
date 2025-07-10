@@ -51,6 +51,7 @@ const AccessMainPage = () => {
                     menu_select_code: 'user_user',
                     accessMenuCode: 'user',
                     accessType: 'user',
+                    permission: false,
                 },
             ],
         },
@@ -65,6 +66,7 @@ const AccessMainPage = () => {
                     menu_select_code: 'admin_man_day',
                     accessMenuCode: 'man_day',
                     accessType: 'admin',
+                    permission: true,
                 },
                 {
                     index: 11,
@@ -72,6 +74,7 @@ const AccessMainPage = () => {
                     menu_select_code: 'admin_user',
                     accessMenuCode: 'user',
                     accessType: 'admin',
+                    permission: false,
                 },
             ],
         },

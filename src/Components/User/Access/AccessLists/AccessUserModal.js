@@ -24,7 +24,7 @@ const styles = {
     }),
 };
 
-const AccessUserModal = ({ onClose, Now_Select_Menu }) => {
+const AccessUserModal = ({ onClose, Now_Select_Menu, Getting_Menu_Access_User_List }) => {
     const [NowSelect, setNowSelect] = useState(null);
     const [Department_State, setDepartment_State] = useState([]);
     useEffect(() => {
@@ -46,13 +46,6 @@ const AccessUserModal = ({ onClose, Now_Select_Menu }) => {
                             <div>
                                 <h3>사용자 선택</h3>
                             </div>
-                            <button
-                                onClick={() => {
-                                    onClose();
-                                }}
-                            >
-                                취소
-                            </button>
                         </UserContentMainPageButtonContainer>
                     </div>
                     <div></div>
@@ -66,7 +59,12 @@ const AccessUserModal = ({ onClose, Now_Select_Menu }) => {
                             ></ParentTree>
                         </div>
                         <div className="Right_Content">
-                            <UserTable NowSelect={NowSelect} Now_Select_Menu={Now_Select_Menu}></UserTable>
+                            <UserTable
+                                onClose={() => onClose()}
+                                NowSelect={NowSelect}
+                                Now_Select_Menu={Now_Select_Menu}
+                                Getting_Menu_Access_User_List={() => Getting_Menu_Access_User_List()}
+                            ></UserTable>
                         </div>
                     </div>
                 </UserModalMainDivBox>

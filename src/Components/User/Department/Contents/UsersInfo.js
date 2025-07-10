@@ -48,6 +48,12 @@ export const UserInfoMainDivBox = styled.div`
             }
         }
     }
+    .Detail_Info_Button_Container {
+        &:hover {
+            cursor: pointer;
+            color: blue;
+        }
+    }
 `;
 
 const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {

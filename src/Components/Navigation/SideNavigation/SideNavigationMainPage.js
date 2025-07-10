@@ -114,37 +114,17 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                 },
             ],
         },
-        {
-            Menu_Select: 'board',
-            Menu_List: [
-                {
-                    menu_name: '대여 현황',
-                    menu_path: '/board',
-                    menu_title: '/board',
-                },
-                {
-                    menu_name: 'board 리스트',
-                    menu_path: '/board/Select',
-                    menu_title: '/board',
-                },
-                {
-                    menu_name: '관리자 Tool 리스트',
-                    menu_path: '/Tool/Administrator/Select',
-                    menu_title: '/Tool',
-                },
-            ],
-        },
     ]);
     const [Admin_Side_Menu_List, setAdmin_Side_Menu_List] = useState([
         {
-            Menu_Select: 'Tool',
+            Menu_Select: 'man_day',
             Menu_List: [
                 {
-                    menu_name: '관리자 Tool 리스트',
-                    menu_path: '/Tool/Administrator/Select',
-                    menu_title: '/Tool',
+                    menu_name: '팀원 Man-Day 조회',
+                    menu_path: '/Man_Day/Team/Select',
+                    menu_title: '/Man_Day팀원 조회',
                     menu_show_access: 'admin',
-                    menu_icon: <RiListOrdered2 />,
+                    menu_icon: <AiFillCalendar></AiFillCalendar>,
                 },
             ],
         },
@@ -202,11 +182,11 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                             )}
                         </ul>
                     </div>
-                    {/* {Login_Info.access.some(list => list.ce_program_admin_access_name === NavState) ? (
-                        <div>
+                    {Login_Info.admin_access.some(list => list.accessMenuCode === NavState?.toLowerCase()) ? (
+                        <div style={{ marginTop: '30px' }}>
                             <div>관리자</div>
                             <ul className="PersonalNavigation_WorkStatus_ListsShow">
-                                {Admin_Side_Menu_List.filter(item => item.Menu_Select === NavState).map(item =>
+                                {Admin_Side_Menu_List.filter(item => item.Menu_Select === NavState?.toLowerCase()).map(item =>
                                     item.Menu_List.map(list => {
                                         return (
                                             <li
@@ -226,7 +206,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                         </div>
                     ) : (
                         <></>
-                    )} */}
+                    )}
                 </div>
             </div>
         </AnnualLeaveNavigationMainPageMainDivBox>

@@ -22,6 +22,9 @@ export const UserContentMainPageButtonContainer = styled.div`
             opacity: 0.7;
         }
     }
+    .Button_Containers {
+        text-align: end;
+    }
 `;
 
 const UserContentMainPage = () => {

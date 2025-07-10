@@ -205,6 +205,12 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
         setScheduleRegistrationIsModalOpen(true);
     };
 
+    const Getting_Max_Row = Event_Bars => {
+        const maxObjArr = Event_Bars.reduce((prev, value) => {
+            return prev >= value.row ? prev : value.row;
+        });
+    };
+
     return (
         <div>
             <CalendarWrapper className="AnnualLeaveCalendarTableMainDivBox">
