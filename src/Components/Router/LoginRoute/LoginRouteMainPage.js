@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 // import { Now_Path_Insert_Reducer_State_Func } from '../../../Models/NowPathReducer/NowPathReduce';
 import { toast } from '../../ToastMessage/ToastManager';
 import { Request_Get_Axios } from '../../../API';
-const LoginRoute = ({ withAdminAuthorization, withAuthorization, component, User_Info }) => {
+const LoginRoute = ({ withAdminAuthorization, withAuthorization, component, User_Info, needAccessToken }) => {
     const Navigate = useNavigate();
     const dispatch = useDispatch();
     const { pathname } = useLocation();
@@ -47,7 +47,7 @@ const LoginRoute = ({ withAdminAuthorization, withAuthorization, component, User
 
     return withAuthorization ? (
         withAdminAuthorization ? (
-            <RestrictRoute component={component} User_Info={User_Info}>
+            <RestrictRoute component={component} User_Info={User_Info} needAccessToken={needAccessToken}>
                 {BlockContent ? component : ''}
             </RestrictRoute>
         ) : (

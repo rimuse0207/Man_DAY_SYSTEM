@@ -10,7 +10,7 @@ import Loader from '../../../../Loader/Loader';
 import ReadingBoxs from './ReadingBoxs';
 import { MdOutlineArrowBackIosNew } from 'react-icons/md';
 import { MdArrowForwardIos } from 'react-icons/md';
-
+import { getWeekOfMonth } from '../../CommonFunc/CommonFunc';
 moment.locale('ko');
 
 export const ContentMainPageMainDivBox = styled.div`
@@ -131,6 +131,7 @@ const ContentMainPage = () => {
     const [WeekContainer, setWeekContainer] = useState({
         represent_Date: moment().clone().startOf('isoWeek').format('YYYY-MM-DD'),
         Mode: 'writing',
+        Before_key: null,
         Date_Lists: [
             {
                 date: moment().clone().startOf('isoWeek').format('YYYY-MM-DD'),
@@ -218,17 +219,33 @@ const ContentMainPage = () => {
     };
 
     // 월단위로 몇주차 인지 계산
-    const getWeekOfMonth = dateStr => {
-        const date = moment(dateStr);
-        const startOfMonth = date.clone().startOf('month');
+    // const getWeekOfMonth = dateStr => {
+    //     const date = moment(dateStr);
+    //     const year = date.year();
+    //     const month = date.month(); // 0~11
 
-        const firstWeekDay = startOfMonth.isoWeekday(); // 1:월 ~ 7:일
-        const offset = firstWeekDay - 1; // 첫 주 시작 요일에 따라 보정
+    //     // 이번 주의 월요일 시작
+    //     const startOfWeek = date.clone().startOf('isoWeek');
 
-        const dayOfMonth = date.date();
+    //     // 이 주의 목요일 구하기
+    //     const thursday = startOfWeek.clone().add(3, 'days');
+    //     const targetMonth = thursday.month(); // 목요일의 달
 
-        return Math.ceil((dayOfMonth + offset) / 7);
-    };
+    //     // 주차 계산 시작점: targetMonth의 첫 날부터 isoWeek 시작점 찾기
+    //     let currentWeekStart = moment([year, targetMonth, 1]).startOf('isoWeek');
+    //     let week = 1;
+
+    //     while (currentWeekStart.isBefore(startOfWeek, 'day')) {
+    //         const currentThursday = currentWeekStart.clone().add(3, 'days');
+    //         if (currentThursday.month() === targetMonth) {
+    //             week++;
+    //         }
+    //         currentWeekStart.add(1, 'week');
+    //     }
+
+    //     const monthStr = (targetMonth + 1).toString().padStart(2, '0');
+    //     return `${monthStr}월 ${week}주차`;
+    // };
     // 수정모드로 변경
     const Change_the_Mode = () => {
         toast.show({
@@ -284,9 +301,9 @@ const ContentMainPage = () => {
         });
         if (Sending_Man_Day_Real_Data.status) {
             toast.show({
-                title: `${moment(WeekContainer.represent_Date).format('M월')}${
-                    getWeekOfMonth(moment(WeekContainer.represent_Date).format('YYYY-MM-DD')) - 1
-                }주차 Man_Day ${WeekContainer.Mode === 'updating' ? `수정` : `입력`} 완료되었습니다.`,
+                title: `${getWeekOfMonth(WeekContainer.represent_Date)} Man_Day ${
+                    WeekContainer.Mode === 'updating' ? `수정` : `입력`
+                } 완료되었습니다.`,
                 successCheck: true,
                 duration: 6000,
             });
@@ -396,8 +413,9 @@ const ContentMainPage = () => {
                     <MdOutlineArrowBackIosNew />
                 </div>
                 <h2>
-                    {moment(WeekContainer.represent_Date).format('M월')}{' '}
-                    {getWeekOfMonth(moment(WeekContainer.represent_Date).format('YYYY-MM-DD')) - 1}주차
+                    {/* {moment(WeekContainer.represent_Date).format('M월')}{' '}
+                    {getWeekOfMonth(moment(WeekContainer.represent_Date).format('YYYY-MM-DD')) - 1}주차 */}
+                    {getWeekOfMonth(WeekContainer.represent_Date)}
                 </h2>
                 {Today_Date === Select_Date ? (
                     ''

@@ -7,6 +7,7 @@ import HomeMainPage from '../../Components/HomeMain/HomeMainPage';
 import ManDayMainPage from '../ManDay/ManDayMainPage';
 import ManDayApplyMain from '../ManDay/MainDayContainer/ManDayApply/ManDayApplyMain';
 import UserMainPage from '../User/UserMainPage';
+import TeamManDaySelectMainPage from '../ManDay/MainDayContainer/TeamManDaySelect/TeamManDaySelectMainPage';
 const RouterMainPage = () => {
     const User_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [RouterInfo, setRouterInfo] = useState([
@@ -35,72 +36,27 @@ const RouterMainPage = () => {
             withAdminAuthorization: false,
         },
         {
+            path: '/Man_Day/Team/Select',
+            element: <TeamManDaySelectMainPage></TeamManDaySelectMainPage>,
+            withAuthorization: true,
+            withAdminAuthorization: true,
+            needAccessToken: 'man_day',
+        },
+        {
             path: '/User_Manage',
             element: <UserMainPage></UserMainPage>,
             withAuthorization: true,
-            withAdminAuthorization: false,
+            withAdminAuthorization: true,
+            needAccessToken: 'user',
         },
+
         {
             path: '/User_Manage/:Select_Menus',
             element: <UserMainPage></UserMainPage>,
             withAuthorization: true,
-            withAdminAuthorization: false,
+            withAdminAuthorization: true,
+            needAccessToken: 'user',
         },
-        // {
-        //     path: '/Tool',
-        //     element: <ToolMainPage></ToolMainPage>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Tool/Apply',
-        //     element: <ToolApply></ToolApply>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Tool/Apply/:Disco_Code/:Disco_Name',
-        //     element: <ToolApply></ToolApply>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Tool/Select',
-        //     element: <ToolsLists></ToolsLists>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Safety_Management',
-        //     element: <SafetyManagementMainPage></SafetyManagementMainPage>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // // 관리자용
-        // {
-        //     path: '/Tool/Administrator/DashBoard',
-        //     element: <DashBoard></DashBoard>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Tool/Administrator/Select',
-        //     element: <AdminToolInfoList></AdminToolInfoList>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Tool/Administrator/Insert/addToolsInfo',
-        //     element: <InsertMainPage></InsertMainPage>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
-        // {
-        //     path: '/Tool/Administrator/Update/UpdateToolsInfo/:tool_code',
-        //     element: <UpdateMainPage></UpdateMainPage>,
-        //     withAuthorization: true,
-        //     withAdminAuthorization: false,
-        // },
     ]);
 
     return (
@@ -117,6 +73,7 @@ const RouterMainPage = () => {
                                     withAuthorization={route.withAuthorization}
                                     component={route.element}
                                     User_Info={User_Info}
+                                    needAccessToken={route.needAccessToken}
                                 ></LoginRoute>
                             }
                         ></Route>

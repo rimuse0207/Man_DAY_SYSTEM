@@ -11,7 +11,7 @@ import {
 } from '../../../../../Models/ManDayReducers/ManDaySelectFilterReducer';
 import { ContentMainPageMainDivBox } from '../../ManDayApply/Contents/ContentMainPage';
 
-const TableFilterMainDivBox = styled.div`
+export const TableFilterMainDivBox = styled.div`
     h2 {
         margin-top: 10px;
         margin-bottom: 10px;

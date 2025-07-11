@@ -2,8 +2,8 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { toast } from '../../ToastMessage/ToastManager';
 
-const RestrictRoute = ({ component, User_Info }) => {
-    const withAdminAuthorization = false;
+const RestrictRoute = ({ component, User_Info, needAccessToken }) => {
+    const withAdminAuthorization = User_Info?.admin_access.some(item => item.accessMenuCode === needAccessToken);
     const Alert_Go_To_Main_Home = () => {
         toast.show({
             title: `관리자 권한이 없습니다.`,
@@ -13,7 +13,7 @@ const RestrictRoute = ({ component, User_Info }) => {
         return <Navigate to="/Home" />;
     };
 
-    return withAdminAuthorization ? { component } : Alert_Go_To_Main_Home();
+    return withAdminAuthorization ? component : Alert_Go_To_Main_Home();
 };
 
 export default RestrictRoute;

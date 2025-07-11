@@ -194,6 +194,13 @@ const LoginMainPage = () => {
                 duration: 3000,
             });
             return;
+        } else if (Change_password.password !== Change_password.passwordCheck) {
+            toast.show({
+                title: `비밀번호가 서로 다릅니다.`,
+                successCheck: false,
+                duration: 3000,
+            });
+            return;
         } else {
             const Change_Password_Axios = await Request_Post_Axios('/API/PLM/Change_Password', Change_password);
             if (Change_Password_Axios.status) {

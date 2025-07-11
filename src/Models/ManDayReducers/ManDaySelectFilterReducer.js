@@ -10,6 +10,8 @@ export const initState = {
         depart: null,
         sub_depart: null,
         divide: null,
+        name: null,
+        team: null,
     },
 };
 
