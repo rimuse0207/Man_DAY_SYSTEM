@@ -23,6 +23,13 @@ const UserListsMainDivBox = styled.div`
         color: black;
         background-color: lightgray;
     }
+
+    thead {
+        tr {
+            position: sticky;
+            top: 0px;
+        }
+    }
     .Click_Buttons {
         font-weight: bolder;
         &:hover {

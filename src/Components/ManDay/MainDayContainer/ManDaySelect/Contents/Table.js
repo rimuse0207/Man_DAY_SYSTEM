@@ -20,6 +20,13 @@ const TableMainDivBox = styled.div`
         background-color: #f2f2f2;
         color: black;
     }
+
+    thead {
+        tr {
+            position: sticky;
+            top: 0px;
+        }
+    }
 `;
 
 const Table = ({ Table_State }) => {

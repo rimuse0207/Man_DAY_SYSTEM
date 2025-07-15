@@ -10,6 +10,7 @@ import {
     Insert_Man_Day_Select_Reducer_State_Func,
 } from '../../../../../Models/ManDayReducers/ManDaySelectFilterReducer';
 import { ContentMainPageMainDivBox } from '../../ManDayApply/Contents/ContentMainPage';
+import { customStyles } from '../../TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter';
 
 export const TableFilterMainDivBox = styled.div`
     h2 {
@@ -19,21 +20,24 @@ export const TableFilterMainDivBox = styled.div`
     .Filter_Container {
         display: flex;
         flex-flow: wrap;
-        justify-content: space-between;
-        margin-bottom: 20px;
+        justify-content: start;
+        /* margin-bottom: 20px; */
         .Filter_GR {
             width: 300px;
+            display: flex;
+            align-items: center;
+            border-left: 1px solid lightgray;
+            margin-right: 10px;
             .Filter_Title {
+                width: 100px;
                 text-align: center;
                 font-weight: bolder;
-                border: 1px solid lightgray;
-                font-size: 1.1em;
+                font-size: 1em;
                 padding-bottom: 10px;
                 padding-top: 10px;
-                border-bottom: 1px solid lightgray;
             }
             .Filter_Content {
-                height: 35px;
+                width: 200px;
                 input {
                     border: 1px solid lightgray;
                     height: 35px;
@@ -49,13 +53,12 @@ export const TableFilterMainDivBox = styled.div`
             display: flex;
             justify-content: end;
             button {
-                margin-top: 20px;
                 margin-bottom: 20px;
-                padding: 15px;
-                font-size: 1em;
+                padding: 10px;
+                font-size: 0.9em;
                 border: none;
                 margin-left: 20px;
-                width: 100px;
+                width: 80px;
                 border-radius: 5px;
                 background-color: orange;
                 color: #fff;
@@ -166,6 +169,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                     <div className="Filter_Title">대분류</div>
                     <div className="Filter_Content">
                         <Select
+                            styles={customStyles}
                             value={Filter_State.depart}
                             onChange={e => {
                                 Sub_Depart(e);
@@ -182,6 +186,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                     <div className="Filter_Title">설비명</div>
                     <div className="Filter_Content">
                         <Select
+                            styles={customStyles}
                             value={Filter_State.sub_depart}
                             options={sub_Depart_options}
                             isClearable
@@ -193,6 +198,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                     <div className="Filter_Title">구분</div>
                     <div className="Filter_Content">
                         <Select
+                            styles={customStyles}
                             value={Filter_State.divide}
                             isClearable
                             onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, divide: e }))}

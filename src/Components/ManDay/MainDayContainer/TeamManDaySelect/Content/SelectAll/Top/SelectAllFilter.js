@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Initial_Man_Day_Select_Reducer_State_Func,
+    initState,
     Insert_Man_Day_Select_Reducer_State_Func,
 } from '../../../../../../../Models/ManDayReducers/ManDaySelectFilterReducer';
 import { ko } from 'date-fns/esm/locale';
@@ -16,12 +17,51 @@ const SelectAllFilterMainDivBox = styled.div`
         justify-content: start;
         .Filter_GR {
             margin-bottom: 30px;
-            margin-right: 30px;
+            margin-right: 10px;
+            margin-left: 10px;
+            width: 18%;
+            min-width: 200px !important;
         }
     }
 `;
-
-const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptions }) => {
+export const customStyles = {
+    control: provided => ({
+        ...provided,
+        minHeight: '40px',
+        height: '40px',
+        fontSize: '12px',
+        padding: '0 4px',
+        display: 'flex',
+        alignItems: 'center', // 수직 정렬
+        lineHeight: '1.2', // 줄 높이 조정
+    }),
+    valueContainer: provided => ({
+        ...provided,
+        height: '40px',
+        padding: '0 4px',
+        display: 'flex',
+        alignItems: 'center', // 수직 정렬
+    }),
+    indicatorsContainer: provided => ({
+        ...provided,
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center', // 아이콘도 정렬
+    }),
+    singleValue: provided => ({
+        ...provided,
+        display: 'flex',
+        alignItems: 'center',
+        lineHeight: '1.2', // 선택된 값 줄 높이
+    }),
+    option: provided => ({
+        ...provided,
+        fontSize: '12px',
+        padding: '6px 8px',
+        lineHeight: '1.5',
+    }),
+};
+const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptions, Getting_Man_Day_Info_Data, Excel_Download }) => {
     const dispatch = useDispatch();
     const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
     const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
@@ -119,6 +159,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Filter_Title">팀명</div>
                         <div className="Filter_Content">
                             <Select
+                                styles={customStyles}
                                 value={Filter_State.team}
                                 isClearable
                                 options={DepartmentFilterOptions}
@@ -130,6 +171,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Filter_Title">이름</div>
                         <div className="Filter_Content">
                             <Select
+                                styles={customStyles}
                                 value={Filter_State.name}
                                 isClearable
                                 options={PersonFilterOptions}
@@ -142,6 +184,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Filter_Title">대분류</div>
                         <div className="Filter_Content">
                             <Select
+                                styles={customStyles}
                                 value={Filter_State.depart}
                                 onChange={e => {
                                     Sub_Depart(e);
@@ -158,6 +201,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Filter_Title">설비명</div>
                         <div className="Filter_Content">
                             <Select
+                                styles={customStyles}
                                 value={Filter_State.sub_depart}
                                 options={sub_Depart_options}
                                 isClearable
@@ -169,6 +213,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Filter_Title">구분</div>
                         <div className="Filter_Content">
                             <Select
+                                styles={customStyles}
                                 value={Filter_State.divide}
                                 isClearable
                                 onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, divide: e }))}
@@ -182,12 +227,31 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Filter_Title">입력여부</div>
                         <div className="Filter_Content">
                             <Select
-                                // value={Filter_State.depart}
-
+                                styles={customStyles}
+                                value={Filter_State.inputCheck}
                                 isClearable
-                                // options={Input_Title_Lists.map(list => {
-                                //     return { value: list.Major_Category_Code, label: list.Major_Category_Name };
-                                // })}
+                                onChange={e => {
+                                    e?.value === 'OFF'
+                                        ? dispatch(
+                                              Insert_Man_Day_Select_Reducer_State_Func({
+                                                  ...Filter_State,
+                                                  inputCheck: e,
+                                                  divide: null,
+                                                  sub_depart: null,
+                                                  depart: null,
+                                              })
+                                          )
+                                        : dispatch(
+                                              Insert_Man_Day_Select_Reducer_State_Func({
+                                                  ...Filter_State,
+                                                  inputCheck: e,
+                                              })
+                                          );
+                                }}
+                                options={[
+                                    { value: 'ON', label: '입력완료' },
+                                    { value: 'OFF', label: '미입력' },
+                                ]}
                             ></Select>
                         </div>
                     </div>
@@ -198,14 +262,30 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         <div className="Update_Button_Container">
                             <button
                                 onClick={() => {
+                                    Excel_Download();
+                                }}
+                                style={{ width: '150px', backgroundColor: '#368' }}
+                            >
+                                엑셀 내보내기
+                            </button>
+                        </div>
+                        <div className="Update_Button_Container">
+                            <button
+                                onClick={async () => {
                                     dispatch(Initial_Man_Day_Select_Reducer_State_Func());
+                                    await Getting_Man_Day_Info_Data(initState.Filters_State);
                                 }}
                             >
                                 초기화
                             </button>
                         </div>
                         <div className="Save_Button_Container">
-                            <button style={{ background: 'green' }} onClick={() => {}}>
+                            <button
+                                style={{ background: 'green' }}
+                                onClick={() => {
+                                    Getting_Man_Day_Info_Data();
+                                }}
+                            >
                                 조회
                             </button>
                         </div>

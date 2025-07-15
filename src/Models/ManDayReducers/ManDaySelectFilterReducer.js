@@ -12,6 +12,7 @@ export const initState = {
         divide: null,
         name: null,
         team: null,
+        inputCheck: null,
     },
 };
 
