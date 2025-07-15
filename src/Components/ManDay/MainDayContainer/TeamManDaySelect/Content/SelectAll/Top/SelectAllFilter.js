@@ -11,7 +11,7 @@ import {
 import { ko } from 'date-fns/esm/locale';
 import styled from 'styled-components';
 
-const SelectAllFilterMainDivBox = styled.div`
+export const SelectAllFilterMainDivBox = styled.div`
     .Filter_Container {
         margin-bottom: 20px;
         justify-content: start;
@@ -176,6 +176,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 isClearable
                                 options={PersonFilterOptions}
                                 onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, name: e }))}
+                                placeholder="선택 해 주세요."
                             ></Select>
                         </div>
                     </div>
@@ -194,6 +195,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 options={Input_Title_Lists.map(list => {
                                     return { value: list.Major_Category_Code, label: list.Major_Category_Name };
                                 })}
+                                placeholder="선택 해 주세요."
                             ></Select>
                         </div>
                     </div>
@@ -206,6 +208,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 options={sub_Depart_options}
                                 isClearable
                                 onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
+                                placeholder="선택 해 주세요."
                             ></Select>
                         </div>
                     </div>
@@ -220,6 +223,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 options={Divide_Lists.map(list => {
                                     return { value: list.itemCode, label: list.itemName };
                                 })}
+                                placeholder="선택 해 주세요."
                             ></Select>
                         </div>
                     </div>
@@ -252,6 +256,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                     { value: 'ON', label: '입력완료' },
                                     { value: 'OFF', label: '미입력' },
                                 ]}
+                                placeholder="선택 해 주세요."
                             ></Select>
                         </div>
                     </div>

@@ -7,6 +7,8 @@ import { toast } from '../../ToastMessage/ToastManager';
 
 export const DepartmentMainPageMainDivBox = styled.div`
     .All_Container {
+        height: calc(100vh - 160px);
+        overflow: auto;
         ::after {
             display: block;
             content: '';
@@ -18,6 +20,14 @@ export const DepartmentMainPageMainDivBox = styled.div`
             width: 20%;
             padding: 10px;
             float: left;
+            height: calc(100vh - 160px);
+            overflow: auto;
+            .Button_Containers {
+                text-align: end;
+                position: sticky;
+                top: 0px;
+                width: 100%;
+            }
             button {
                 border: 1px solid lightgray;
                 padding: 5px;
@@ -34,6 +44,8 @@ export const DepartmentMainPageMainDivBox = styled.div`
             padding-right: 10px;
             float: right;
             width: 80%;
+            height: 100%;
+            overflow: auto;
         }
     }
 `;
@@ -48,6 +60,7 @@ const DepartmentMainPage = () => {
         Getting_Department_Data();
     }, []);
 
+    // 부서 조직도 불러오기
     const Getting_Department_Data = async () => {
         const Getting_Department_Data_Axios = await Request_Get_Axios('/API/PLM/user/Getting_Department_Data');
         if (Getting_Department_Data_Axios.status) {
@@ -87,7 +100,7 @@ const DepartmentMainPage = () => {
             </div>
             <div className="All_Container">
                 <div className="Left_Content">
-                    <div style={{ textAlign: 'end', marginBottom: '10px' }}>
+                    <div className="Button_Containers">
                         <button onClick={() => setUpdate_Mode(true)}> 추 가 </button>
                     </div>
                     <ParentTree

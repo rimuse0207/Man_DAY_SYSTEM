@@ -6,6 +6,7 @@ const TableMainDivBox = styled.div`
     table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 0.8em;
     }
 
     th,
@@ -60,7 +61,7 @@ const Table = ({ Table_State }) => {
                                 <td>{list.depart}</td>
                                 <td>{list.sub_depart}</td>
                                 <td>{list.divideCode}</td>
-                                <td>{list.manDay}</td>
+                                <td>{list.manDay.toFixed(1)}</td>
                             </tr>
                         );
                     })}

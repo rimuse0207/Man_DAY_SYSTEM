@@ -58,7 +58,7 @@ const ManDaySelect = ({ Now_Select_User, NowDate }) => {
                                                     <div className="Input_GR">
                                                         <div className="Title">Man-day</div>
                                                         <div className="Answer" style={{ textAlign: 'center' }}>
-                                                            {item.manDay}
+                                                            {item.manDay.toFixed(1)}
                                                         </div>
                                                     </div>
                                                 </SelectBoxsMainDivBox>

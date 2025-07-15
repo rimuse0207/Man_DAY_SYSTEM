@@ -83,7 +83,11 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         <option value={null}></option>
                         {Input_Title_Lists.map(list => {
                             return (
-                                <option value={list.Major_Category_Code} key={list.Major_Category_Code}>
+                                <option
+                                    value={list.Major_Category_Code}
+                                    data-name={list.Major_Category_Name}
+                                    key={list.Major_Category_Code}
+                                >
                                     {list.Major_Category_Name}
                                 </option>
                             );
@@ -100,7 +104,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                             if (item.Major_Category_Code === Now_Data.depart) {
                                 return item.Eqipment_lists.map(list => {
                                     return (
-                                        <option value={list.itemCode} key={list.itemCode}>
+                                        <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
                                             {list.itemName}
                                         </option>
                                     );
@@ -117,7 +121,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         <option value={null}></option>
                         {Divide_Lists.map(list => {
                             return (
-                                <option value={list.itemCode} key={list.itemCode}>
+                                <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
                                     {list.itemName}
                                 </option>
                             );
@@ -131,9 +135,9 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                     <input
                         value={Now_Data.man_day}
                         type="number"
-                        min="0"
-                        max="1"
-                        step="0.1"
+                        min={0}
+                        max={1}
+                        step={0.1}
                         onChange={e => handleFieldChange(e, 'man_day')}
                     ></input>
                 </div>

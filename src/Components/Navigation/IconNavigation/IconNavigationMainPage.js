@@ -85,9 +85,9 @@ const IconNavigationMainPage = () => {
     const Login_Info_State = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [Icon_Nav_Info, setIcon_Nav_Info] = useState([
         {
-            path: '/Man_Day',
+            path: '/Man_day',
             icon: <TbCalendarClock></TbCalendarClock>,
-            name: 'Man_Day',
+            name: 'Man_day',
             role: 'all',
         },
         {

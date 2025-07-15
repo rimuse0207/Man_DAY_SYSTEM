@@ -9,7 +9,7 @@ export const SbContainer = styled.div`
     width: auto;
     height: auto;
     min-height: 70vh;
-    font-size: 14px;
+    font-size: 12px;
 `;
 
 const ParentTree = ({ TreeMenu, setDepartment_State, NowSelect, setNowSelect }) => {

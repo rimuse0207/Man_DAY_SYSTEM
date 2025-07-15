@@ -47,7 +47,7 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
                                 <div className="Input_GR">
                                     <div className="Title">Man-day</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
-                                        {list.man_day}
+                                        {list.man_day.toFixed(1)}
                                     </div>
                                 </div>
                             </SelectBoxsMainDivBox>

@@ -49,6 +49,7 @@ export const TableFilterMainDivBox = styled.div`
         }
     }
     .Filter_Button_Group {
+        margin-top: 20px;
         .Filter_Button_Container {
             display: flex;
             justify-content: end;
@@ -179,6 +180,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                             options={Input_Title_Lists.map(list => {
                                 return { value: list.Major_Category_Code, label: list.Major_Category_Name };
                             })}
+                            placeholder="선택 해 주세요."
                         ></Select>
                     </div>
                 </div>
@@ -191,6 +193,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                             options={sub_Depart_options}
                             isClearable
                             onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
+                            placeholder="선택 해 주세요."
                         ></Select>
                     </div>
                 </div>
@@ -205,6 +208,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                             options={Divide_Lists.map(list => {
                                 return { value: list.itemCode, label: list.itemName };
                             })}
+                            placeholder="선택 해 주세요."
                         ></Select>
                     </div>
                 </div>

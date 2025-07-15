@@ -51,7 +51,7 @@ const NavigationMainPageMainDivBox = styled.div`
         .Main_Menu_Move_Container {
             position: absolute;
             right: -400px;
-            top: 0px;
+            top: 5px;
             width: 300px;
         }
     }
@@ -130,8 +130,8 @@ const TopNavigationMainPage = () => {
             role: 'all',
         },
         {
-            value: '/Man_Day',
-            label: 'Man_Day',
+            value: '/Man_day',
+            label: 'Man_day',
             role: 'all',
         },
         {
@@ -165,7 +165,7 @@ const TopNavigationMainPage = () => {
             <div className="NavigationMainFlexdiv">
                 <div className="Main_Logo_Container">
                     <Link to="/Home">
-                        <img src="/01_EXICON_CYMK_FULL-COLOR.png" width="100px"></img>
+                        <img src={`/${Login_Info_State.company}.png`} width="100px"></img>
                     </Link>
                     <div className="Main_Menu_Move_Container">
                         <FormControl sx={{ m: 1, minWidth: 100, margin: 0, width: '100%' }} size="small">

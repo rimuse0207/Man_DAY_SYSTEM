@@ -63,7 +63,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                                             <td>{user.depart}</td>
                                             <td>{user.sub_depart}</td>
                                             <td>{user.divideCode}</td>
-                                            <td>{user.manDay}</td>
+                                            <td>{user.manDay.toFixed(1)}</td>
                                             <td>입력완료</td>
                                         </tr>
                                     );

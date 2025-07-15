@@ -106,9 +106,9 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
             Menu_Select: 'Man_Day',
             Menu_List: [
                 {
-                    menu_name: 'Man-Day 조회',
-                    menu_path: '/Man_Day',
-                    menu_title: '/Man_Day',
+                    menu_name: 'Man_day 조회',
+                    menu_path: '/Man_day',
+                    menu_title: '/Man_day',
                     menu_show_access: 'user',
                     menu_icon: <AiFillCalendar></AiFillCalendar>,
                 },
@@ -120,9 +120,9 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
             Menu_Select: 'man_day',
             Menu_List: [
                 {
-                    menu_name: '팀원 Man-Day 조회',
-                    menu_path: '/Man_Day/Team/Select',
-                    menu_title: '/Man_Day팀원 조회',
+                    menu_name: '팀원 Man_day 조회',
+                    menu_path: '/Man_day/Team/Select',
+                    menu_title: '/Man_day팀원 조회',
                     menu_show_access: 'admin',
                     menu_icon: <AiFillCalendar></AiFillCalendar>,
                 },
@@ -154,10 +154,10 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                 <div
                     className="PersonalNavigation_ApplyPage"
                     onClick={() => {
-                        Navigate('/Man_Day/Apply');
+                        Navigate('/Man_day/Apply');
                     }}
                 >
-                    <div>Man-Day 입력</div>
+                    <div>Man_day 입력</div>
                 </div>
             </div>
             <div>

@@ -100,13 +100,18 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
 
     // 부서별 사용자 조회
     const Getting_User_Info_Data_Iclduing_Department = async () => {
+        console.log(NowSelect);
         const Getting_User_Info_Data_Iclduing_Department_Axios = await Request_Get_Axios(
             '/API/PLM/user/Getting_User_Info_Data_Iclduing_Department',
             {
-                NowSelect,
+                NowSelect: { itemCode: NowSelect.itemCode },
             }
         );
-        setGetting_Users(Getting_User_Info_Data_Iclduing_Department_Axios.data);
+
+        console.log(Getting_User_Info_Data_Iclduing_Department_Axios);
+        if (Getting_User_Info_Data_Iclduing_Department_Axios.status) {
+            setGetting_Users(Getting_User_Info_Data_Iclduing_Department_Axios.data);
+        }
     };
 
     // List의 체크박스 등록

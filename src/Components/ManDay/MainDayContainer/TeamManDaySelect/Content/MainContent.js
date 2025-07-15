@@ -5,6 +5,7 @@ import SelectAllMainPage from './SelectAll/SelectAllMainPage';
 import StatisticMainPage from './Statistic/StatisticMainPage';
 
 const MainContentMainDivBox = styled.div`
+    height: 100%;
     ul {
         display: flex;
         padding: 10px;
