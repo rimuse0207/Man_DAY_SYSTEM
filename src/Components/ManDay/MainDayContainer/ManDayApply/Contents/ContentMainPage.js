@@ -341,7 +341,10 @@ const ContentMainPage = () => {
         );
         if (Handle_Getting_Save_Temporarily_Man_Dat_Data.status) {
             if (Handle_Getting_Save_Temporarily_Man_Dat_Data.data.Have_Temporarily_Data) {
-                setWeekContainer(Handle_Getting_Save_Temporarily_Man_Dat_Data.data.data);
+                setWeekContainer({
+                    ...WeekContainer,
+                    Date_Lists: Handle_Getting_Save_Temporarily_Man_Dat_Data.data.data.Date_Lists,
+                });
                 toast.show({
                     title: `임시 저장된 데이터를 불러왔습니다.`,
                     successCheck: true,
