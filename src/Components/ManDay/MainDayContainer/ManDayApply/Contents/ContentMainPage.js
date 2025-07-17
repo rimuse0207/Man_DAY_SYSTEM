@@ -451,6 +451,9 @@ const ContentMainPage = () => {
                         <div className="Cancel_Button_Container">
                             <button onClick={() => Cancel_Man_Day_Data()}>취소</button>
                         </div>
+                        <div className="Update_Button_Container">
+                            <button onClick={() => Save_Temporarily_Man_Data_Info_Data()}>임시 저장</button>
+                        </div>
                         <div className="Save_Button_Container">
                             <button onClick={() => Save_Man_Day_Data()}>수정 완료</button>
                         </div>
