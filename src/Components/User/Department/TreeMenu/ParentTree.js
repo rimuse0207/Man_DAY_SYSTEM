@@ -13,6 +13,7 @@ export const SbContainer = styled.div`
 `;
 
 const ParentTree = ({ TreeMenu, setDepartment_State, NowSelect, setNowSelect }) => {
+    console.log(TreeMenu, setDepartment_State, NowSelect, setNowSelect);
     return (
         <SbContainer>
             {TreeMenu.map((list, index) => {

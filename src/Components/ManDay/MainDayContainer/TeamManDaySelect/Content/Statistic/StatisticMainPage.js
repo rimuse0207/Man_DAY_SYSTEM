@@ -18,6 +18,7 @@ const StatisticMainPage = () => {
                 {Menu_Lists.map(list => {
                     return (
                         <li
+                            onClick={() => setNow_Select_Menu(list.menuCode)}
                             style={Now_Select_Menu === list.menuCode ? { borderBottom: '2px solid black', color: 'black' } : {}}
                             key={list.menuCode}
                         >

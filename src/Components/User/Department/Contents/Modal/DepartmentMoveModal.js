@@ -64,7 +64,15 @@ export const CancelButton = styled.button`
     }
 `;
 
-const ConfirmApply = ({ isOpen, onClose, Department_State, setDepartment_State, NowSelect, setNowSelect, Update_User_Info_Data }) => {
+const DepartmentMoveModal = ({
+    isOpen,
+    onClose,
+    Department_State,
+    setDepartment_State,
+    NowSelect,
+    setNowSelect,
+    Update_User_Info_Data,
+}) => {
     const Navigate = useNavigate();
     if (!isOpen) return null;
 
@@ -100,4 +108,4 @@ const ConfirmApply = ({ isOpen, onClose, Department_State, setDepartment_State, 
     );
 };
 
-export default React.memo(ConfirmApply);
+export default React.memo(DepartmentMoveModal);

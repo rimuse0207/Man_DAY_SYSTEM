@@ -70,6 +70,9 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
     const [Getting_Users, setGetting_Users] = useState([]);
     const [AllChecking, setAllChecking] = useState(false);
     const [isOpen, setisOpen] = useState(false);
+    useEffect(() => {
+        setModal_Choose_Department_State(Department_State);
+    }, [Department_State]);
 
     /// 부서변경 서버로 전송
     const Update_User_Info_Data = async () => {
@@ -100,7 +103,6 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
 
     // 부서별 사용자 조회
     const Getting_User_Info_Data_Iclduing_Department = async () => {
-        console.log(NowSelect);
         const Getting_User_Info_Data_Iclduing_Department_Axios = await Request_Get_Axios(
             '/API/PLM/user/Getting_User_Info_Data_Iclduing_Department',
             {
@@ -108,7 +110,6 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
             }
         );
 
-        console.log(Getting_User_Info_Data_Iclduing_Department_Axios);
         if (Getting_User_Info_Data_Iclduing_Department_Axios.status) {
             setGetting_Users(Getting_User_Info_Data_Iclduing_Department_Axios.data);
         }
@@ -212,15 +213,19 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
                     </tbody>
                 </table>
             </div>
-            <DepartmentMoveModal
-                isOpen={isOpen}
-                onClose={() => setisOpen(false)}
-                Department_State={Modal_Choose_Department_State}
-                setDepartment_State={data => setModal_Choose_Department_State(data)}
-                NowSelect={ModalNowSelect}
-                setNowSelect={data => setModalNowSelect(data)}
-                Update_User_Info_Data={() => Update_User_Info_Data()}
-            ></DepartmentMoveModal>
+            {isOpen ? (
+                <DepartmentMoveModal
+                    isOpen={isOpen}
+                    onClose={() => setisOpen(false)}
+                    Department_State={Modal_Choose_Department_State}
+                    setDepartment_State={data => setModal_Choose_Department_State(data)}
+                    NowSelect={ModalNowSelect}
+                    setNowSelect={data => setModalNowSelect(data)}
+                    Update_User_Info_Data={() => Update_User_Info_Data()}
+                ></DepartmentMoveModal>
+            ) : (
+                <></>
+            )}
         </UserInfoMainDivBox>
     );
 };
