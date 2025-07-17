@@ -399,7 +399,7 @@ const ContentMainPage = () => {
                     </div>
                 )}
             </div>
-            {WeekContainer?.Mode === 'writing' ? (
+            {WeekContainer?.Mode === 'writing' || WeekContainer?.Mode === 'updating' ? (
                 <div className="Button_Group">
                     <ul>
                         <li>
