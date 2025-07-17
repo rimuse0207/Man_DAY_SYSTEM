@@ -13,7 +13,10 @@ export const initState = {
         name: null,
         team: null,
         inputCheck: null,
-        company: null,
+        company: {
+            value: 'all',
+            label: '전체',
+        },
     },
 };
 

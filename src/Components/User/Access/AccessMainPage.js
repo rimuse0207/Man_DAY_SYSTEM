@@ -33,7 +33,7 @@ const AccessMainPageMainDivBox = styled.div`
         .Right_Container {
             width: calc(100% - 250px);
             height: calc(100vh - 160px);
-            overflow: auto;
+            /* overflow: auto; */
         }
     }
 `;

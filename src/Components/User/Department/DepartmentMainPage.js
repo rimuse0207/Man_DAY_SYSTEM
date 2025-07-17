@@ -8,7 +8,7 @@ import { toast } from '../../ToastMessage/ToastManager';
 export const DepartmentMainPageMainDivBox = styled.div`
     .All_Container {
         height: calc(100vh - 160px);
-        overflow: auto;
+        /* overflow: auto; */
         ::after {
             display: block;
             content: '';
@@ -45,7 +45,7 @@ export const DepartmentMainPageMainDivBox = styled.div`
             float: right;
             width: 80%;
             height: 100%;
-            overflow: auto;
+            /* overflow: auto; */
         }
     }
 `;

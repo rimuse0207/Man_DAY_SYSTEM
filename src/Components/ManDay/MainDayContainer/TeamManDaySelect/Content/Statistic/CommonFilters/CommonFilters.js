@@ -128,6 +128,10 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                                     isClearable
                                     options={[
                                         {
+                                            value: 'all',
+                                            label: '전체',
+                                        },
+                                        {
                                             value: 'YC',
                                             label: '와이씨(YC)',
                                         },
