@@ -13,6 +13,7 @@ export const initState = {
         name: null,
         team: null,
         inputCheck: null,
+        company: null,
     },
 };
 

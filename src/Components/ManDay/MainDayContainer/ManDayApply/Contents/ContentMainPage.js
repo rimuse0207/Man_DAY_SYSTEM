@@ -266,6 +266,20 @@ const ContentMainPage = () => {
             });
             return;
         }
+
+        /// 일별로 Man_Day가 0이 있는지 체크
+        const Man_Day_Check = WeekContainer.Date_Lists.some(list => {
+            return list.child.some(pre => pre.man_day === 0);
+        });
+        if (Man_Day_Check) {
+            toast.show({
+                title: `Man-day는 0이상만 저장 됩니다.`,
+                successCheck: false,
+                duration: 6000,
+            });
+            return;
+        }
+
         setLoadin_Check(true);
         const Sending_Man_Day_Real_Data = await Request_Post_Axios('/API/PLM/Sending_Man_Day_Real_Data', {
             WeekContainer,

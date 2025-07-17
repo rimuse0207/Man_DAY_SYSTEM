@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import BarGraph from './BarGraph';
 import styled from 'styled-components';
 
-const PersonMainPageMainDivBox = styled.div`
+export const PersonMainPageMainDivBox = styled.div`
     padding-right: 20px;
     .User_Info_Container {
         display: flex;
@@ -38,7 +38,6 @@ const PersonMainPage = ({ menuCode }) => {
                 setBar_State(Getting_Person_Bar_State_Axios.data.BarGraphData);
                 setUser_Info_State(Getting_Person_Bar_State_Axios.data.Personal_Infos_SQL);
             }
-            console.log(Getting_Person_Bar_State_Axios);
         }
     };
     return (

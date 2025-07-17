@@ -22,28 +22,6 @@ const BarGraph = ({ Bar_State }) => {
                 padding={0.6}
                 colors={['skyblue', 'gray']}
                 colorBy="id"
-                // theme={{
-                //     labels: { text: { fontSize: '2vmin', fill: '#000000' } },
-                //     legends: { text: { fontSize: '2vmin', fill: '#000000' } },
-                //     axis: {
-                //         legend: { text: { fontSize: '1.5vmin', fill: '#000000' } },
-                //         ticks: { text: { fontSize: '2vmin', fill: '#000000' } },
-                //     },
-                // }}
-                // axisBottom={{
-                //     tickSize: 5,
-                //     tickPadding: 5,
-                //     tickRotation: 0,
-                //     legendPosition: 'middle',
-                //     legendOffset: 20,
-                // }}
-                // axisLeft={{
-                //     tickSize: 1,
-                //     tickPadding: 20,
-                //     tickRotation: 0,
-                //     legendPosition: 'middle',
-                //     legendOffset: -40,
-                // }}
                 enableGridY={true}
                 enableLabel={true}
                 legends={[
