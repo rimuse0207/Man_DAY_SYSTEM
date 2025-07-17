@@ -10,6 +10,9 @@ const CompanyMainPage = ({ menuCode }) => {
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [depart_Bar_State, setdepart_Bar_State] = useState([]);
     const [sub_depart_Bar_State, setsub_depart_Bar_State] = useState([]);
+    const [department_Pie_State, setdepartment_Pie_State] = useState([]);
+    const [gradbounce_Pie_State, setgradbounce_Pie_State] = useState([]);
+
     useEffect(() => {
         Getting_Company_Data();
     }, []);
@@ -22,6 +25,8 @@ const CompanyMainPage = ({ menuCode }) => {
                 console.log(Getting_Company_Data_Axios);
                 setdepart_Bar_State(Getting_Company_Data_Axios.data.depart_Bar_Data);
                 setsub_depart_Bar_State(Getting_Company_Data_Axios.data.sub_depart_Bar_Data);
+                setdepartment_Pie_State(Getting_Company_Data_Axios.data.User_Counting_Pie_Data);
+                setgradbounce_Pie_State(Getting_Company_Data_Axios.data.Based_Annual_Leave_User_Count_Pie_Data);
             }
             console.log(Getting_Company_Data_Axios);
         } catch (error) {
@@ -37,7 +42,17 @@ const CompanyMainPage = ({ menuCode }) => {
             </h3>
             <BarGraph Bar_State={depart_Bar_State}></BarGraph>
             <BarGraph Bar_State={sub_depart_Bar_State}></BarGraph>
-            <div>{/* <PieGraph></PieGraph> */}</div>
+            <h3 style={{ textAlign: 'center' }}>
+                {Filter_State.company.value === 'all' ? 'YC & EXICON' : Filter_State.company.value} 인력 구성
+            </h3>
+            <div style={{ display: 'flex' }}>
+                <div style={{ width: '50%' }}>
+                    <PieGraph Pie_State={department_Pie_State}></PieGraph>
+                </div>
+                <div style={{ width: '50%' }}>
+                    <PieGraph Pie_State={gradbounce_Pie_State}></PieGraph>
+                </div>
+            </div>
         </PersonMainPageMainDivBox>
     );
 };

@@ -23,6 +23,7 @@ const styles = {
 
 const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
     const initial_state = {
+        company: null,
         email: '',
         name: '',
         department: null,
@@ -47,6 +48,7 @@ const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
 
     const Handle_Add_User_Info = async () => {
         if (
+            !Input_User_Info.company ||
             !Input_User_Info.email ||
             !Input_User_Info.name ||
             !Input_User_Info.department ||
@@ -122,6 +124,22 @@ const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
                         <table>
                             <tbody>
                                 <tr>
+                                    <th>회사명</th>
+                                    <td>
+                                        <Select
+                                            value={Input_User_Info.company}
+                                            onChange={e => {
+                                                setInput_User_Info({ ...Input_User_Info, company: e });
+                                            }}
+                                            isClearable
+                                            options={Option_Lists.filter(item => item.divideType === 'company').map(list => {
+                                                return { value: list.itemCode, label: list.itemName };
+                                            })}
+                                            styles={styles}
+                                        ></Select>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>EMAIL</th>
                                     <td>
                                         {' '}
@@ -143,6 +161,7 @@ const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
                                         ></input>
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <th>직위</th>
                                     <td>

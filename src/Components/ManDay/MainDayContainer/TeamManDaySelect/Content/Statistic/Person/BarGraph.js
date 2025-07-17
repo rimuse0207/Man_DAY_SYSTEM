@@ -5,7 +5,7 @@ import styled from 'styled-components';
 export const BarsMainDivBox = styled.div`
     width: 100%;
     /* height: 100%; */
-    height: calc(100vh - 400px);
+    height: calc(100vh - 450px);
     text-align: center;
     position: relative;
 `;
@@ -18,7 +18,7 @@ const BarGraph = ({ Bar_State }) => {
                 maxValue={1.2}
                 keys={['rate']}
                 indexBy="equipment"
-                margin={{ top: 120, right: 0, bottom: 60, left: 100 }}
+                margin={{ top: 50, right: 100, bottom: 60, left: 50 }}
                 padding={0.6}
                 colors={['skyblue', 'gray']}
                 colorBy="id"
@@ -29,8 +29,8 @@ const BarGraph = ({ Bar_State }) => {
                         dataFrom: 'keys',
                         anchor: 'top-right',
                         direction: 'row',
-                        translateX: 30,
-                        translateY: -110,
+                        translateX: 120,
+                        translateY: 0,
                         itemWidth: 100,
                         itemHeight: 20,
                         itemsSpacing: 2,
@@ -38,6 +38,15 @@ const BarGraph = ({ Bar_State }) => {
                         itemDirection: 'left-to-right',
                     },
                 ]}
+                axisLeft={{
+                    tickSize: 1,
+                    tickPadding: 20,
+                    tickRotation: 0,
+                    legendPosition: 'middle',
+                    legendOffset: -40,
+                    tickValues: [0, 0.4, 0.8, 1.2],
+                    format: value => Number(value),
+                }}
             />
         </BarsMainDivBox>
     );
