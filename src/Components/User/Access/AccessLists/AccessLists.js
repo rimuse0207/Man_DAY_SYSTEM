@@ -50,10 +50,10 @@ const AccessListsaMainDivBox = styled.div`
 `;
 
 const AccessLists = ({ Now_Select_Menu }) => {
-    const [Select_Menus, setSelect_Menus] = useState([{ menu_name: '사용자별', menu_code: 'user' }]);
+    const [Select_Menus, setSelect_Menus] = useState([{ menu_name: '부서', menu_code: 'department' }]);
     const [Permission_Select_Menus, setPermission_Select_Menus] = useState([
-        { menu_name: '사용자별', menu_code: 'user' },
-        { menu_name: '부서별', menu_code: 'department' },
+        // { menu_name: '사용자별', menu_code: 'user' },
+        { menu_name: '부서', menu_code: 'department' },
     ]);
     const [Now_Select, setNow_Select] = useState('user');
     const [UserLists, setUserLists] = useState([]);

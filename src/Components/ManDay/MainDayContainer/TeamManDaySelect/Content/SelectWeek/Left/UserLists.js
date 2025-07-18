@@ -13,7 +13,8 @@ const UserListsMainDivBox = styled.div`
         border: none;
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
-        padding: 5px;
+        padding-bottom: 6px;
+        padding-top: 6px;
         text-align: center;
         border-left: none;
         border-right: none;

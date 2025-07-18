@@ -58,6 +58,7 @@ const SelectAllMainPage = () => {
                 if (item.man_day.length > 0) {
                     item.man_day.forEach(re => {
                         flattenedData.push({
+                            회사: item.company,
                             날짜: data.date,
                             팀: item.departmentName,
                             이름: item.name,
@@ -69,6 +70,7 @@ const SelectAllMainPage = () => {
                     });
                 } else {
                     flattenedData.push({
+                        회사: item.company,
                         날짜: data.date,
                         팀: item.departmentName,
                         이름: item.name,

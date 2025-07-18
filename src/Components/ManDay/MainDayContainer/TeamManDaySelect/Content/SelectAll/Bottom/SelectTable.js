@@ -41,6 +41,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                 <thead>
                     <tr>
                         <th>날짜</th>
+                        <th>회사명</th>
                         <th>팀</th>
                         <th>이름</th>
                         <th>대분류</th>
@@ -58,6 +59,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                                     return (
                                         <tr key={`${list.date}-${item.email}-${idx}`}>
                                             <td>{list.date}</td>
+                                            <td>{item.company}</td>
                                             <td>{item.departmentName}</td>
                                             <td>{item.name}</td>
                                             <td>{user.depart}</td>
@@ -71,6 +73,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                             ) : (
                                 <tr key={`${list.date}-${list.date}-${item.email}-empty-${j}`}>
                                     <td>{list.date}</td>
+                                    <td>{item.company}</td>
                                     <td>{item.departmentName}</td>
                                     <td>{item.name}</td>
                                     <td colSpan={4}></td>

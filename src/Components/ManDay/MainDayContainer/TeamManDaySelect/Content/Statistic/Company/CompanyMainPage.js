@@ -22,13 +22,11 @@ const CompanyMainPage = ({ menuCode }) => {
                 Filter_State,
             });
             if (Getting_Company_Data_Axios.status) {
-                console.log(Getting_Company_Data_Axios);
                 setdepart_Bar_State(Getting_Company_Data_Axios.data.depart_Bar_Data);
                 setsub_depart_Bar_State(Getting_Company_Data_Axios.data.sub_depart_Bar_Data);
                 setdepartment_Pie_State(Getting_Company_Data_Axios.data.User_Counting_Pie_Data);
                 setgradbounce_Pie_State(Getting_Company_Data_Axios.data.Based_Annual_Leave_User_Count_Pie_Data);
             }
-            console.log(Getting_Company_Data_Axios);
         } catch (error) {
             console.log(error);
         }

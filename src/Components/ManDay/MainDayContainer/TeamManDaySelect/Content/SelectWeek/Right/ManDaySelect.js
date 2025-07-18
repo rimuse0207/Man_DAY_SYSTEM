@@ -22,7 +22,7 @@ const ManDaySelect = ({ Now_Select_User, NowDate }) => {
         },
     ]);
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em' }}>
             {Now_Select_User ? (
                 WeekContainer.map(list => {
                     return (
