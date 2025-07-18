@@ -78,6 +78,10 @@ const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, 
         occupational: { value: Select_User.occupationalCode, label: Select_User.user_occupational },
         gradebounce: { value: Select_User.gradebounceCode, label: Select_User.user_gradebounce },
         position: { value: Select_User.positionCode, label: Select_User.user_position },
+        SelectreadOnly: {
+            value: Select_User.readOnly === 1 ? 'readOnly' : 'writeAndreading',
+            label: Select_User.readOnly === 1 ? '읽기전용' : '쓰기/읽기',
+        },
     });
     const [Option_Lists, setOption_Lists] = useState([]);
 
@@ -90,6 +94,10 @@ const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, 
             occupational: { value: Select_User.occupationalCode, label: Select_User.user_occupational },
             gradebounce: { value: Select_User.gradebounceCode, label: Select_User.user_gradebounce },
             position: { value: Select_User.positionCode, label: Select_User.user_position },
+            SelectreadOnly: {
+                value: Select_User.readOnly === 1 ? 'readOnly' : 'writeAndreading',
+                label: Select_User.readOnly === 1 ? '읽기전용' : '쓰기/읽기',
+            },
         });
     }, [Update_Mode]);
 
@@ -346,6 +354,33 @@ const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, 
                                         </td>
                                     ) : (
                                         <td>{Select_User.dailyExpense}</td>
+                                    )}
+                                </tr>
+                                <tr>
+                                    <th>읽기전용</th>
+                                    {Update_Mode ? (
+                                        <td>
+                                            <Select
+                                                value={Input_User_Info.SelectreadOnly}
+                                                onChange={e => {
+                                                    setInput_User_Info({ ...Input_User_Info, SelectreadOnly: e });
+                                                }}
+                                                isClearable
+                                                options={[
+                                                    {
+                                                        value: 'readOnly',
+                                                        label: '읽기전용',
+                                                    },
+                                                    {
+                                                        value: 'writeAndreading',
+                                                        label: '쓰기/읽기',
+                                                    },
+                                                ]}
+                                                styles={styles}
+                                            ></Select>
+                                        </td>
+                                    ) : (
+                                        <td>{Select_User.readOnly === 1 ? '읽기전용' : '쓰기/읽기'}</td>
                                     )}
                                 </tr>
                             </tbody>

@@ -40,6 +40,7 @@ const UserContentMainPage = () => {
     const Getting_All_User_Info = async () => {
         const Getting_All_User_Info_Axios = await Request_Get_Axios('/API/PLM/user/Getting_All_User_Info');
         if (Getting_All_User_Info_Axios.status) {
+            console.log(Getting_All_User_Info_Axios);
             setUser_Lists_State(Getting_All_User_Info_Axios.data);
         }
     };
@@ -83,14 +84,15 @@ const UserContentMainPage = () => {
                             <th>연차</th>
                             <th>ID</th>
                             <th>직군</th>
+                            <th>읽기전용 체크</th>
                         </tr>
                     </thead>
                     <tbody>
                         {User_Lists_State.filter(
                             item =>
-                                item.name.toLowerCase().includes(SearchInput.toLowerCase()) ||
-                                item.email.toLowerCase().includes(SearchInput.toLowerCase()) ||
-                                item.user_department.toLowerCase().includes(SearchInput.toLowerCase())
+                                item?.name?.toLowerCase().includes(SearchInput?.toLowerCase()) ||
+                                item?.email?.toLowerCase().includes(SearchInput?.toLowerCase()) ||
+                                item?.user_department?.toLowerCase().includes(SearchInput?.toLowerCase())
                         ).map(list => {
                             return (
                                 <tr
@@ -107,6 +109,7 @@ const UserContentMainPage = () => {
                                     <td>{list.user_gradebounce}</td>
                                     <td>{list.email}</td>
                                     <td>{list.user_occupational}</td>
+                                    <td>{list.readOnly === 1 ? 'O' : 'X'}</td>
                                 </tr>
                             );
                         })}

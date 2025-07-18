@@ -36,7 +36,7 @@ export const InputPageMainDivBox = styled.div`
     }
 `;
 
-const InputPage = ({ List_Items, WeekContainer, setWeekContainer }) => {
+const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, Today_Date }) => {
     const HandleClicksAddChild = () => {
         const Insert_Data = {
             index: `${moment().format('YYYYMMDDHHmmss')}`,
@@ -108,11 +108,15 @@ const InputPage = ({ List_Items, WeekContainer, setWeekContainer }) => {
                     );
                 })}
             </div>
-            <div style={{ marginBottom: '40px' }}>
-                <div className="Plus_Container" onClick={() => HandleClicksAddChild()}>
-                    <FaPlus />
+            {Today_Date === Select_Date ? (
+                <div style={{ marginBottom: '40px' }}>
+                    <div className="Plus_Container" onClick={() => HandleClicksAddChild()}>
+                        <FaPlus />
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <></>
+            )}
         </InputPageMainDivBox>
     );
 };

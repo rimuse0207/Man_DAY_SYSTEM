@@ -6,6 +6,9 @@ import { Request_Get_Axios } from '../../../../../../API';
 import UserListsComponent from './Left/UserLists';
 import { FaUserFriends } from 'react-icons/fa';
 import ManDaySelect from './Right/ManDaySelect';
+import { IoIosArrowBack } from 'react-icons/io';
+import { useSelector } from 'react-redux';
+import { IoIosArrowForward } from 'react-icons/io';
 
 export const MyListMainDivBox = styled.div`
     width: 300px;
@@ -59,7 +62,18 @@ const SelectWeekMainPageMainDivBox = styled.div`
     .GetWeekOfMonth_Container {
         margin-top: 20px;
         margin-bottom: 20px;
-
+        .AminOnlyArrow {
+            display: flex;
+            align-items: center;
+            .Icon_Containers {
+                margin-right: 10px;
+                font-size: 2em;
+                &:hover {
+                    cursor: pointer;
+                    color: gray;
+                }
+            }
+        }
         .Title {
             font-size: 1.7em;
             font-weight: bolder;
@@ -91,12 +105,14 @@ const SelectWeekMainPageMainDivBox = styled.div`
 `;
 
 const SelectWeekMainPage = () => {
-    const [NowDate, setNowDate] = useState(moment().format('YYYY-MM-DD'));
+    const Today_Date = moment().clone().startOf('isoWeek').format('YYYY-MM-DD');
+    const [NowDate, setNowDate] = useState(moment().clone().startOf('isoWeek').format('YYYY-MM-DD'));
     const [UserLists, setUserLists] = useState([]);
     const [Now_Select_User, setNow_Select_User] = useState(null);
+    const Login_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     useEffect(() => {
         Getting_Team_Member_Lists();
-    }, []);
+    }, [NowDate]);
 
     const Getting_Team_Member_Lists = async () => {
         const Getting_Team_Member_Lists_Axios = await Request_Get_Axios('/API/PLM/Getting_Team_Member_Lists', {
@@ -108,23 +124,44 @@ const SelectWeekMainPage = () => {
         }
     };
 
+    const HandleChangeDate = Select_Menu => {
+        if (Select_Menu === 'minus') setNowDate(moment(NowDate).clone().subtract(7, 'days').startOf('isoWeek').format('YYYY-MM-DD'));
+        else setNowDate(moment(NowDate).clone().add(7, 'days').startOf('isoWeek').format('YYYY-MM-DD'));
+    };
+
     return (
         <SelectWeekMainPageMainDivBox>
             <div className="GetWeekOfMonth_Container">
-                <div>
-                    <span className="Title">{getWeekOfMonth(NowDate)}</span>
-                    <span className="Sub">
-                        {' '}
-                        ( {moment().clone().startOf('isoWeek').format('MM.DD')} ~{' '}
-                        {moment().clone().startOf('isoWeek').add(4, 'days').format('MM.DD')} )
-                    </span>
+                <div className="AminOnlyArrow">
+                    {Login_Info.team === '개발운영팀' || Login_Info.id === 'sjyoo@dhk.co.kr' ? (
+                        <div className="Icon_Containers" onClick={() => HandleChangeDate('minus')}>
+                            <IoIosArrowBack />
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+
+                    <div className="Title">{getWeekOfMonth(NowDate)}</div>
+                    <div className="Sub">
+                        ( {moment(NowDate).clone().startOf('isoWeek').format('MM.DD')} ~{' '}
+                        {moment(NowDate).clone().startOf('isoWeek').add(4, 'days').format('MM.DD')} )
+                    </div>
+
+                    {(Login_Info.team === '개발운영팀' || Login_Info.id === 'sjyoo@dhk.co.kr') &&
+                    Today_Date !== moment(NowDate).clone().startOf('isoWeek').format('YYYY-MM-DD') ? (
+                        <div style={{ marginLeft: '20px' }} className="Icon_Containers" onClick={() => HandleChangeDate('plus')}>
+                            <IoIosArrowForward />
+                        </div>
+                    ) : (
+                        <></>
+                    )}
                 </div>
             </div>
             <div>
                 <div style={{ display: 'flex', width: '300px', justifyContent: 'space-between' }}>
                     <div style={{ width: '100px', textAlign: 'center' }}>전체인원</div>
                     <div style={{ width: '100px', textAlign: 'center' }}>입력인원</div>
-                    <div style={{ width: '100px', textAlign: 'center' }}>미인원</div>
+                    <div style={{ width: '100px', textAlign: 'center' }}>미입력인원</div>
                 </div>
                 <div style={{ display: 'flex', width: '300px', justifyContent: 'space-between' }}>
                     <div style={{ width: '100px', textAlign: 'center' }}>{UserLists.length} 명</div>
@@ -138,7 +175,12 @@ const SelectWeekMainPage = () => {
             </div>
             <div className="Left_Right_Containers">
                 <div className="Left_Container">
-                    <UserListsComponent UserLists={UserLists} setNow_Select_User={data => setNow_Select_User(data)}></UserListsComponent>
+                    <UserListsComponent
+                        UserLists={UserLists}
+                        setNow_Select_User={data => setNow_Select_User(data)}
+                        NowDate={NowDate}
+                        Today_Date={Today_Date}
+                    ></UserListsComponent>
                 </div>
                 <div className="Right_Container">
                     <h3>

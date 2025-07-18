@@ -416,7 +416,7 @@ const ContentMainPage = () => {
                     </div>
                 )}
             </div>
-            {WeekContainer?.Mode === 'writing' || WeekContainer?.Mode === 'updating' ? (
+            {(WeekContainer?.Mode === 'writing' || WeekContainer?.Mode === 'updating') && Today_Date === Select_Date ? (
                 <div className="Button_Group">
                     <ul>
                         <li>
@@ -451,11 +451,13 @@ const ContentMainPage = () => {
                                 key={list.date}
                                 WeekContainer={WeekContainer}
                                 setWeekContainer={data => setWeekContainer(data)}
+                                Select_Date={Select_Date}
+                                Today_Date={Today_Date}
                             ></InputPage>
                         );
                     })}
                 </div>
-                {WeekContainer.Mode === 'reading' ? (
+                {WeekContainer.Mode === 'reading' && Today_Date === Select_Date ? (
                     Today_Date === Select_Date ? (
                         <div className="Update_Button_Container">
                             <button onClick={() => Change_the_Mode()}>수정</button>
@@ -463,7 +465,7 @@ const ContentMainPage = () => {
                     ) : (
                         <></>
                     )
-                ) : WeekContainer.Mode === 'updating' ? (
+                ) : WeekContainer.Mode === 'updating' && Today_Date === Select_Date ? (
                     <div style={{ display: 'flex', justifyContent: 'end' }}>
                         <div className="Cancel_Button_Container">
                             <button onClick={() => Cancel_Man_Day_Data()}>취소</button>
@@ -475,7 +477,7 @@ const ContentMainPage = () => {
                             <button onClick={() => Save_Man_Day_Data()}>수정 완료</button>
                         </div>
                     </div>
-                ) : (
+                ) : Today_Date === Select_Date ? (
                     <div style={{ display: 'flex', justifyContent: 'end' }}>
                         <div className="Update_Button_Container">
                             <button onClick={() => Save_Temporarily_Man_Data_Info_Data()}>임시 저장</button>
@@ -484,6 +486,8 @@ const ContentMainPage = () => {
                             <button onClick={() => Save_Man_Day_Data()}>저장</button>
                         </div>
                     </div>
+                ) : (
+                    <></>
                 )}
             </div>
             <Loader loading={Loading_Check}></Loader>
