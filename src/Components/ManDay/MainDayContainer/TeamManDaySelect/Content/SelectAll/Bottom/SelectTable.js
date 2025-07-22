@@ -83,37 +83,6 @@ const SelectTable = ({ Man_Day_Infos }) => {
                         });
                     })}
                 </tbody>
-
-                {/* <tbody>
-                    {Man_Day_Infos.flatMap(list =>
-                        list.user_lists.flatMap((item, idx) => {
-                            if (item.man_day.length > 0) {
-                                return item.man_day.map((user, mdIdx) => (
-                                    <tr>
-                                        <td>{list.date}</td>
-                                        <td>{item.departmentName}</td>
-                                        <td>{item.name}</td>
-                                        <td>{user.depart}</td>
-                                        <td>{user.sub_depart}</td>
-                                        <td>{user.divideCode}</td>
-                                        <td>{user.manDay}</td>
-                                        <td>입력완료</td>
-                                    </tr>
-                                ));
-                            } else {
-                                return (
-                                    <tr>
-                                        <td>{list.date}</td>
-                                        <td>{item.departmentName}</td>
-                                        <td>{item.name}</td>
-                                        <td colSpan={4}></td>
-                                        <td style={{ color: 'red' }}>미입력</td>
-                                    </tr>
-                                );
-                            }
-                        })
-                    )}
-                </tbody> */}
             </table>
             <div style={{ marginTop: '20px', marginBottom: '20px' }}></div>
         </SelectTableMainDivBox>

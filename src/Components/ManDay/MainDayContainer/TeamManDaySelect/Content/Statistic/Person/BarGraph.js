@@ -15,7 +15,7 @@ const BarGraph = ({ Bar_State }) => {
         <BarsMainDivBox>
             <ResponsiveBar
                 data={Bar_State}
-                maxValue={1.2}
+                // maxValue={1.2}
                 keys={['rate']}
                 indexBy="equipment"
                 margin={{ top: 50, right: 100, bottom: 60, left: 50 }}
@@ -44,8 +44,8 @@ const BarGraph = ({ Bar_State }) => {
                     tickRotation: 0,
                     legendPosition: 'middle',
                     legendOffset: -40,
-                    tickValues: [0, 0.4, 0.8, 1.2],
-                    format: value => Number(value),
+                    // tickValues: [0, 0.4, 0.8, 1.2],
+                    // format: value => Number(value),
                 }}
             />
         </BarsMainDivBox>

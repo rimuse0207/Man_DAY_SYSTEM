@@ -58,7 +58,7 @@ const UserListsMainDivBox = styled.div`
     }
 `;
 
-const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate }) => {
+const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSelect_Modes }) => {
     const Login_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
 
     // 미입력자에게 메일 발송
@@ -82,6 +82,12 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate }) => {
                 toast.show({
                     title: `메일을 정상적으로 보냈습니다.`,
                     successCheck: true,
+                    duration: 4000,
+                });
+            } else {
+                toast.show({
+                    title: `오류가 발생되었습니다. IT팀에 문의바랍니다.`,
+                    successCheck: false,
                     duration: 4000,
                 });
             }
@@ -111,17 +117,32 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate }) => {
                 <tbody>
                     {UserLists.map(list => {
                         return (
-                            <tr>
+                            <tr key={list.email}>
                                 <td></td>
                                 <td>{list.name}</td>
                                 <td>{list.position}</td>
                                 <td>{list.departmentName}</td>
                                 {list.man_day_infos.length > 0 ? (
-                                    <td className="Click_Buttons" onClick={() => setNow_Select_User(list)}>
+                                    <td
+                                        className="Click_Buttons"
+                                        onClick={() => {
+                                            setNow_Select_User(list);
+                                            setSelect_Modes('reading');
+                                        }}
+                                    >
                                         입력 완료
                                     </td>
                                 ) : (
-                                    <td style={{ color: 'red', fontWeight: 'bolder' }}>미입력</td>
+                                    <td
+                                        className="Click_Buttons"
+                                        style={{ color: 'red', fontWeight: 'bolder' }}
+                                        onClick={() => {
+                                            setNow_Select_User(list);
+                                            setSelect_Modes('reading');
+                                        }}
+                                    >
+                                        미입력
+                                    </td>
                                 )}
                             </tr>
                         );
