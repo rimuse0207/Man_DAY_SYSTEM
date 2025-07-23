@@ -1,43 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Overlay } from '../../Department/Contents/Modal/DepartmentMoveModal';
+import { Modal, Overlay } from './DepartmentMoveModal';
+import { UserModalMainDivBox } from '../../../User/Contents/UserModal';
+import { UserContentMainPageButtonContainer } from '../../../User/UserContentMainPage';
+import ParentTree from '../../TreeMenu/ParentTree';
+import { Request_Get_Axios } from '../../../../../API';
+import UserSelectTable from './UserSelectTable';
+import { customStyles } from '../../../../ManDay/MainDayContainer/TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter';
 import Select from 'react-select';
-import { Request_Get_Axios, Request_Post_Axios } from '../../../../API';
-import { toast } from '../../../ToastMessage/ToastManager';
-import { UserModalMainDivBox } from '../../User/Contents/UserModal';
-import { UserContentMainPageButtonContainer } from '../../User/UserContentMainPage';
-import ParentTree from '../../Department/TreeMenu/ParentTree';
-import SelectDepartment from '../../Department/Contents/SelectDepartment';
-import UserTable from './UserTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { customStyles } from '../../../ManDay/MainDayContainer/TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter';
-import { Change_User_Search_Reducer } from '../../../../Models/UserSearchReducer/UserSearchReducer';
-import { findItemByCode } from '../../Department/DepartmentMainPage';
+import { Change_User_Search_Reducer } from '../../../../../Models/UserSearchReducer/UserSearchReducer';
+import { findItemByCode } from '../../DepartmentMainPage';
 
-const styles = {
-    control: provided => ({
-        ...provided,
-        height: '40px',
-    }),
-    valueContainer: provided => ({
-        ...provided,
-        height: '40px',
-    }),
-    indicatorsContainer: provided => ({
-        ...provided,
-        height: '40px',
-    }),
-};
-
-const AccessUserModal = ({ onClose, Now_Select_Menu, Getting_Menu_Access_User_List }) => {
+const UserAddModal = ({ onClose, User_Lists, Choose_Lists, Department_Including_User_Data }) => {
     const dispatch = useDispatch();
     const SearchInfo = useSelector(state => state.Change_User_Search_Reducer_State);
     const [NowSelect, setNowSelect] = useState(null);
     const [Department_State, setDepartment_State] = useState([]);
+    const [NowSelectedUser, setNowSelectedUser] = useState([]);
+    const [Checked_user_lists, setChecked_user_lists] = useState([]);
     const [Search_User_Name, setSearch_User_Name] = useState(null);
     const [User_Select_Options, setUser_Select_Options] = useState([]);
+
     useEffect(() => {
         Getting_Department_Data();
-    }, [SearchInfo]);
+    }, []);
 
     const Getting_Department_Data = async () => {
         const Getting_Department_Data_Axios = await Request_Get_Axios('/API/PLM/user/Getting_Department_Data', {
@@ -46,6 +32,25 @@ const AccessUserModal = ({ onClose, Now_Select_Menu, Getting_Menu_Access_User_Li
         if (Getting_Department_Data_Axios.status) {
             setDepartment_State(Getting_Department_Data_Axios.data.Change_Tree_State);
             setUser_Select_Options(Getting_Department_Data_Axios.data.Change_User_Options);
+        }
+    };
+
+    useEffect(() => {
+        if (NowSelect) Getting_Department_Users();
+    }, [NowSelect]);
+    const Getting_Department_Users = async () => {
+        const Getting_Department_Users_Axios = await Request_Get_Axios('/API/PLM/user/Getting_Department_Users', {
+            itemCode: NowSelect.itemCode,
+        });
+        if (Getting_Department_Users_Axios.status) {
+            const a = Getting_Department_Users_Axios.data.map(list => {
+                return {
+                    ...list,
+                    checked: Checked_user_lists.some(item => item.email === list.email),
+                    disabled: User_Lists.some(item => item.email === list.email),
+                };
+            });
+            setNowSelectedUser(a);
         }
     };
 
@@ -65,7 +70,7 @@ const AccessUserModal = ({ onClose, Now_Select_Menu, Getting_Menu_Access_User_Li
                     <div className="Float_Top_Container">
                         <UserContentMainPageButtonContainer>
                             <div>
-                                <h3>사용자 선택</h3>
+                                <h3>'{Choose_Lists.itemName}' 부서 권한 추가 사용자 선택</h3>
                             </div>
                         </UserContentMainPageButtonContainer>
                     </div>
@@ -98,12 +103,17 @@ const AccessUserModal = ({ onClose, Now_Select_Menu, Getting_Menu_Access_User_Li
                             ></ParentTree>
                         </div>
                         <div className="Right_Content">
-                            <UserTable
+                            <UserSelectTable
                                 onClose={() => onClose()}
                                 NowSelect={NowSelect}
-                                Now_Select_Menu={Now_Select_Menu}
-                                Getting_Menu_Access_User_List={() => Getting_Menu_Access_User_List()}
-                            ></UserTable>
+                                User_Lists={User_Lists}
+                                NowSelectedUser={NowSelectedUser}
+                                setNowSelectedUser={data => setNowSelectedUser(data)}
+                                setChecked_user_lists={data => setChecked_user_lists(data)}
+                                Checked_user_lists={Checked_user_lists}
+                                Choose_Lists={Choose_Lists}
+                                Department_Including_User_Data={() => Department_Including_User_Data()}
+                            ></UserSelectTable>
                         </div>
                     </div>
                 </UserModalMainDivBox>
@@ -111,4 +121,5 @@ const AccessUserModal = ({ onClose, Now_Select_Menu, Getting_Menu_Access_User_Li
         </Overlay>
     );
 };
-export default AccessUserModal;
+
+export default UserAddModal;

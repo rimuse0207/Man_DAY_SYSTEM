@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import DepartmentInfo from './DepartmentInfo';
 import UsersInfo from './UsersInfo';
+import AccessUsers from './AccessUsers';
 
 const SelectDepartmentMainDivBox = styled.div`
     .Menu_Container {
@@ -28,7 +29,6 @@ const SelectDepartmentMainDivBox = styled.div`
             height: 50px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
         }
     }
 `;
@@ -51,6 +51,12 @@ const SelectDepartment = ({
                 <ul>
                     <li style={Select_Menus === 'user' ? { borderBottom: '2px solid black' } : {}} onClick={() => setSelect_Menus('user')}>
                         <h4>부서원 정보</h4>
+                    </li>
+                    <li
+                        style={Select_Menus === 'access' ? { borderBottom: '2px solid black' } : {}}
+                        onClick={() => setSelect_Menus('access')}
+                    >
+                        <h4>부서조회 권한</h4>
                     </li>
                     <li
                         style={Select_Menus === 'company' ? { borderBottom: '2px solid black' } : {}}
@@ -79,6 +85,15 @@ const SelectDepartment = ({
                         NowSelect={NowSelect}
                         setDepartment_State={data => setDepartment_State(data)}
                     ></UsersInfo>
+                ) : (
+                    <></>
+                )}
+                {Select_Menus === 'access' ? (
+                    <AccessUsers
+                        Department_State={Department_State}
+                        NowSelect={NowSelect}
+                        setDepartment_State={data => setDepartment_State(data)}
+                    ></AccessUsers>
                 ) : (
                     <></>
                 )}

@@ -98,7 +98,7 @@ const IconNavigationMainPage = () => {
         },
     ]);
     const filteredNav = Icon_Nav_Info.filter(navItem => {
-        return navItem.role === 'all' || Login_Info_State.user_access.some(access => access.accessMenuCode === navItem.role);
+        return navItem.role === 'all' || Login_Info_State?.user_access?.some(access => access.accessMenuCode === navItem.role);
     });
     return (
         <HomeNavigationMainPageMainDivBox>

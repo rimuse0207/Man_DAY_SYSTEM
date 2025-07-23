@@ -158,7 +158,7 @@ const TopNavigationMainPage = () => {
         };
     }, []);
     const filteredNav = Nav_Select_Options_Menus.filter(navItem => {
-        return navItem.role === 'all' || Login_Info_State.user_access.some(access => access.accessMenuCode === navItem.role);
+        return navItem.role === 'all' || Login_Info_State?.user_access?.some(access => access.accessMenuCode === navItem.role);
     });
     return (
         <NavigationMainPageMainDivBox>
@@ -175,7 +175,7 @@ const TopNavigationMainPage = () => {
                                 value={'/' + location.pathname.split('/')[1]}
                                 onChange={event => Handle_Change_Move_To_Go(event)}
                             >
-                                {filteredNav.map(list => {
+                                {filteredNav?.map(list => {
                                     return (
                                         <MenuItem value={list.value} key={list.value}>
                                             {list.label}

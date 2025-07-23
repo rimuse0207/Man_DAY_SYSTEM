@@ -7,7 +7,7 @@ import DepartmentMoveModal from './Modal/DepartmentMoveModal';
 import { toast } from '../../../ToastMessage/ToastManager';
 export const UserInfoMainDivBox = styled.div`
     width: 100%;
-    padding: 10px;
+    padding: 5px 10px;
     table {
         width: 100%;
         border-collapse: collapse;
@@ -183,6 +183,7 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
                                 {AllChecking ? <FaRegCheckSquare /> : <FaRegSquare></FaRegSquare>}
                             </th>
                             <th>이름</th>
+                            <th>직급</th>
                             <th>부서</th>
                             <th>호봉</th>
                             <th>연차</th>
@@ -202,6 +203,7 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
                                         {list.checked ? <FaRegCheckSquare /> : <FaRegSquare></FaRegSquare>}
                                     </td>
                                     <td>{list.name}</td>
+                                    <td>{list.user_position}</td>
                                     <td>{list.user_department}</td>
                                     <td>{list.user_salarygrade}</td>
                                     <td>{list.user_gradebounce}</td>

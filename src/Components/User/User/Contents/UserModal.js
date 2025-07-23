@@ -70,7 +70,6 @@ const styles = {
 };
 
 const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, Getting_All_User_Info, setSelect_User }) => {
-    console.log(Select_User);
     const [Input_User_Info, setInput_User_Info] = useState({
         ...Select_User,
         department: { value: Select_User.departmentCode, label: Select_User.user_department },

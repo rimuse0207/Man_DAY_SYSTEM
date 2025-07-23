@@ -76,7 +76,6 @@ const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_T
                 man_day: item.data.reduce((pre, acc) => pre + Number(acc.manDay), 0),
             };
         });
-        console.log(Chechking_Man_Day_Sum);
         if (Chechking_Man_Day_Sum.some(item => item.man_day !== 1 && item.man_day !== 0)) {
             toast.show({
                 title: `Man-day 합산은 1이 되어야 합니다.`,

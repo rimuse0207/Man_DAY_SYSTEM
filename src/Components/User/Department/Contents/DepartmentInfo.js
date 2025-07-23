@@ -59,15 +59,15 @@ const DepartmentInfo = ({ NowSelect, Update_Mode, setUpdate_Mode, New_DepartMent
         <>
             {' '}
             <div className="Content_Container">
-                <div>부 서 명</div>
+                <div style={{ width: '200px' }}>부 서 명</div>
                 <div>{NowSelect?.itemName}</div>
             </div>
             <div className="Content_Container">
-                <div>부서코드</div>
+                <div style={{ width: '200px' }}>부서코드</div>
                 <div>{NowSelect?.itemCode}</div>
             </div>
             <div className="Content_Container">
-                <div>상위 부서 코드</div>
+                <div style={{ width: '200px' }}>상위 부서 코드</div>
                 <div>{NowSelect?.parentCode}</div>
             </div>
             <div className="Content_Container">

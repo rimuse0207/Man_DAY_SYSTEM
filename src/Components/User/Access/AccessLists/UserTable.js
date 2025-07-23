@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { IoClose } from 'react-icons/io5';
 import { toast } from '../../../ToastMessage/ToastManager';
 
-const UserTableMainDivBox = styled.div`
+export const UserTableMainDivBox = styled.div`
     position: relative;
     td,
     th {
@@ -66,7 +66,7 @@ const UserTable = ({ onClose, NowSelect, Now_Select_Menu, Getting_Menu_Access_Us
         const Getting_Access_User_Info_Data_Iclduing_Department_Axios = await Request_Get_Axios(
             '/API/PLM/user/Getting_Access_User_Info_Data_Iclduing_Department',
             {
-                NowSelect,
+                itemCode: NowSelect.itemCode,
                 Now_Select_Menu,
             }
         );
@@ -139,7 +139,6 @@ const UserTable = ({ onClose, NowSelect, Now_Select_Menu, Getting_Menu_Access_Us
             Now_Select_Menu,
         });
         if (Handle_Add_Access_User_Axios.status) {
-            console.log(Handle_Add_Access_User_Axios);
             await Getting_Menu_Access_User_List();
             onClose();
             toast.show({

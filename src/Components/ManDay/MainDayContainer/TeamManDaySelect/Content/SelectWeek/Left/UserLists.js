@@ -107,7 +107,6 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSele
             <table>
                 <thead>
                     <tr>
-                        <th></th>
                         <th>이름</th>
                         <th>직위</th>
                         <th>팀명</th>
@@ -118,7 +117,6 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSele
                     {UserLists.map(list => {
                         return (
                             <tr key={list.email}>
-                                <td></td>
                                 <td>{list.name}</td>
                                 <td>{list.position}</td>
                                 <td>{list.departmentName}</td>

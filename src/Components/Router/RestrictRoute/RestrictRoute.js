@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { toast } from '../../ToastMessage/ToastManager';
 
 const RestrictRoute = ({ component, User_Info, needAccessToken }) => {
-    const withAdminAuthorization = User_Info?.admin_access.some(item => item.accessMenuCode === needAccessToken);
+    const withAdminAuthorization = User_Info?.admin_access?.some(item => item.accessMenuCode === needAccessToken);
     const Alert_Go_To_Main_Home = () => {
         toast.show({
             title: `관리자 권한이 없습니다.`,

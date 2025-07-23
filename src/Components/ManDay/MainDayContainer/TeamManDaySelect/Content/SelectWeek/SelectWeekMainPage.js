@@ -146,7 +146,6 @@ const SelectWeekMainPage = () => {
             setUserLists(Getting_Team_Member_Lists_Axios.data);
             if (Now_Select_User) {
                 const [User_Select_Data] = Getting_Team_Member_Lists_Axios?.data?.filter(item => item.email === Now_Select_User.email);
-                console.log('User_Select_Data', User_Select_Data);
                 setNow_Select_User(User_Select_Data);
                 setSelect_Modes('reading');
             }
@@ -234,7 +233,7 @@ const SelectWeekMainPage = () => {
                 <div className="Right_Container">
                     {Login_Info.team === '개발운영팀' || Login_Info.id === 'sjyoo@dhk.co.kr' ? (
                         <div>
-                            {Select_Modes === 'reading' ? (
+                            {Select_Modes === 'reading' && Now_Select_User ? (
                                 <>
                                     <ManDaySelect Now_Select_User={Now_Select_User} NowDate={NowDate}></ManDaySelect>
                                     <div className="Mode_Button_Containers">

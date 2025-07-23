@@ -28,7 +28,7 @@ const StatisticMainPage = () => {
                 })}
             </ul>
             {Menu_Lists.filter(item => item.menuCode === Now_Select_Menu).map(list => {
-                return list.Component;
+                return <div key={list.menuCode}>{list.Component}</div>;
             })}
         </div>
     );

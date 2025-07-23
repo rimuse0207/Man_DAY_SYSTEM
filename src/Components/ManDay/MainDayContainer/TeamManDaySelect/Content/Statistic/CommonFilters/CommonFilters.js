@@ -18,9 +18,19 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
     const [DepartmentFilterOptions, setDepartmentFilterOptions] = useState([]);
     const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
-
+    const [Equipment_Options, setEquipment_Options] = useState([]);
     useEffect(() => {
         Getting_Team_Member_Lists();
+        const a = Input_Title_Lists?.flatMap(list => {
+            return list?.Eqipment_lists?.flatMap(item => {
+                return {
+                    value: item.itemCode,
+                    label: item.itemName,
+                };
+            });
+        });
+
+        setEquipment_Options(a);
     }, []);
     const Getting_Team_Member_Lists = async () => {
         const Getting_Team_Member_Lists_Axios = await Request_Get_Axios('/API/PLM/Getting_Team_Member_All_Lists_For_Using_Filter_Options');
@@ -125,7 +135,6 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                                 <Select
                                     styles={customStyles}
                                     value={Filter_State.company}
-                                    isClearable
                                     options={[
                                         {
                                             value: 'all',
@@ -141,6 +150,24 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                                         },
                                     ]}
                                     onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, company: e }))}
+                                    placeholder="선택 해 주세요."
+                                ></Select>
+                            </div>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+
+                    {menuCode === 'Equipments' ? (
+                        <div className="Filter_GR">
+                            <div className="Filter_Title">설비명</div>
+                            <div className="Filter_Content">
+                                <Select
+                                    styles={customStyles}
+                                    value={Filter_State.sub_depart}
+                                    options={Equipment_Options}
+                                    isClearable
+                                    onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
                                     placeholder="선택 해 주세요."
                                 ></Select>
                             </div>

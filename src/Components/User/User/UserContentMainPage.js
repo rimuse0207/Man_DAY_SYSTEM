@@ -40,7 +40,6 @@ const UserContentMainPage = () => {
     const Getting_All_User_Info = async () => {
         const Getting_All_User_Info_Axios = await Request_Get_Axios('/API/PLM/user/Getting_All_User_Info');
         if (Getting_All_User_Info_Axios.status) {
-            console.log(Getting_All_User_Info_Axios);
             setUser_Lists_State(Getting_All_User_Info_Axios.data);
         }
     };
@@ -79,6 +78,7 @@ const UserContentMainPage = () => {
                     <thead>
                         <tr style={{ backgroundColor: 'RGB(239, 244, 252)' }}>
                             <th>이름</th>
+                            <th>직급</th>
                             <th>부서</th>
                             <th>호봉</th>
                             <th>연차</th>
@@ -104,6 +104,7 @@ const UserContentMainPage = () => {
                                     style={list.email === Select_User?.email ? { backgroundColor: 'RGB(239, 244, 252)' } : {}}
                                 >
                                     <td>{list.name}</td>
+                                    <td>{list.user_position}</td>
                                     <td>{list.user_department}</td>
                                     <td>{list.user_salarygrade}</td>
                                     <td>{list.user_gradebounce}</td>

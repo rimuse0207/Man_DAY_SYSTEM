@@ -50,10 +50,10 @@ const AccessListsaMainDivBox = styled.div`
 `;
 
 const AccessLists = ({ Now_Select_Menu }) => {
-    const [Select_Menus, setSelect_Menus] = useState([{ menu_name: '부서', menu_code: 'department' }]);
+    const [Select_Menus, setSelect_Menus] = useState([{ menu_name: '등록된 사용자', menu_code: 'department' }]);
     const [Permission_Select_Menus, setPermission_Select_Menus] = useState([
         // { menu_name: '사용자별', menu_code: 'user' },
-        { menu_name: '부서', menu_code: 'department' },
+        { menu_name: '등록된 사용자', menu_code: 'department' },
     ]);
     const [Now_Select, setNow_Select] = useState('user');
     const [UserLists, setUserLists] = useState([]);
@@ -316,13 +316,12 @@ const AccessLists = ({ Now_Select_Menu }) => {
                                 {AllChecking ? <FaRegCheckSquare /> : <FaRegSquare></FaRegSquare>}
                             </th>
                             <th>이름</th>
-                            <th>직위</th>
+                            <th>직급</th>
                             <th>부서</th>
                             <th>호봉</th>
                             <th>연차</th>
                             <th>ID</th>
                             <th>직군</th>
-                            {Now_Select_Menu?.permission ? <th>조회범위</th> : <></>}
                         </tr>
                     </thead>
                     <tbody>
@@ -349,16 +348,6 @@ const AccessLists = ({ Now_Select_Menu }) => {
                                     <td>{list.user_gradebounce}</td>
                                     <td>{list.email}</td>
                                     <td>{list.user_occupational}</td>
-                                    {Now_Select_Menu?.permission ? (
-                                        <td
-                                            className="Detail_Info_Button_Container"
-                                            onClick={() => Handle_Modal_Open_To_Select_Permission(list)}
-                                        >
-                                            <FaInfoCircle />
-                                        </td>
-                                    ) : (
-                                        <></>
-                                    )}
                                 </tr>
                             );
                         })}
