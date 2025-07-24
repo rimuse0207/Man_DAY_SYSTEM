@@ -10,7 +10,7 @@ const Info = () => {
             <div className="MainBodyContent_Left_WorkCheck">
                 <div className="MainBodyContent_Left_WorkCheckDesc">
                     <div>
-                        <span style={{ color: '#535559' }}>{Login_Info.team}팀</span>
+                        <span style={{ color: '#535559' }}>{Login_Info.team}</span>
                     </div>
                     <div className="TimerContainer">
                         <h2>

@@ -64,8 +64,14 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSele
 
     // 미입력자에게 메일 발송
     const Handle_Send_Mail_User = async () => {
-        const Nothing_User_Lists = UserLists.filter(list => list.man_day_infos.length === 0);
-        if (!window.confirm(`${Nothing_User_Lists.length}의 인원에게 메일을 발송 하시겠습니까?`)) {
+        const Nothing_User_Lists = Filter_User_List(UserLists, Today_Date);
+
+        if (
+            !window.confirm(
+                `${Nothing_User_Lists.length}명의 인원에게 메일을 발송 하시겠습니까?
+               `
+            )
+        ) {
             return;
         }
         if (Nothing_User_Lists.length === 0) {
@@ -150,6 +156,22 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSele
                 부분 입력
             </td>
         );
+    };
+
+    const Filter_User_List = (user_list, referenceDate) => {
+        // 1. 기준일이 속한 주의 월~금 날짜 리스트 구하기
+        const weekdays = [];
+        const startOfWeek = moment(referenceDate).startOf('isoWeek'); // 월요일
+        for (let i = 0; i < 5; i++) {
+            weekdays.push(startOfWeek.clone().add(i, 'days').format('YYYY-MM-DD'));
+        }
+        return user_list.filter(user => {
+            const userDatesSet = new Set(user.man_day_infos.map(info => moment(info.date).format('YYYY-MM-DD')));
+
+            const matchedCount = weekdays.filter(date => userDatesSet.has(date)).length;
+
+            return matchedCount < 5; // '입력'이 아닌 유저만
+        });
     };
 
     return (

@@ -47,7 +47,7 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
     return (
         <SelectAllFilterMainDivBox style={{ height: '200px' }}>
             <TableFilterMainDivBox>
-                <h2>필터 조회</h2>
+                <h2>조회</h2>
                 <div className="Filter_Container">
                     <div className="Filter_GR">
                         <div className="Filter_Title">기간</div>

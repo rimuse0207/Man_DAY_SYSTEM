@@ -305,13 +305,13 @@ const ContentMainPage = () => {
             if (Handle_Getting_Before_Man_Day_Data.data.Have_Previous_data) {
                 setWeekContainer(Handle_Getting_Before_Man_Day_Data.data.data);
                 toast.show({
-                    title: `이전 데이터를 불러왔습니다.`,
+                    title: `이전 주의 데이터를 불러왔습니다.`,
                     successCheck: true,
                     duration: 3000,
                 });
             } else {
                 toast.show({
-                    title: `최근 1한달 내 저장한 데이터가 없습니다.`,
+                    title: `이전 주의 저장한 데이터가 없습니다.`,
                     successCheck: false,
                     duration: 5000,
                 });
@@ -390,6 +390,9 @@ const ContentMainPage = () => {
                     borderBottom: '1px solid lightgray',
                     paddingBottom: '20px',
                     paddingTop: '20px',
+                    position: 'sticky',
+                    top: '0px',
+                    background: '#fff',
                 }}
             >
                 <div
@@ -426,7 +429,7 @@ const ContentMainPage = () => {
                         </li>
                         <li>
                             <button style={{ backgroundColor: 'orange' }} onClick={() => Handle_Getting_Before_Data()}>
-                                이전 데이터 불러오기
+                                이전 주 데이터 불러오기
                             </button>
                         </li>
                     </ul>

@@ -19,7 +19,7 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
                         <div key={list.index}>
                             <SelectBoxsMainDivBox>
                                 <div className="Input_GR">
-                                    <div className="Title">대분류</div>
+                                    <div className="Title">상위 설비명</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
                                         {Input_Title_Lists.map(item => {
                                             return item.Major_Category_Code === list.depart ? item.Major_Category_Name : '';
@@ -37,7 +37,7 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
                                     </div>
                                 </div>
                                 <div className="Input_GR">
-                                    <div className="Title">구분</div>
+                                    <div className="Title">업무 유형</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
                                         {Divide_Lists.map(item => {
                                             return item.itemCode === list.divide ? item.itemName : '';

@@ -62,7 +62,8 @@ const CalendarGrid = styled.div`
 `;
 
 const DayCell = styled.div`
-    min-height: ${({ isHeader }) => (isHeader ? '30px' : '150px')};
+    min-height: ${({ isHeader }) => (isHeader ? '30px' : `${150}px`)};
+    /* min-height: ${({ isHeader, dynamicHeight }) => (isHeader ? '30px' : `${150 + dynamicHeight * 10}px`)}; */
     padding: 5px;
     background-color: ${({ isCurrentMonth }) => (isCurrentMonth ? 'white' : '#f0f0f0')};
     color: ${({ isCurrentMonth }) => (isCurrentMonth ? 'black' : '#aaa')};
@@ -223,12 +224,23 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                 </CalendarHeader>
                 <CalendarGrid>
                     {daysOfWeek.map(day => (
-                        <DayCell key={day} isCurrentMonth={true} isHeader={true} style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <DayCell
+                            key={day}
+                            isCurrentMonth={true}
+                            isHeader={true}
+                            style={{ justifyContent: 'center', alignItems: 'center' }}
+                            dynamicHeight={Math.max(0, ...eventBars.map(o => o.row))}
+                        >
                             {day}
                         </DayCell>
                     ))}
                     {days.map((date, index) => (
-                        <DayCell key={index} isCurrentMonth={date.isCurrentMonth} onClick={() => HandleAddSchedule(date)}>
+                        <DayCell
+                            key={index}
+                            isCurrentMonth={date.isCurrentMonth}
+                            onClick={() => HandleAddSchedule(date)}
+                            dynamicHeight={Math.max(0, ...eventBars.map(o => o.row))}
+                        >
                             {date.day}
                         </DayCell>
                     ))}

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 export const SelectBoxsMainDivBox = styled.div`
     margin-bottom: 30px;
+    font-size: 0.9em;
     .Input_GR {
         border: 1px solid lightgray;
         display: flex;
@@ -70,7 +71,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
     return (
         <SelectBoxsMainDivBox>
             <div className="Input_GR">
-                <div className="Title">대분류</div>
+                <div className="Title">상위 설비명</div>
                 <div className="Answer">
                     <select
                         name="depart"
@@ -115,7 +116,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                 </div>
             </div>
             <div className="Input_GR">
-                <div className="Title">구분</div>
+                <div className="Title">업무 유형</div>
                 <div className="Answer">
                     <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
                         <option value={null}></option>

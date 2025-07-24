@@ -110,7 +110,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
     return (
         <SelectAllFilterMainDivBox>
             <TableFilterMainDivBox>
-                <h2>필터 조회</h2>
+                <h2>조회</h2>
                 <div className="Filter_Container">
                     <div className="Filter_GR">
                         <div className="Filter_Title">기간</div>
@@ -208,7 +208,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                     </div>
 
                     <div className="Filter_GR">
-                        <div className="Filter_Title">대분류</div>
+                        <div className="Filter_Title">상위 설비명</div>
                         <div className="Filter_Content">
                             <Select
                                 styles={customStyles}
@@ -239,7 +239,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                         </div>
                     </div>
                     <div className="Filter_GR">
-                        <div className="Filter_Title">구분</div>
+                        <div className="Filter_Title">업무 유형</div>
                         <div className="Filter_Content">
                             <Select
                                 styles={customStyles}

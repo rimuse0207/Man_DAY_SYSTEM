@@ -126,7 +126,7 @@ const TopNavigationMainPage = () => {
     const [Nav_Select_Options_Menus, setNav_Select_Options_Menus] = useState([
         {
             value: '/Home',
-            label: '홈(메인)',
+            label: 'Home',
             role: 'all',
         },
         {
@@ -136,7 +136,7 @@ const TopNavigationMainPage = () => {
         },
         {
             value: '/User_Manage',
-            label: '사용자',
+            label: 'Admin',
             role: 'user',
         },
     ]);

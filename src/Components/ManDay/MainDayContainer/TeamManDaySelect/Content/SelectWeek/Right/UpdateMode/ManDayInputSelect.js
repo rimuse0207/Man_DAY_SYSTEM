@@ -27,7 +27,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
     return (
         <SelectBoxsMainDivBox>
             <div className="Input_GR">
-                <div className="Title">대분류</div>
+                <div className="Title">상위 설비명</div>
                 <div className="Answer">
                     <select
                         name="departCode"
@@ -72,7 +72,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                 </div>
             </div>
             <div className="Input_GR">
-                <div className="Title">구분</div>
+                <div className="Title">업무 유형</div>
                 <div className="Answer">
                     <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
                         <option value={null}></option>

@@ -42,9 +42,9 @@ const Table = ({ Table_State }) => {
                         <th>팀</th>
                         <th>파트</th>
                         <th>이름</th>
-                        <th>대분류</th>
+                        <th>상위 설비명</th>
                         <th>설비명</th>
-                        <th>구분</th>
+                        <th>업무 유형</th>
                         <th>Man-Day</th>
                     </tr>
                 </thead>
