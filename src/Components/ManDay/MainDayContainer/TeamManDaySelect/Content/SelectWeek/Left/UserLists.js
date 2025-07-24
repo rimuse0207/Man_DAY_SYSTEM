@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { toast } from '../../../../../../ToastMessage/ToastManager';
 import { useSelector } from 'react-redux';
 import { Request_Post_Axios } from '../../../../../../../API';
+import moment from 'moment';
 
 const UserListsMainDivBox = styled.div`
     table {
@@ -94,6 +95,63 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSele
         }
     };
 
+    const checkInputStatus = (user_list, emailToCheck, referenceDate) => {
+        // 1. 기준일이 속한 주의 월~금 날짜 리스트 구하기
+        const weekdays = [];
+        const startOfWeek = moment(referenceDate).startOf('isoWeek'); // 월요일
+        for (let i = 0; i < 5; i++) {
+            weekdays.push(startOfWeek.clone().add(i, 'days').format('YYYY-MM-DD'));
+        }
+        // 2. 해당 email의 user 찾기
+        const user = user_list.find(user => user.email === emailToCheck?.email);
+        if (!user) return '사용자 없음';
+
+        // 3. 중복 제거된 날짜 리스트 만들기
+        const userDatesSet = new Set(user.man_day_infos.map(info => moment(info.date).format('YYYY-MM-DD')));
+
+        // 4. 해당 주의 날짜 중 몇 개가 포함되어 있는지 확인
+        const matchedCount = weekdays.filter(date => userDatesSet.has(date)).length;
+
+        // 5. 조건에 따른 결과 반환
+        if (matchedCount === 0)
+            return (
+                <td
+                    className="Click_Buttons"
+                    style={{ color: 'red', fontWeight: 'bolder' }}
+                    onClick={() => {
+                        setNow_Select_User(emailToCheck);
+                        setSelect_Modes('reading');
+                    }}
+                >
+                    미입력
+                </td>
+            );
+        if (matchedCount === 5)
+            return (
+                <td
+                    className="Click_Buttons"
+                    onClick={() => {
+                        setNow_Select_User(emailToCheck);
+                        setSelect_Modes('reading');
+                    }}
+                >
+                    입력 완료
+                </td>
+            );
+        return (
+            <td
+                className="Click_Buttons"
+                style={{ color: 'orange', fontWeight: 'bolder' }}
+                onClick={() => {
+                    setNow_Select_User(emailToCheck);
+                    setSelect_Modes('reading');
+                }}
+            >
+                부분 입력
+            </td>
+        );
+    };
+
     return (
         <UserListsMainDivBox>
             {NowDate === Today_Date && (Login_Info.team === '개발운영팀' || Login_Info.id === 'sjyoo@dhk.co.kr') ? (
@@ -120,28 +178,7 @@ const UserLists = ({ UserLists, setNow_Select_User, Today_Date, NowDate, setSele
                                 <td>{list.name}</td>
                                 <td>{list.position}</td>
                                 <td>{list.departmentName}</td>
-                                {list.man_day_infos.length > 0 ? (
-                                    <td
-                                        className="Click_Buttons"
-                                        onClick={() => {
-                                            setNow_Select_User(list);
-                                            setSelect_Modes('reading');
-                                        }}
-                                    >
-                                        입력 완료
-                                    </td>
-                                ) : (
-                                    <td
-                                        className="Click_Buttons"
-                                        style={{ color: 'red', fontWeight: 'bolder' }}
-                                        onClick={() => {
-                                            setNow_Select_User(list);
-                                            setSelect_Modes('reading');
-                                        }}
-                                    >
-                                        미입력
-                                    </td>
-                                )}
+                                {checkInputStatus(UserLists, list, NowDate)}
                             </tr>
                         );
                     })}

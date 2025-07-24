@@ -35,6 +35,12 @@ const CompanyMainPage = ({ menuCode }) => {
     return (
         <PersonMainPageMainDivBox>
             <CommonFilters menuCode={menuCode} Getting_Person_Bar_State={() => Getting_Company_Data()}></CommonFilters>
+            <div className="User_Info_Container">
+                <div className="User_Content_Container">
+                    <span>총원 : </span>
+                    <span>{gradbounce_Pie_State.reduce((pre, acc) => pre + acc.value, 0)}명</span>
+                </div>
+            </div>
             <h3 style={{ textAlign: 'center' }}>
                 {Filter_State.company.value === 'all' ? 'YC & EXICON' : Filter_State.company.value} Man_day
             </h3>
@@ -48,7 +54,7 @@ const CompanyMainPage = ({ menuCode }) => {
                     <PieGraph Pie_State={department_Pie_State}></PieGraph>
                 </div>
                 <div style={{ width: '50%' }}>
-                    <PieGraph Pie_State={gradbounce_Pie_State}></PieGraph>
+                    <PieGraph Pie_State={gradbounce_Pie_State.filter(item => item.value > 0)}></PieGraph>
                 </div>
             </div>
         </PersonMainPageMainDivBox>

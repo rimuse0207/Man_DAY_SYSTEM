@@ -106,7 +106,9 @@ const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_T
 
     return (
         <ContentMainPageMainDivBox>
-            <h3>{Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}</h3>
+            <h3 style={{ textAlign: 'center' }}>
+                {Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}
+            </h3>
             <div className="Input_Cotainer">
                 {datess.map(list => {
                     return (

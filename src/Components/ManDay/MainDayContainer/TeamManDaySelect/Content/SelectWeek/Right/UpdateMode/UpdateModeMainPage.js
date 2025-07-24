@@ -107,7 +107,9 @@ const UpdateModeMainPage = ({ Now_Select_User, NowDate, setSelect_Modes, Getting
 
     return (
         <ContentMainPageMainDivBox>
-            <h3>{Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}</h3>{' '}
+            <h3 style={{ textAlign: 'center' }}>
+                {Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}
+            </h3>{' '}
             <div className="Input_Cotainer">
                 {datess.map(list => {
                     return (

@@ -192,12 +192,12 @@ const TopNavigationMainPage = () => {
                         <BsFillPersonFill></BsFillPersonFill>
                         {open && (
                             <DropdownMenu>
-                                <MenuItemss onClick={() => alert('구현 준비중에 있습니다.')}>
+                                {/* <MenuItemss onClick={() => alert('구현 준비중에 있습니다.')}>
                                     <Icon>
                                         <FaKey size={16}></FaKey>
                                     </Icon>{' '}
                                     비밀번호 변경
-                                </MenuItemss>
+                                </MenuItemss> */}
                                 <MenuItemss
                                     onClick={() => {
                                         Logout();

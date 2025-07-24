@@ -92,7 +92,7 @@ const HomeClock = () => {
                     </div>
                     <div className="TimerContainer">
                         <h2>{time.format('HH:mm:ss')}</h2>
-                        <div className="TimerContainer_WorkStatus"></div>
+                        {/* <div className="TimerContainer_WorkStatus"></div> */}
                         <div
                             className={workStatusMenuBar ? 'TimerContainer_WorkStatusArrowUp' : 'TimerContainer_WorkStatusArrowDown'}
                             onClick={() => setWorkStatusMenuBar(!workStatusMenuBar)}
@@ -101,7 +101,9 @@ const HomeClock = () => {
                         </div>
                     </div>
                     {workStatusMenuBar ? (
-                        <div className="Open_WorkingStatus_Container">{/* <HomeCardMainContainer></HomeCardMainContainer> */}</div>
+                        <div className="Open_WorkingStatus_Container">
+                            <HomeCardMainContainer></HomeCardMainContainer>
+                        </div>
                     ) : (
                         <div></div>
                     )}

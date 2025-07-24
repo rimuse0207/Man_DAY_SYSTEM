@@ -43,7 +43,9 @@ const ManDaySelect = ({ Now_Select_User, NowDate, setSelect_Modes }) => {
     }, [NowDate]);
     return (
         <div>
-            <h3>{Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}</h3>
+            <h3 style={{ textAlign: 'center' }}>
+                {Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}
+            </h3>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em' }}>
                 {Now_Select_User ? (
                     WeekContainer.map(list => {

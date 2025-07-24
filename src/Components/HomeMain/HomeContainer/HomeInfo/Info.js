@@ -17,7 +17,7 @@ const Info = () => {
                             {Login_Info.name} {Login_Info.position}
                         </h2>
 
-                        <div className="TimerContainer_WorkStatus"></div>
+                        {/* <div className="TimerContainer_WorkStatus"></div> */}
                     </div>
                     {/* {workStatusMenuBar ? <div className="Open_WorkingStatus_Container"></div> : <div></div>} */}
                 </div>
