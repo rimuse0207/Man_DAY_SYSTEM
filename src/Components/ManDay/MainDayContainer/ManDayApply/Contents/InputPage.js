@@ -108,6 +108,12 @@ const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, T
                     );
                 })}
             </div>
+            <div style={{ borderTop: '1px solid lightgray' }}>
+                <div style={{ textAlign: 'end' }}>
+                    <h5>Man-day 합</h5>
+                    <div>{List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)}</div>
+                </div>
+            </div>
             {Today_Date === Select_Date ? (
                 <div style={{ marginBottom: '40px' }}>
                     <div className="Plus_Container" onClick={() => HandleClicksAddChild()}>

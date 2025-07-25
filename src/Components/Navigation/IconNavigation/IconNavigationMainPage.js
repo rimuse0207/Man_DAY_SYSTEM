@@ -93,7 +93,7 @@ const IconNavigationMainPage = () => {
         {
             path: '/User_Manage/user',
             icon: <FaUserCog />,
-            name: 'admin',
+            name: 'Admin',
             role: 'user',
         },
     ]);

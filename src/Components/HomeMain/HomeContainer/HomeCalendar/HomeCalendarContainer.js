@@ -12,13 +12,13 @@ const HomeCalendarContainer = () => {
     const [events, setEvents] = useState([]);
 
     const Change_Color_State = async () => {
-        // const Getting_PIMS_Data = await Request_Get_Axios('/Ce_Route/Tools/Getting_PIMS_Select', {
-        //     id: Login_Info.id,
-        //     date: `${year}-${month + 1}`,
-        // });
-        // if (Getting_PIMS_Data.status) {
-        //     setEvents(Getting_PIMS_Data.data);
-        // }
+        const Getting_PIMS_Data = await Request_Get_Axios('/API/PLM/Getting_Month_Man_Day_Select', {
+            date: `${year}-${month + 1}`,
+        });
+        if (Getting_PIMS_Data.status) {
+            console.log(Getting_PIMS_Data);
+            setEvents(Getting_PIMS_Data.data);
+        }
     };
 
     useEffect(() => {

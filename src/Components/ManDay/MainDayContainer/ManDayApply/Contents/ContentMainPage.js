@@ -252,12 +252,17 @@ const ContentMainPage = () => {
             });
             return;
         }
+        const factor = 100000;
+        const tolerance = 1;
         /// 일별로 Man_Day가 1이 되는지 체크
         const Sum_Check = WeekContainer.Date_Lists.filter(item => item.child.length > 0)
             .map(list => {
-                return list.child.reduce((pre, acc) => pre + Number(acc.man_day), 0);
+                const total = list.child
+                    .map(child => Math.round(Number(child.man_day) * factor)) // 먼저 정수화
+                    .reduce((a, b) => a + b, 0); // 정수끼리 합산
+                return total;
             })
-            .filter(item => item !== 1);
+            .filter(total => Math.abs(total - factor) > tolerance);
         if (Sum_Check.length > 0) {
             toast.show({
                 title: `Man-day는 일별 합산이 1이 되어야 합니다.`,

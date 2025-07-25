@@ -27,6 +27,18 @@ const CalendarWrapper = styled.div`
 
     .Popup.show {
         opacity: 1;
+        table {
+            width: 100%;
+            th {
+                text-align: start;
+                width: 40%;
+                padding: 5px;
+            }
+            td {
+                width: 60%;
+                padding: 5px;
+            }
+        }
     }
 `;
 
@@ -96,7 +108,7 @@ const EventBar = styled.div`
     color: white;
     font-weight: bold;
     &:hover {
-        cursor: pointer;
+        /* cursor: pointer; */
         opacity: 0.8;
     }
 `;
@@ -130,8 +142,8 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
     const eventLayers = {};
 
     const eventBars = events.flatMap(event => {
-        const startDate = new Date(event.start_date);
-        const endDate = new Date(event.end_date);
+        const startDate = new Date(event.date);
+        const endDate = new Date(event.date);
 
         if (
             (startDate.getFullYear() !== year && endDate.getFullYear() !== year) ||
@@ -238,7 +250,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                         <DayCell
                             key={index}
                             isCurrentMonth={date.isCurrentMonth}
-                            onClick={() => HandleAddSchedule(date)}
+                            // onClick={() => HandleAddSchedule(date)}
                             dynamicHeight={Math.max(0, ...eventBars.map(o => o.row))}
                         >
                             {date.day}
@@ -254,7 +266,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                             onMouseEnter={e => handleMouseEnter(e, bar, idx)}
                             onMouseLeave={handleMouseLeave}
                         >
-                            {bar.title}
+                            {bar.sub_depart} {bar.divideCode} {bar.manDay.toFixed(1)}
                         </EventBar>
                     ))}
                     {hoveredEvent && (
@@ -266,15 +278,29 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                                 left: `${popupPosition.x}px`,
                             }}
                         >
-                            <h2 style={{ marginBottom: '10px' }}>{hoveredEvent.Code}</h2>
-                            <strong>{hoveredEvent.title}</strong>
-                            <div style={{ padding: '20px' }}></div>
-                            <div>
-                                <strong style={{ marginRight: '40px' }}>일시</strong>
-                                <span>
-                                    {hoveredEvent.start_date} ~ {hoveredEvent.end_date}
-                                </span>
-                            </div>
+                            <h2 style={{ marginBottom: '10px' }}>{hoveredEvent.date} Man_day</h2>
+                            {/* <strong>{hoveredEvent.title}</strong> */}
+                            {/* <div style={{ paddingTop: 'px' }}></div> */}
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <th>상위 설비명</th>
+                                        <td>{hoveredEvent.depart}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>설 비 명</th>
+                                        <td>{hoveredEvent.sub_depart}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>구분 항목</th>
+                                        <td>{hoveredEvent.divideCode}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Man_day</th>
+                                        <td>{hoveredEvent.manDay.toFixed(1)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </CalendarGrid>
