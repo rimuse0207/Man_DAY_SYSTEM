@@ -216,7 +216,7 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 value={Filter_State.depart}
                                 onChange={e => {
                                     Sub_Depart(e);
-                                    dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, depart: e }));
+                                    dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, depart: e, sub_depart: null }));
                                 }}
                                 isClearable
                                 options={Input_Title_Lists.map(list => {
@@ -235,7 +235,15 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 options={sub_Depart_options}
                                 isClearable
                                 onChange={e => {
-                                    dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }));
+                                    if (Filter_State.depart?.value) {
+                                        dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }));
+                                    } else {
+                                        toast.show({
+                                            title: `설비군을 먼저 선택 후 선택 가능합니다.`,
+                                            successCheck: false,
+                                            duration: 6000,
+                                        });
+                                    }
                                 }}
                                 placeholder="선택 해 주세요."
                             ></Select>
