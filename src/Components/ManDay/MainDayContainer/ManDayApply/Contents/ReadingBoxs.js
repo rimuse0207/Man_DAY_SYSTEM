@@ -19,7 +19,7 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
                         <div key={list.index}>
                             <SelectBoxsMainDivBox>
                                 <div className="Input_GR">
-                                    <div className="Title">상위 설비명</div>
+                                    <div className="Title">설비군</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
                                         {Input_Title_Lists.map(item => {
                                             return item.Major_Category_Code === list.depart ? item.Major_Category_Name : '';

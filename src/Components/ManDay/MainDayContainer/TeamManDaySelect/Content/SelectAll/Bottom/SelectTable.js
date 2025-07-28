@@ -44,7 +44,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                         <th>회사명</th>
                         <th>팀</th>
                         <th>이름</th>
-                        <th>상위 설비명</th>
+                        <th>설비군</th>
                         <th>설비명</th>
                         <th>업무 유형</th>
                         <th>Man-day</th>

@@ -27,7 +27,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
     return (
         <SelectBoxsMainDivBox>
             <div className="Input_GR">
-                <div className="Title">상위 설비명</div>
+                <div className="Title">설비군</div>
                 <div className="Answer">
                     <select
                         name="departCode"

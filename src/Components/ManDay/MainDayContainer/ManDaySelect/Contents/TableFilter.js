@@ -167,7 +167,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                     </div>
                 </div>
                 <div className="Filter_GR">
-                    <div className="Filter_Title">상위 설비명</div>
+                    <div className="Filter_Title">설비군</div>
                     <div className="Filter_Content">
                         <Select
                             styles={customStyles}

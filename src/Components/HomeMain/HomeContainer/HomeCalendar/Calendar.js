@@ -284,7 +284,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                             <table>
                                 <tbody>
                                     <tr>
-                                        <th>상위 설비명</th>
+                                        <th>설 비 군</th>
                                         <td>{hoveredEvent.depart}</td>
                                     </tr>
                                     <tr>

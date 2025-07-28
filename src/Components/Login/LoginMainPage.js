@@ -201,6 +201,13 @@ const LoginMainPage = () => {
                 duration: 3000,
             });
             return;
+        } else if (!isValidPassword(Change_password.password)) {
+            toast.show({
+                title: `비밀번호에 ' , { , } 또는 \`는 사용할 수 없습니다.`,
+                successCheck: false,
+                duration: 3000,
+            });
+            return;
         } else {
             const Change_Password_Axios = await Request_Post_Axios('/API/PLM/Change_Password', Change_password);
             if (Change_Password_Axios.status) {
@@ -227,6 +234,10 @@ const LoginMainPage = () => {
         }
     };
 
+    function isValidPassword(password) {
+        // 작은따옴표('), 백틱(`)이 포함되어 있으면 false 반환
+        return !/['`{}]/.test(password);
+    }
     // 로그인 API
     const handleClicksLogin = async e => {
         e.preventDefault();
@@ -241,7 +252,6 @@ const LoginMainPage = () => {
             setLoginDataInfo({ ...LoginDataInfo, password: '' });
             return;
         }
-
         const Login_Check = await Request_Post_Axios('/API/PLM/Login', LoginDataInfo);
         if (Login_Check.status) {
             if (Login_Check.data) {
@@ -265,13 +275,11 @@ const LoginMainPage = () => {
                             position: Login_Check.data.Select_User_Info_Data_SQL.position,
                             user_access: Login_Check.data.User_Access_Lists,
                             admin_access: Login_Check.data.Admin_Access_Lists,
-
-                            // employeeNumber: Login_Check.data.employeeNumber,
                         })
                     );
                     dispatch(Now_Path_Initial_Reducer_State_Func());
 
-                    return Navigate(before_path ? before_path : '/Home');
+                    return Navigate('/Home');
                 }
             } else {
                 setLoginDataInfo({ ...LoginDataInfo, password: '' });
