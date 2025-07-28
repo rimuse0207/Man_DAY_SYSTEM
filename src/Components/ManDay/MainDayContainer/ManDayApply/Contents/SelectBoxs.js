@@ -36,8 +36,13 @@ export const SelectBoxsMainDivBox = styled.div`
 
 const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
     const annualLeaveLists = ['연차', '오전반차', '오후반차'];
-    const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
-    const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+    // const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
+    // const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+
+    const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
+    const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
+    const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
+
     const [Annuals, setAnnuals] = useState(false);
     const handleFieldChange = (e, fieldName) => {
         const newValue = e?.target?.value;
@@ -93,10 +98,11 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         onChange={e => {
                             handleFieldChange(e, 'depart');
                             handleFieldChange(null, 'sub_depart');
+                            handleFieldChange(null, 'divide');
                         }}
                     >
                         <option value={null}></option>
-                        {Input_Title_Lists.map(list => {
+                        {/* {Input_Title_Lists.map(list => {
                             return (
                                 <option
                                     value={list.Major_Category_Code}
@@ -106,6 +112,13 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                                     {list.Major_Category_Name}
                                 </option>
                             );
+                        })} */}
+                        {Depart_Option_Lists.map(list => {
+                            return (
+                                <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
+                                    {list.itemName}
+                                </option>
+                            );
                         })}
                     </select>
                 </div>
@@ -113,9 +126,16 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
             <div className="Input_GR">
                 <div className="Title">설비명</div>
                 <div className="Answer">
-                    <select name="sub_depart" value={Now_Data.sub_depart} onChange={e => handleFieldChange(e, 'sub_depart')}>
+                    <select
+                        name="sub_depart"
+                        value={Now_Data.sub_depart}
+                        onChange={e => {
+                            handleFieldChange(e, 'sub_depart');
+                            handleFieldChange(null, 'divide');
+                        }}
+                    >
                         <option value={null}></option>
-                        {Input_Title_Lists.map(item => {
+                        {/* {Input_Title_Lists.map(item => {
                             if (item.Major_Category_Code === Now_Data.depart) {
                                 return item.Eqipment_lists.map(list => {
                                     return (
@@ -125,7 +145,17 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                                     );
                                 });
                             }
-                        })}
+                        })} */}
+
+                        {Sub_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.depart)
+                            .sort((a, b) => a.itemRank - b.itemRank)
+                            .map(list => {
+                                return (
+                                    <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
+                                        {list.itemName}
+                                    </option>
+                                );
+                            })}
                     </select>
                 </div>
             </div>
@@ -134,13 +164,22 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                 <div className="Answer">
                     <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
                         <option value={null}></option>
-                        {Divide_Lists.map(list => {
+                        {/* {Divide_Lists.map(list => {
                             return (
                                 <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
                                     {list.itemName}
                                 </option>
                             );
-                        })}
+                        })} */}
+                        {Divide_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.sub_depart)
+                            .sort((a, b) => a.itemRank - b.itemRank)
+                            .map(list => {
+                                return (
+                                    <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
+                                        {list.itemName}
+                                    </option>
+                                );
+                            })}
                     </select>
                 </div>
             </div>

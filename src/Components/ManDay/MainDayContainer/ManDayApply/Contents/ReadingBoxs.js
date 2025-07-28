@@ -6,8 +6,13 @@ import { SelectBoxsMainDivBox } from './SelectBoxs';
 import { useSelector } from 'react-redux';
 
 const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
-    const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
-    const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+    // const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
+    // const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+
+    const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
+    const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
+    const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
+
     return (
         <InputPageMainDivBox>
             <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px' }}>
@@ -21,26 +26,30 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
                                 <div className="Input_GR">
                                     <div className="Title">설비군</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
-                                        {Input_Title_Lists.map(item => {
-                                            return item.Major_Category_Code === list.depart ? item.Major_Category_Name : '';
+                                        {Depart_Option_Lists.map(item => {
+                                            return item.itemCode === list.depart ? item.itemName : '';
                                         })}
                                     </div>
                                 </div>
                                 <div className="Input_GR">
                                     <div className="Title">설비명</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
-                                        {Input_Title_Lists.map(item => {
-                                            return item.Eqipment_lists.map(equip =>
-                                                equip.itemCode === list.sub_depart ? equip.itemName : ''
-                                            );
+                                        {Sub_Depart_Option_Lists.map(item => {
+                                            return item.itemCode === list.sub_depart && item.itemParentCode === list.depart
+                                                ? item.itemName
+                                                : '';
                                         })}
                                     </div>
                                 </div>
                                 <div className="Input_GR">
                                     <div className="Title">업무 유형</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
-                                        {Divide_Lists.map(item => {
-                                            return item.itemCode === list.divide ? item.itemName : '';
+                                        {Divide_Depart_Option_Lists.map(item => {
+                                            return item.itemCode === list.divide &&
+                                                item.divideType === 'divide' &&
+                                                item.itemParentCode === list.sub_depart
+                                                ? item.itemName
+                                                : '';
                                         })}
                                     </div>
                                 </div>

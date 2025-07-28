@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import ManDaySelectMain from './MainDayContainer/ManDaySelect/ManDaySelectMain';
 import { AllManDayItemfetchData } from '../../Models/ReduxThunks/ManDaySelectItemReducer';
+import { Request_Get_Axios } from '../../API';
+import { Man_Day_Select_Option_fetchData } from '../../Models/ReduxThunks/ManDaySelectOptionReducer';
 
 export const AnnualLeaveContainerMainPageMainDivBox = styled.div`
     .Personal_Main_Float {
@@ -27,6 +29,7 @@ const ManDayMainPage = () => {
     useEffect(() => {
         dispatch(AllManDayItemfetchData());
     }, []);
+
     return (
         <AnnualLeaveContainerMainPageMainDivBox>
             <TopNavigationMainPage></TopNavigationMainPage>

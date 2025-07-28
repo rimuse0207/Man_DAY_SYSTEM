@@ -64,50 +64,55 @@ export const customStyles = {
 };
 const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptions, Getting_Man_Day_Info_Data, Excel_Download }) => {
     const dispatch = useDispatch();
-    const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
-    const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+    // const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
+    // const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+
+    const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
+    const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
+    const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
+
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [sub_Depart_options, setsub_Depart_options] = useState([]);
-    useEffect(() => {
-        Sub_Depart();
-    }, [Input_Title_Lists, Filter_State.depart]);
+    // useEffect(() => {
+    //     Sub_Depart();
+    // }, [Input_Title_Lists, Filter_State.depart]);
 
-    const Sub_Depart = async e => {
-        if (e) {
-            const [a] = await Input_Title_Lists.filter(item => item.Major_Category_Code === e.value).map(list => {
-                return list.Eqipment_lists.map(options => {
-                    return {
-                        value: options.itemCode,
-                        label: options.itemName,
-                    };
-                });
-            });
-            setsub_Depart_options(a);
-        } else if (Filter_State.depart) {
-            const [a] = await Input_Title_Lists.filter(item => item.Major_Category_Code === Filter_State.depart.value).map(list => {
-                return list.Eqipment_lists.map(options => {
-                    return {
-                        value: options.itemCode,
-                        label: options.itemName,
-                    };
-                });
-            });
-            setsub_Depart_options(a);
-        } else {
-            const a = await Input_Title_Lists.map(list => {
-                return list.Eqipment_lists.map(item => {
-                    return {
-                        vlaue: item.itemCode,
-                        label: item.itemName,
-                    };
-                });
-            });
-            const Grouping_One_Array = a.reduce((acc, group) => {
-                return acc.concat(group);
-            }, []);
-            setsub_Depart_options(Grouping_One_Array);
-        }
-    };
+    // const Sub_Depart = async e => {
+    //     if (e) {
+    //         const [a] = await Input_Title_Lists.filter(item => item.Major_Category_Code === e.value).map(list => {
+    //             return list.Eqipment_lists.map(options => {
+    //                 return {
+    //                     value: options.itemCode,
+    //                     label: options.itemName,
+    //                 };
+    //             });
+    //         });
+    //         setsub_Depart_options(a);
+    //     } else if (Filter_State.depart) {
+    //         const [a] = await Input_Title_Lists.filter(item => item.Major_Category_Code === Filter_State.depart.value).map(list => {
+    //             return list.Eqipment_lists.map(options => {
+    //                 return {
+    //                     value: options.itemCode,
+    //                     label: options.itemName,
+    //                 };
+    //             });
+    //         });
+    //         setsub_Depart_options(a);
+    //     } else {
+    //         const a = await Input_Title_Lists.map(list => {
+    //             return list.Eqipment_lists.map(item => {
+    //                 return {
+    //                     vlaue: item.itemCode,
+    //                     label: item.itemName,
+    //                 };
+    //             });
+    //         });
+    //         const Grouping_One_Array = a.reduce((acc, group) => {
+    //             return acc.concat(group);
+    //         }, []);
+    //         setsub_Depart_options(Grouping_One_Array);
+    //     }
+    // };
     return (
         <SelectAllFilterMainDivBox>
             <TableFilterMainDivBox>
@@ -215,12 +220,22 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 styles={customStyles}
                                 value={Filter_State.depart}
                                 onChange={e => {
-                                    Sub_Depart(e);
-                                    dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, depart: e, sub_depart: null }));
+                                    // Sub_Depart(e);
+                                    dispatch(
+                                        Insert_Man_Day_Select_Reducer_State_Func({
+                                            ...Filter_State,
+                                            depart: e,
+                                            sub_depart: null,
+                                            divide: null,
+                                        })
+                                    );
                                 }}
                                 isClearable
-                                options={Input_Title_Lists.map(list => {
-                                    return { value: list.Major_Category_Code, label: list.Major_Category_Name };
+                                // options={Input_Title_Lists.map(list => {
+                                //     return { value: list.Major_Category_Code, label: list.Major_Category_Name };
+                                // })}
+                                options={Depart_Option_Lists.map(list => {
+                                    return { value: list.itemCode, label: list.itemName };
                                 })}
                                 placeholder="선택 해 주세요."
                             ></Select>
@@ -232,16 +247,35 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                             <Select
                                 styles={customStyles}
                                 value={Filter_State.sub_depart}
-                                options={sub_Depart_options}
+                                // options={sub_Depart_options}
+                                options={Sub_Depart_Option_Lists.filter(item => item.itemParentCode === Filter_State?.depart?.value)
+                                    .sort((a, b) => a.itemRank - b.itemRank)
+                                    .map(list => {
+                                        return {
+                                            value: list.itemCode,
+                                            label: list.itemName,
+                                        };
+                                    })}
                                 isClearable
                                 onChange={e => {
                                     if (Filter_State.depart?.value) {
-                                        dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }));
+                                        dispatch(
+                                            Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e, divide: null })
+                                        );
                                     } else {
                                         toast.show({
                                             title: `설비군을 먼저 선택 후 선택 가능합니다.`,
                                             successCheck: false,
                                             duration: 6000,
+                                        });
+                                    }
+                                }}
+                                onMenuOpen={() => {
+                                    if (!Filter_State?.depart) {
+                                        toast.show({
+                                            title: `'설비군'을 먼저 선택 후 입력 가능합니다.`,
+                                            successCheck: false,
+                                            duration: 5000,
                                         });
                                     }
                                 }}
@@ -257,9 +291,23 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 value={Filter_State.divide}
                                 isClearable
                                 onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, divide: e }))}
-                                options={Divide_Lists.map(list => {
-                                    return { value: list.itemCode, label: list.itemName };
-                                })}
+                                // options={Divide_Lists.map(list => {
+                                //     return { value: list.itemCode, label: list.itemName };
+                                // })}
+                                options={Divide_Depart_Option_Lists.filter(item => item.itemParentCode === Filter_State?.sub_depart?.value)
+                                    .sort((a, b) => a.itemRank - b.itemRank)
+                                    .map(list => {
+                                        return { value: list.itemCode, label: list.itemName };
+                                    })}
+                                onMenuOpen={() => {
+                                    if (!Filter_State?.depart) {
+                                        toast.show({
+                                            title: `'설비명'을 먼저 선택 후 입력 가능합니다.`,
+                                            successCheck: false,
+                                            duration: 5000,
+                                        });
+                                    }
+                                }}
                                 placeholder="선택 해 주세요."
                             ></Select>
                         </div>

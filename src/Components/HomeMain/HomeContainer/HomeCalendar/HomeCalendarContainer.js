@@ -16,7 +16,6 @@ const HomeCalendarContainer = () => {
             date: `${year}-${month + 1}`,
         });
         if (Getting_PIMS_Data.status) {
-            console.log(Getting_PIMS_Data);
             setEvents(Getting_PIMS_Data.data);
         }
     };
