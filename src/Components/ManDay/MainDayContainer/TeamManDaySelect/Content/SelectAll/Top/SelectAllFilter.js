@@ -10,6 +10,7 @@ import {
 } from '../../../../../../../Models/ManDayReducers/ManDaySelectFilterReducer';
 import { ko } from 'date-fns/esm/locale';
 import styled from 'styled-components';
+import { toast } from '../../../../../../ToastMessage/ToastManager';
 
 export const SelectAllFilterMainDivBox = styled.div`
     .Filter_Container {
@@ -233,7 +234,9 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 value={Filter_State.sub_depart}
                                 options={sub_Depart_options}
                                 isClearable
-                                onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
+                                onChange={e => {
+                                    dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }));
+                                }}
                                 placeholder="선택 해 주세요."
                             ></Select>
                         </div>

@@ -11,6 +11,7 @@ import {
 } from '../../../../../Models/ManDayReducers/ManDaySelectFilterReducer';
 import { ContentMainPageMainDivBox } from '../../ManDayApply/Contents/ContentMainPage';
 import { customStyles } from '../../TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter';
+import { toast } from '../../../../ToastMessage/ToastManager';
 
 export const TableFilterMainDivBox = styled.div`
     h2 {
@@ -37,7 +38,7 @@ export const TableFilterMainDivBox = styled.div`
                 padding-top: 10px;
             }
             .Filter_Content {
-                width: 200px;
+                width: 250px;
                 input {
                     border: 1px solid lightgray;
                     height: 35px;
@@ -107,7 +108,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
             const a = await Input_Title_Lists.map(list => {
                 return list.Eqipment_lists.map(item => {
                     return {
-                        vlaue: item.itemCode,
+                        value: item.itemCode,
                         label: item.itemName,
                     };
                 });
@@ -119,6 +120,11 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
         }
     };
 
+    const handleKeyDown = event => {
+        if (event.key === ' ') {
+            event.preventDefault(); // 스페이스 입력 막기
+        }
+    };
     return (
         <TableFilterMainDivBox>
             <h2>조회</h2>
@@ -174,7 +180,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                             value={Filter_State.depart}
                             onChange={e => {
                                 Sub_Depart(e);
-                                dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, depart: e }));
+                                dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, depart: e, sub_depart: null }));
                             }}
                             isClearable
                             options={Input_Title_Lists.map(list => {
@@ -192,7 +198,18 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                             value={Filter_State.sub_depart}
                             options={sub_Depart_options}
                             isClearable
-                            onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
+                            onKeyDown={handleKeyDown}
+                            onChange={e => {
+                                if (Filter_State.depart?.value) {
+                                    dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }));
+                                } else {
+                                    toast.show({
+                                        title: `설비군을 먼저 선택 후 선택 가능합니다.`,
+                                        successCheck: false,
+                                        duration: 6000,
+                                    });
+                                }
+                            }}
                             placeholder="선택 해 주세요."
                         ></Select>
                     </div>

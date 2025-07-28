@@ -163,8 +163,8 @@ const TopNavigationMainPage = () => {
     return (
         <NavigationMainPageMainDivBox>
             <div className="NavigationMainFlexdiv">
-                <div className="Main_Logo_Container">
-                    <Link to="/Home">
+                <div className="Main_Logo_Container" style={{ width: '66px', height: '50px' }}>
+                    <Link to="/Home" style={{ position: 'absolute', top: '0px', width: '300px' }}>
                         <img src={`/${Login_Info_State.company}.png`} width="100px"></img>
                     </Link>
                     <div className="Main_Menu_Move_Container">
