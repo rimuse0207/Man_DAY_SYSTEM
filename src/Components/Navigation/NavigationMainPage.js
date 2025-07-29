@@ -4,11 +4,6 @@ import { useDispatch } from 'react-redux';
 import { Man_Day_Select_Option_fetchData } from '../../Models/ReduxThunks/ManDaySelectOptionReducer';
 
 const NavigationMainPage = () => {
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(Man_Day_Select_Option_fetchData());
-    }, []);
     return (
         <div>
             <TopNavigationMainPage></TopNavigationMainPage>

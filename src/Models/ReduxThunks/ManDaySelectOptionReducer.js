@@ -14,7 +14,7 @@ export const Man_Day_Select_Option_fetchData = () => {
 
         try {
             const response = await Request_Get_Axios('/API/PLM/Getting_Option_Select_Lists'); // Axios API 호출
-            console.log(response);
+
             if (response.status) dispatch(Select_Options_fetchDataSuccess(response.data)); // 성공 시 데이터 저장
             else dispatch(Select_Options_fetchDataFailure('error'));
         } catch (error) {
@@ -32,7 +32,6 @@ const initialState = {
 };
 
 const ManDaySelectOptionReducer = (state = initialState, action) => {
-    console.log('action', action);
     switch (action.type) {
         case SELECT_OPTIONS_FETCH_DATA_REQUEST:
             return { ...state, loading: true };

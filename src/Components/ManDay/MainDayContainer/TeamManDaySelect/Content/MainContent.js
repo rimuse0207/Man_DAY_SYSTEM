@@ -24,9 +24,9 @@ const MainContentMainDivBox = styled.div`
 
 const MainContent = () => {
     const [Menu_Lists, setMenu_Lists] = useState([
-        { menuName: '금주 조회', menuCode: 'selectWeek', Component: <SelectWeekMainPage /> },
-        { menuName: '전체 조회', menuCode: 'selectAll', Component: <SelectAllMainPage /> },
-        // { menuName: ' 통 계 ', menuCode: 'statistic', Component: <StatisticMainPage /> },
+        { menuName: '금주 조회', menuCode: 'selectWeek', Component: SelectWeekMainPage },
+        { menuName: '전체 조회', menuCode: 'selectAll', Component: SelectAllMainPage },
+        { menuName: ' 통 계 ', menuCode: 'statistic', Component: StatisticMainPage },
     ]);
     const [Now_Select_Menu, setNow_Select_Menu] = useState('selectWeek');
     return (
@@ -35,6 +35,7 @@ const MainContent = () => {
                 {Menu_Lists.map(list => {
                     return (
                         <li
+                            key={list.menuCode}
                             style={Now_Select_Menu === list.menuCode ? { borderBottom: '2px solid black', color: 'black' } : {}}
                             onClick={() => setNow_Select_Menu(list.menuCode)}
                         >
@@ -44,7 +45,7 @@ const MainContent = () => {
                 })}
             </ul>
             {Menu_Lists.filter(item => item.menuCode === Now_Select_Menu).map(list => {
-                return list.Component;
+                return <list.Component key={list.menuCode} />;
             })}
         </MainContentMainDivBox>
     );

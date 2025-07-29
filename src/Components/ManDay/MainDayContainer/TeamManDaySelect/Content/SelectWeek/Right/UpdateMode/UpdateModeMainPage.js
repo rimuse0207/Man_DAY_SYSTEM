@@ -89,6 +89,7 @@ const UpdateModeMainPage = ({ Now_Select_User, NowDate, setSelect_Modes, Getting
         const Updating_Man_Day_Info_By_Administrator_Axios = await Request_Post_Axios(`/API/PLM/Updating_Man_Day_Info_By_Administrator`, {
             WeekContainer,
         });
+
         if (Updating_Man_Day_Info_By_Administrator_Axios.status) {
             toast.show({
                 title: `정상적으로 변경처리 되었습니다.`,

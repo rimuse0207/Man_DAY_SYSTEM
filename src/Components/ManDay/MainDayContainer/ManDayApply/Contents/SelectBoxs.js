@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { toast } from '../../../../ToastMessage/ToastManager';
 
 export const SelectBoxsMainDivBox = styled.div`
     margin-bottom: 30px;
@@ -35,30 +36,17 @@ export const SelectBoxsMainDivBox = styled.div`
 `;
 
 const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
-    const annualLeaveLists = ['연차', '오전반차', '오후반차'];
     // const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
     // const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
 
     const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
     const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
     const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
+    const [ReadOnlySetting, setReadOnlySetting] = useState(false);
 
-    const [Annuals, setAnnuals] = useState(false);
-    const handleFieldChange = (e, fieldName) => {
+    const handleFieldChange = async (e, fieldName) => {
         const newValue = e?.target?.value;
 
-        if (e?.target?.value === 'AA12' && fieldName === 'sub_depart') {
-            console.log('연차 선택');
-            setAnnuals(true);
-        } else {
-            if (Now_Data?.sub_depart === 'AA12' && fieldName === 'divide') {
-                console.log('연차 노 선택');
-                setAnnuals(true);
-            } else {
-                console.log('연차 노 선택');
-                setAnnuals(false);
-            }
-        }
         setWeekContainer(prev => {
             const updatedDateLists = prev.Date_Lists.map(dayItem => {
                 if (dayItem.date === Now_Data.date) {
@@ -85,6 +73,40 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                 Date_Lists: updatedDateLists,
             };
         });
+        if (e?.target?.selectedOptions) {
+            const selected = e?.target?.selectedOptions[0];
+            const customData = selected?.getAttribute('data-name');
+            if (customData) {
+                if (customData === '연차' || customData === '-') {
+                    setReadOnlySetting(true);
+
+                    handleFieldChange(
+                        {
+                            target: {
+                                value: 1,
+                            },
+                        },
+                        'man_day'
+                    );
+                    toast.show({
+                        title: `Man-Day는 1로 고정됩니다.`,
+                        successCheck: true,
+                        duration: 3000,
+                    });
+                } else if (customData === '반차') {
+                    setReadOnlySetting(true);
+                    handleFieldChange({ target: { value: 0.5 } }, 'man_day');
+
+                    toast.show({
+                        title: `Man-Day는 0.5로 고정됩니다.`,
+                        successCheck: true,
+                        duration: 3000,
+                    });
+                } else {
+                    setReadOnlySetting(false);
+                }
+            }
+        }
     };
 
     return (
@@ -214,6 +236,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         max={1}
                         step={0.1}
                         onChange={e => handleFieldChange(e, 'man_day')}
+                        readOnly={ReadOnlySetting}
                     ></input>
                 </div>
             </div>

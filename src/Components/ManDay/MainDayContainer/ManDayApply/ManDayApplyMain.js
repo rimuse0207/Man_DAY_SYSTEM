@@ -5,13 +5,18 @@ import SideNavigationMainPage from '../../../Navigation/SideNavigation/SideNavig
 import ContentMainPage from './Contents/ContentMainPage';
 import { AllManDayItemfetchData } from '../../../../Models/ReduxThunks/ManDaySelectItemReducer';
 import { useDispatch } from 'react-redux';
+import { Man_Day_Select_Option_fetchData } from '../../../../Models/ReduxThunks/ManDaySelectOptionReducer';
 
 const ManDayApplyMain = () => {
+    // const dispatch = useDispatch();
+    // useEffect(() => {
+    //     dispatch(AllManDayItemfetchData());
+    // }, []);
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(AllManDayItemfetchData());
-    }, []);
 
+    useEffect(() => {
+        dispatch(Man_Day_Select_Option_fetchData());
+    }, []);
     return (
         <AnnualLeaveContainerMainPageMainDivBox>
             <TopNavigationMainPage></TopNavigationMainPage>

@@ -6,6 +6,7 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import { MdDeleteForever } from 'react-icons/md';
 import ReadingBoxs from './ReadingBoxs';
+import HolidaySelect from './HolidaySelect';
 
 moment.locale('ko');
 
@@ -37,6 +38,7 @@ export const InputPageMainDivBox = styled.div`
 `;
 
 const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, Today_Date }) => {
+    console.log(List_Items, WeekContainer, setWeekContainer, Select_Date, Today_Date);
     const HandleClicksAddChild = () => {
         const Insert_Data = {
             index: `${moment().format('YYYYMMDDHHmmss')}`,
@@ -86,24 +88,40 @@ const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, T
     };
     return (
         <InputPageMainDivBox>
-            <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px' }}>
-                {moment(List_Items.date).format('MM.DD dddd')}
-            </div>
+            {List_Items.holidayChecking ? (
+                <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px', color: 'red' }}>
+                    {moment(List_Items.date).format('MM.DD dddd')}
+                    (공휴일)
+                </div>
+            ) : (
+                <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px' }}>
+                    {moment(List_Items.date).format('MM.DD dddd')}
+                </div>
+            )}
+
             <div>
                 {List_Items.child.map((list, j) => {
                     return (
                         <div key={list.index}>
                             <div className="Delete_Container">
                                 <div>{j + 1}.</div>
-                                <div className="Delete_Button" onClick={() => HandleDeleteTable(list)}>
-                                    <MdDeleteForever />
-                                </div>
+                                {!List_Items.holidayChecking ? (
+                                    <div className="Delete_Button" onClick={() => HandleDeleteTable(list)}>
+                                        <MdDeleteForever />
+                                    </div>
+                                ) : (
+                                    <></>
+                                )}
                             </div>
-                            <SelectBoxs
-                                WeekContainer={WeekContainer}
-                                setWeekContainer={data => setWeekContainer(data)}
-                                Now_Data={list}
-                            ></SelectBoxs>
+                            {List_Items.holidayChecking ? (
+                                <HolidaySelect Now_Data={list}></HolidaySelect>
+                            ) : (
+                                <SelectBoxs
+                                    WeekContainer={WeekContainer}
+                                    setWeekContainer={data => setWeekContainer(data)}
+                                    Now_Data={list}
+                                ></SelectBoxs>
+                            )}
                         </div>
                     );
                 })}
@@ -114,7 +132,7 @@ const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, T
                     <div>{List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)}</div>
                 </div>
             </div>
-            {Today_Date === Select_Date ? (
+            {Today_Date === Select_Date && !List_Items.holidayChecking ? (
                 <div style={{ marginBottom: '40px' }}>
                     <div className="Plus_Container" onClick={() => HandleClicksAddChild()}>
                         <FaPlus />

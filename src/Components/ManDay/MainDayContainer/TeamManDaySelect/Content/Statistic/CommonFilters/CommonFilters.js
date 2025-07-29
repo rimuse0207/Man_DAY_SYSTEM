@@ -19,16 +19,15 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
     const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [Equipment_Options, setEquipment_Options] = useState([]);
+    const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
 
     useEffect(() => {
         Getting_Team_Member_Lists();
-        const a = Input_Title_Lists?.flatMap(list => {
-            return list?.Eqipment_lists?.flatMap(item => {
-                return {
-                    value: item.itemCode,
-                    label: item.itemName,
-                };
-            });
+        const a = Sub_Depart_Option_Lists?.flatMap(list => {
+            return {
+                value: list.itemCode,
+                label: list.itemName,
+            };
         });
 
         setEquipment_Options(a);

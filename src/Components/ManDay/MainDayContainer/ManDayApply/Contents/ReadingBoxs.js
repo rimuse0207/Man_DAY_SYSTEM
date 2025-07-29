@@ -15,9 +15,16 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
 
     return (
         <InputPageMainDivBox>
-            <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px' }}>
-                {moment(List_Items.date).format('MM.DD dddd')}
-            </div>
+            {List_Items.holidayChecking ? (
+                <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px', color: 'red' }}>
+                    {moment(List_Items.date).format('MM.DD dddd')}
+                    (공휴일)
+                </div>
+            ) : (
+                <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px' }}>
+                    {moment(List_Items.date).format('MM.DD dddd')}
+                </div>
+            )}
             <div>
                 {List_Items.child.map((list, j) => {
                     return (

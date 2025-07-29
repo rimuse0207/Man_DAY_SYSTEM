@@ -7,12 +7,13 @@ import UserListsComponent from './Left/UserLists';
 import { FaUserFriends } from 'react-icons/fa';
 import ManDaySelect from './Right/SelectMode/ManDaySelect';
 import { IoIosArrowBack } from 'react-icons/io';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IoIosArrowForward } from 'react-icons/io';
 import { toast } from '../../../../../ToastMessage/ToastManager';
 import ManDayUpdateMode from './Right/UpdateMode/ManDayUpdateMode';
 import UpdateModeMainPage from './Right/UpdateMode/UpdateModeMainPage';
 import ManDayInsertMode from './Right/InsertMode/ManDayInsertMode';
+import { Man_Day_Select_Option_fetchData } from '../../../../../../Models/ReduxThunks/ManDaySelectOptionReducer';
 
 export const MyListMainDivBox = styled.div`
     width: 300px;
@@ -127,6 +128,11 @@ const SelectWeekMainPageMainDivBox = styled.div`
 `;
 
 const SelectWeekMainPage = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(Man_Day_Select_Option_fetchData());
+    }, []);
     const Today_Date = moment().clone().startOf('isoWeek').format('YYYY-MM-DD');
     const [NowDate, setNowDate] = useState(moment().clone().startOf('isoWeek').format('YYYY-MM-DD'));
     const [UserLists, setUserLists] = useState([]);
@@ -141,7 +147,6 @@ const SelectWeekMainPage = () => {
         const Getting_Team_Member_Lists_Axios = await Request_Get_Axios('/API/PLM/Getting_Team_Member_Lists', {
             NowDate,
         });
-
         if (Getting_Team_Member_Lists_Axios.status) {
             setUserLists(Getting_Team_Member_Lists_Axios.data);
             if (Now_Select_User) {

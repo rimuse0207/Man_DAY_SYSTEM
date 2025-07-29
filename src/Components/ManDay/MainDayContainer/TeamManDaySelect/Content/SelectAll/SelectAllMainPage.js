@@ -62,9 +62,9 @@ const SelectAllMainPage = () => {
                             날짜: data.date,
                             팀: item.departmentName,
                             이름: item.name,
-                            대분류: re.depart || '',
+                            설비군: re.depart || '',
                             설비명: re.sub_depart || '',
-                            구분: re.divideCode || '',
+                            업무유형: re.divideCode || '',
                             Man_Day: re.manDay || '',
                         });
                     });
@@ -74,9 +74,9 @@ const SelectAllMainPage = () => {
                         날짜: data.date,
                         팀: item.departmentName,
                         이름: item.name,
-                        대분류: '',
+                        설비군: '',
                         설비명: '',
-                        구분: '',
+                        업무유형: '',
                         Man_Day: '',
                     });
                 }

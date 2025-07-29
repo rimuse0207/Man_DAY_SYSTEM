@@ -211,6 +211,8 @@ const ContentMainPage = () => {
         const Getting_Man_Day_Info_Before_Data_Axios = await Request_Get_Axios(`/API/PLM/Getting_Man_Day_Info_Before_Data`, {
             Select_Date,
         });
+
+        console.log(Getting_Man_Day_Info_Before_Data_Axios);
         if (Getting_Man_Day_Info_Before_Data_Axios.status) {
             if (Getting_Man_Day_Info_Before_Data_Axios.data.Date_Lists.length > 0) {
                 setWeekContainer(Getting_Man_Day_Info_Before_Data_Axios.data);
@@ -310,13 +312,13 @@ const ContentMainPage = () => {
             if (Handle_Getting_Before_Man_Day_Data.data.Have_Previous_data) {
                 setWeekContainer(Handle_Getting_Before_Man_Day_Data.data.data);
                 toast.show({
-                    title: `이전 주의 데이터를 불러왔습니다.`,
+                    title: `이전 주 데이터를 불러왔습니다.`,
                     successCheck: true,
                     duration: 3000,
                 });
             } else {
                 toast.show({
-                    title: `이전 주의 저장한 데이터가 없습니다.`,
+                    title: `이전 주 데이터가 없습니다.`,
                     successCheck: false,
                     duration: 5000,
                 });

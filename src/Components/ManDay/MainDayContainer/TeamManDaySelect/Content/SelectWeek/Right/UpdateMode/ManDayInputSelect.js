@@ -3,11 +3,16 @@ import { SelectBoxsMainDivBox } from '../../../../../ManDayApply/Contents/Select
 import { useSelector } from 'react-redux';
 
 const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
-    const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
-    const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+    // const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
+    // const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
+
+    const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
+    const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
+    const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
 
     const handleFieldChange = (e, fieldName) => {
         const newValue = e?.target?.value;
+
         setWeekContainer(prev => {
             const updatedDateLists = prev.man_day_infos.map(dayItem => {
                 if (dayItem.date === Now_Data.date && dayItem.indexs === Now_Data.indexs) {
@@ -35,17 +40,14 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                         onChange={e => {
                             handleFieldChange(e, 'departCode');
                             handleFieldChange(null, 'subDepartCode');
+                            handleFieldChange(null, 'divide');
                         }}
                     >
                         <option value={null}></option>
-                        {Input_Title_Lists.map(list => {
+                        {Depart_Option_Lists.map(list => {
                             return (
-                                <option
-                                    value={list.Major_Category_Code}
-                                    data-name={list.Major_Category_Name}
-                                    key={list.Major_Category_Code}
-                                >
-                                    {list.Major_Category_Name}
+                                <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
+                                    {list.itemName}
                                 </option>
                             );
                         })}
@@ -55,9 +57,16 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
             <div className="Input_GR">
                 <div className="Title">설비명</div>
                 <div className="Answer">
-                    <select name="subDepartCode" value={Now_Data.subDepartCode} onChange={e => handleFieldChange(e, 'subDepartCode')}>
+                    <select
+                        name="subDepartCode"
+                        value={Now_Data.subDepartCode}
+                        onChange={e => {
+                            handleFieldChange(e, 'subDepartCode');
+                            handleFieldChange(null, 'divide');
+                        }}
+                    >
                         <option value={null}></option>
-                        {Input_Title_Lists.map(item => {
+                        {/* {Input_Title_Lists.map(item => {
                             if (item.Major_Category_Code === Now_Data.departCode) {
                                 return item.Eqipment_lists.map(list => {
                                     return (
@@ -67,7 +76,16 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                                     );
                                 });
                             }
-                        })}
+                        })} */}
+                        {Sub_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.departCode)
+                            .sort((a, b) => a.itemRank - b.itemRank)
+                            .map(list => {
+                                return (
+                                    <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
+                                        {list.itemName}
+                                    </option>
+                                );
+                            })}
                     </select>
                 </div>
             </div>
@@ -76,13 +94,22 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                 <div className="Answer">
                     <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
                         <option value={null}></option>
-                        {Divide_Lists.map(list => {
+                        {/* {Divide_Lists.map(list => {
                             return (
                                 <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
                                     {list.itemName}
                                 </option>
                             );
-                        })}
+                        })} */}
+                        {Divide_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.subDepartCode)
+                            .sort((a, b) => a.itemRank - b.itemRank)
+                            .map(list => {
+                                return (
+                                    <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
+                                        {list.itemName}
+                                    </option>
+                                );
+                            })}
                     </select>
                 </div>
             </div>

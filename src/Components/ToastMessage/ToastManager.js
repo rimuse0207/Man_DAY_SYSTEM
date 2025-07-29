@@ -10,7 +10,7 @@ export class ToastManager {
     constructor() {
         const body = document.getElementsByTagName('body')[0];
         const toastContainer = document.createElement('div');
-        toastContainer.id = 'toast-container-main';
+        toastContainer.id = 'Toast';
         body.insertAdjacentElement('beforeend', toastContainer);
         this.containerRef = toastContainer;
     }
@@ -34,7 +34,7 @@ export class ToastManager {
 
     render() {
         const toastsList = this.toasts.map(toastProps => <Toast key={toastProps.id} {...toastProps} />);
-        root.render(toastsList, this.containerRef);
+        root.render(toastsList);
     }
 }
 

@@ -85,11 +85,12 @@ const LicenseContainer = () => {
                                 <tr>
                                     {WeekContainer.map(list => {
                                         return list.child.length > 0 ? (
-                                            <td className="Td_Descript" onClick={() => Navigation('/Man_day/Apply')}>
+                                            <td className="Td_Descript" onClick={() => Navigation('/Man_day/Apply')} key={list.date}>
                                                 입력완료
                                             </td>
                                         ) : (
                                             <td
+                                                key={list.date}
                                                 className="Td_Descript"
                                                 onClick={() => Navigation('/Man_day/Apply')}
                                                 style={{ color: 'red' }}
