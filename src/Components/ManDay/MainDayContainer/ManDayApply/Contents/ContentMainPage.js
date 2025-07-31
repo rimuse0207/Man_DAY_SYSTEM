@@ -11,6 +11,8 @@ import ReadingBoxs from './ReadingBoxs';
 import { MdOutlineArrowBackIosNew } from 'react-icons/md';
 import { MdArrowForwardIos } from 'react-icons/md';
 import { getWeekOfMonth } from '../../CommonFunc/CommonFunc';
+import { BsFillQuestionSquareFill } from 'react-icons/bs';
+
 moment.locale('ko');
 
 export const ContentMainPageMainDivBox = styled.div`
@@ -122,6 +124,18 @@ export const ContentMainPageMainDivBox = styled.div`
             }
         }
     }
+
+    .Support_Icons {
+        display: flex;
+        margin-left: 10px;
+
+        font-size: 1em;
+        padding-top: 10px;
+        &:hover {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+    }
 `;
 
 const ContentMainPage = () => {
@@ -212,7 +226,6 @@ const ContentMainPage = () => {
             Select_Date,
         });
 
-        console.log(Getting_Man_Day_Info_Before_Data_Axios);
         if (Getting_Man_Day_Info_Before_Data_Axios.status) {
             if (Getting_Man_Day_Info_Before_Data_Axios.data.Date_Lists.length > 0) {
                 setWeekContainer(Getting_Man_Day_Info_Before_Data_Axios.data);
@@ -255,19 +268,19 @@ const ContentMainPage = () => {
             return;
         }
         const factor = 100000;
-        const tolerance = 1;
+        const expectedTotal = factor * 8; // 800000
+        const tolerance = 0;
         /// 일별로 Man_Day가 1이 되는지 체크
         const Sum_Check = WeekContainer.Date_Lists.filter(item => item.child.length > 0)
             .map(list => {
-                const total = list.child
-                    .map(child => Math.round(Number(child.man_day) * factor)) // 먼저 정수화
-                    .reduce((a, b) => a + b, 0); // 정수끼리 합산
+                const total = list.child.map(child => Math.round(Number(child.man_day) * factor)).reduce((a, b) => a + b, 0);
                 return total;
             })
-            .filter(total => Math.abs(total - factor) > tolerance);
+            .filter(total => Math.abs(total - expectedTotal) > tolerance); // 800000이 아니면 필터됨
+
         if (Sum_Check.length > 0) {
             toast.show({
-                title: `Man-day는 일별 합산이 1이 되어야 합니다.`,
+                title: `Man-day는 일별 합산이 8이 되어야 합니다.`,
                 successCheck: false,
                 duration: 6000,
             });
@@ -412,6 +425,18 @@ const ContentMainPage = () => {
                     <MdOutlineArrowBackIosNew />
                 </div>
                 <h2>{getWeekOfMonth(WeekContainer.represent_Date)}</h2>
+                <h2
+                    className="Support_Icons"
+                    onClick={() =>
+                        window.open(
+                            '/Man_Day/Example',
+                            '입력 예시',
+                            'menubar=no, toolbar=no, location=no, scrollbars=no, status=no, width=1200px, height=700px'
+                        )
+                    }
+                >
+                    <BsFillQuestionSquareFill />
+                </h2>
                 {Today_Date === Select_Date ? (
                     ''
                 ) : (

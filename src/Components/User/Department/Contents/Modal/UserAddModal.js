@@ -76,7 +76,7 @@ const UserAddModal = ({ onClose, User_Lists, Choose_Lists, Department_Including_
                     </div>
                     <div></div>
                     <div className="All_Container">
-                        <div className="Left_Content">
+                        <div className="Left_Content" style={{ height: 'calc(100vh-100px)' }}>
                             <div className="Button_Containers">
                                 <div style={{ width: 'calc(100% - 60px)', textAlign: 'start' }}>
                                     <Select
@@ -102,7 +102,7 @@ const UserAddModal = ({ onClose, User_Lists, Choose_Lists, Department_Including_
                                 setNowSelect={data => setNowSelect(data)}
                             ></ParentTree>
                         </div>
-                        <div className="Right_Content">
+                        <div className="Right_Content" style={{ height: 'calc(100vh-100px)' }}>
                             <UserSelectTable
                                 onClose={() => onClose()}
                                 NowSelect={NowSelect}

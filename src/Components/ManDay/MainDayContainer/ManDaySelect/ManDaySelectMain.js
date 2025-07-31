@@ -2,15 +2,18 @@ import React, { useEffect, useState } from 'react';
 import Table from './Contents/Table';
 import { Request_Get_Axios } from '../../../../API';
 import TableFilter from './Contents/TableFilter';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../../Loader/Loader';
 import { initState } from '../../../../Models/ManDayReducers/ManDaySelectFilterReducer';
+import { Man_Day_Select_Option_fetchData } from '../../../../Models/ReduxThunks/ManDaySelectOptionReducer';
 const ManDaySelectMain = () => {
+    const dispatch = useDispatch();
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [Table_State, setTable_State] = useState([]);
     const [Loading_Check, setLoading_Check] = useState(false);
     useEffect(() => {
         Getting_Man_Day_Info_Data_Lists();
+        dispatch(Man_Day_Select_Option_fetchData());
     }, []);
 
     const Getting_Man_Day_Info_Data_Lists = async data => {

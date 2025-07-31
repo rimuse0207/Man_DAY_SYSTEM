@@ -113,7 +113,7 @@ const EventBar = styled.div`
     }
 `;
 
-const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) => {
+const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holiday_List }) => {
     const [hoveredEvent, setHoveredEvent] = useState(null);
     const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
     const [ChooseDate, setChooseDate] = useState(moment().format('YYYY-MM-DD'));
@@ -127,16 +127,67 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
     const prevDaysInMonth = prevLastDay.getDate();
 
     const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
-    const days = [];
+    // const days = [];
 
+    // for (let i = startDay - 1; i >= 0; i--) {
+    //     days.push({ day: prevDaysInMonth - i, isCurrentMonth: false });
+    // }
+    // for (let i = 1; i <= daysInMonth; i++) {
+    //     days.push({ day: i, isCurrentMonth: true });
+    // }
+    // while (days.length % 7 !== 0) {
+    //     days.push({ day: days.length - daysInMonth - startDay + 1, isCurrentMonth: false });
+    // }
+
+    const days = [];
+    let index = 0;
+    const today = new Date();
+    const todayStr = today.toDateString(); // 비교용 문자열
+    // 이전 달 날짜 추가
     for (let i = startDay - 1; i >= 0; i--) {
-        days.push({ day: prevDaysInMonth - i, isCurrentMonth: false });
+        const day = prevDaysInMonth - i;
+        const dateObj = new Date(year, month - 1, day);
+        days.push({
+            day: prevDaysInMonth - i,
+            isCurrentMonth: false,
+            isWeekend: index % 7 === 0 || index % 7 === 6,
+            dayOfWeek: index % 7, // 0:일, 6:토
+            TodayChecking: dateObj.toDateString() === todayStr,
+            holidayChecking: Holiday_List.some(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+            holidayNaming: Holiday_List.filter(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+        });
+        index++;
     }
+
+    // 이번 달 날짜 추가
     for (let i = 1; i <= daysInMonth; i++) {
-        days.push({ day: i, isCurrentMonth: true });
+        const dateObj = new Date(year, month, i);
+        days.push({
+            day: i,
+            isCurrentMonth: true,
+            isWeekend: index % 7 === 0 || index % 7 === 6,
+            dayOfWeek: index % 7,
+            TodayChecking: dateObj.toDateString() === todayStr,
+            holidayChecking: Holiday_List.some(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+            holidayNaming: Holiday_List.filter(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+        });
+        index++;
     }
+
+    // 다음 달 날짜로 주 마무리
     while (days.length % 7 !== 0) {
-        days.push({ day: days.length - daysInMonth - startDay + 1, isCurrentMonth: false });
+        const day = days.length - daysInMonth - startDay + 1;
+        const dateObj = new Date(year, month + 1, day);
+        days.push({
+            day: days.length - daysInMonth - startDay + 1,
+            isCurrentMonth: false,
+            isWeekend: index % 7 === 0 || index % 7 === 6,
+            dayOfWeek: index % 7,
+            TodayChecking: dateObj.toDateString() === todayStr,
+            holidayChecking: Holiday_List.some(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+            holidayNaming: Holiday_List.filter(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+        });
+        index++;
     }
 
     const eventLayers = {};
@@ -243,7 +294,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                             style={{ justifyContent: 'center', alignItems: 'center' }}
                             dynamicHeight={Math.max(0, ...eventBars.map(o => o.row))}
                         >
-                            {day}
+                            <div style={day === '토' ? { color: 'blue' } : day === '일' ? { color: 'red' } : {}}>{day}</div>
                         </DayCell>
                     ))}
                     {days.map((date, index) => (
@@ -252,8 +303,22 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State }) =>
                             isCurrentMonth={date.isCurrentMonth}
                             // onClick={() => HandleAddSchedule(date)}
                             dynamicHeight={Math.max(0, ...eventBars.map(o => o.row))}
+                            style={date.TodayChecking ? { background: '#eff1d1' } : {}}
                         >
-                            {date.day}
+                            <div
+                                style={
+                                    date.dayOfWeek === 0 || date.holidayChecking
+                                        ? { color: 'red' }
+                                        : date.dayOfWeek === 6
+                                        ? { color: 'blue' }
+                                        : {}
+                                }
+                            >
+                                {date.day}{' '}
+                                <span style={{ fontSize: '0.8em' }}>
+                                    {date.holidayNaming.length > 0 ? `( ${date.holidayNaming[0]?.holidayName} )` : ''}
+                                </span>
+                            </div>
                         </DayCell>
                     ))}
                     {eventBars.map((bar, idx) => (

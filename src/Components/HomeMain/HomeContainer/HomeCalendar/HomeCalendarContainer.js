@@ -10,7 +10,19 @@ const HomeCalendarContainer = () => {
     const [year, setYear] = useState(now.getFullYear());
     const [month, setMonth] = useState(now.getMonth());
     const [events, setEvents] = useState([]);
+    const [Holiday_List, setHoliday_List] = useState([]);
+    useEffect(() => {
+        Getting_Holiday_Lists();
+    }, [month]);
 
+    const Getting_Holiday_Lists = async () => {
+        const Getting_Holiday_Lists = await Request_Get_Axios('/API/PLM/user/Getting_Holiday_Lists', {
+            Select_Date: `${year}-${month > 10 ? month + 1 : `0${month + 1}`}`,
+        });
+        if (Getting_Holiday_Lists.status) {
+            setHoliday_List(Getting_Holiday_Lists.data);
+        }
+    };
     const Change_Color_State = async () => {
         const Getting_PIMS_Data = await Request_Get_Axios('/API/PLM/Getting_Month_Man_Day_Select', {
             date: `${year}-${month + 1}`,
@@ -42,6 +54,7 @@ const HomeCalendarContainer = () => {
 
     return (
         <Calendar
+            Holiday_List={Holiday_List}
             year={year}
             month={month}
             onMonthChange={handleMonthChange}

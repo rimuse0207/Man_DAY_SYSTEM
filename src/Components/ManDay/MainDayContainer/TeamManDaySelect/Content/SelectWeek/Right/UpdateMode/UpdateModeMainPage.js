@@ -76,9 +76,9 @@ const UpdateModeMainPage = ({ Now_Select_User, NowDate, setSelect_Modes, Getting
                 man_day: item.data.reduce((pre, acc) => pre + Number(acc.manDay), 0),
             };
         });
-        if (Chechking_Man_Day_Sum.some(item => item.man_day !== 1 && item.man_day !== 0)) {
+        if (Chechking_Man_Day_Sum.some(item => item.man_day !== 8 && item.man_day !== 0)) {
             toast.show({
-                title: `Man-day 합산은 1이 되어야 합니다.`,
+                title: `Man-day 합산은 8이 되어야 합니다.`,
                 successCheck: false,
                 duration: 6000,
             });

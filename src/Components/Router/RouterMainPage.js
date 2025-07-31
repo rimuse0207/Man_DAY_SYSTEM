@@ -8,6 +8,7 @@ import ManDayMainPage from '../ManDay/ManDayMainPage';
 import ManDayApplyMain from '../ManDay/MainDayContainer/ManDayApply/ManDayApplyMain';
 import UserMainPage from '../User/UserMainPage';
 import TeamManDaySelectMainPage from '../ManDay/MainDayContainer/TeamManDaySelect/TeamManDaySelectMainPage';
+import ManDayExampleMainPage from '../ManDay/ManDayExampleMainPage';
 const RouterMainPage = () => {
     const User_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const [RouterInfo, setRouterInfo] = useState([
@@ -56,6 +57,12 @@ const RouterMainPage = () => {
             withAuthorization: true,
             withAdminAuthorization: true,
             needAccessToken: 'user',
+        },
+        {
+            path: '/Man_Day/Example',
+            element: <ManDayExampleMainPage></ManDayExampleMainPage>,
+            withAuthorization: false,
+            withAdminAuthorization: false,
         },
     ]);
 

@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import DepartmentMainPage from './Department/DepartmentMainPage';
 import UserContentMainPage from './User/UserContentMainPage';
 import AccessMainPage from './Access/AccessMainPage';
+import HolidayMainPage from './Holiday/HolidayMainPage';
 const UserMainPage = () => {
     const { Select_Menus } = useParams();
     const { pathname } = useLocation();
@@ -54,6 +55,17 @@ const UserMainPage = () => {
                 },
             ],
         },
+        {
+            Menu_Select: 'holiday',
+            Menu_List: [
+                {
+                    menu_name: '공휴일 관리',
+                    menu_path: '/User_Manage/holiday',
+                    menu_title: '/User_Manage/holiday',
+                    menu_show_access: 'holiday',
+                },
+            ],
+        },
     ]);
 
     return (
@@ -92,6 +104,7 @@ const UserMainPage = () => {
                     {Select_Menus === 'department' ? <DepartmentMainPage></DepartmentMainPage> : ''}
                     {Select_Menus === 'user' ? <UserContentMainPage></UserContentMainPage> : ''}
                     {Select_Menus === 'access' ? <AccessMainPage></AccessMainPage> : ''}
+                    {Select_Menus === 'holiday' ? <HolidayMainPage></HolidayMainPage> : ''}
                 </div>
             </div>
         </AnnualLeaveContainerMainPageMainDivBox>

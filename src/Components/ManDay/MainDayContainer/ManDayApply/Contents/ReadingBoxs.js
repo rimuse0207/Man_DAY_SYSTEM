@@ -61,7 +61,7 @@ const ReadingBoxs = ({ List_Items, WeekContainer, setWeekContainer }) => {
                                     </div>
                                 </div>
                                 <div className="Input_GR">
-                                    <div className="Title">Man-day</div>
+                                    <div className="Title">Man-day(시간)</div>
                                     <div className="Answer" style={{ textAlign: 'center' }}>
                                         {list.man_day.toFixed(1)}
                                     </div>

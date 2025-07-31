@@ -76,10 +76,21 @@ const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_T
                 man_day: item.data.reduce((pre, acc) => pre + Number(acc.manDay), 0),
             };
         });
+        // const tolerance = 0.00001;
+        // if (Chechking_Man_Day_Sum.some(item => item.man_day !== 0 && Math.abs(item.man_day - 1) > tolerance)) {
+        //     toast.show({
+        //         title: `Man-day 합산은 8이 되어야 합니다.`,
+        //         successCheck: false,
+        //         duration: 6000,
+        //     });
+        //     return;
+        // }
         const tolerance = 0.00001;
-        if (Chechking_Man_Day_Sum.some(item => item.man_day !== 0 && Math.abs(item.man_day - 1) > tolerance)) {
+        const totalSum = Chechking_Man_Day_Sum.map(item => Number(item.man_day)).reduce((a, b) => a + b, 0);
+
+        if (Math.abs(totalSum - 8) > tolerance) {
             toast.show({
-                title: `Man-day 합산은 1이 되어야 합니다.`,
+                title: `Man-day 합산은 8이 되어야 합니다.`,
                 successCheck: false,
                 duration: 6000,
             });

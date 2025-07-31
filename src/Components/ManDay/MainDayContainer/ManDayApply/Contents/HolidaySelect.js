@@ -34,7 +34,7 @@ const HolidaySelect = ({ Now_Data }) => {
             </div>
 
             <div className="Input_GR">
-                <div className="Title">Man-day</div>
+                <div className="Title">Man-day(시간)</div>
                 <div className="Answer" style={{ textAlign: 'center' }}>
                     {Now_Data.man_day}
                 </div>

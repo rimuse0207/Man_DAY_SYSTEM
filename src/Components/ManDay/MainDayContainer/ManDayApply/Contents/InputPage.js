@@ -38,7 +38,6 @@ export const InputPageMainDivBox = styled.div`
 `;
 
 const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, Today_Date }) => {
-    console.log(List_Items, WeekContainer, setWeekContainer, Select_Date, Today_Date);
     const HandleClicksAddChild = () => {
         const Insert_Data = {
             index: `${moment().format('YYYYMMDDHHmmss')}`,

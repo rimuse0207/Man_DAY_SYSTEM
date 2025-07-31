@@ -77,28 +77,28 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
             const selected = e?.target?.selectedOptions[0];
             const customData = selected?.getAttribute('data-name');
             if (customData) {
-                if (customData === '연차' || customData === '-') {
+                if (customData === '연차' || customData === '공휴일') {
                     setReadOnlySetting(true);
 
                     handleFieldChange(
                         {
                             target: {
-                                value: 1,
+                                value: 8,
                             },
                         },
                         'man_day'
                     );
                     toast.show({
-                        title: `Man-Day는 1로 고정됩니다.`,
+                        title: `Man-day(시간)는 8로 고정됩니다.`,
                         successCheck: true,
                         duration: 3000,
                     });
                 } else if (customData === '반차') {
                     setReadOnlySetting(true);
-                    handleFieldChange({ target: { value: 0.5 } }, 'man_day');
+                    handleFieldChange({ target: { value: 4 } }, 'man_day');
 
                     toast.show({
-                        title: `Man-Day는 0.5로 고정됩니다.`,
+                        title: `Man-day(시간)는 4로 고정됩니다.`,
                         successCheck: true,
                         duration: 3000,
                     });
@@ -118,9 +118,15 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         name="depart"
                         value={Now_Data.depart}
                         onChange={e => {
-                            handleFieldChange(e, 'depart');
-                            handleFieldChange(null, 'sub_depart');
-                            handleFieldChange(null, 'divide');
+                            if (e?.target?.value === 'AA99') {
+                                handleFieldChange(e, 'depart');
+                                handleFieldChange({ target: { value: 'AA9901' } }, 'sub_depart');
+                                handleFieldChange(null, 'divide');
+                            } else {
+                                handleFieldChange(e, 'depart');
+                                handleFieldChange(null, 'sub_depart');
+                                handleFieldChange(null, 'divide');
+                            }
                         }}
                     >
                         <option value={null}></option>
@@ -227,14 +233,14 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                 </div>
             </div> */}
             <div className="Input_GR">
-                <div className="Title">Man-day</div>
+                <div className="Title">Man-day(시간)</div>
                 <div className="Answer">
                     <input
                         value={Now_Data.man_day}
                         type="number"
                         min={0}
-                        max={1}
-                        step={0.1}
+                        max={8}
+                        step={1}
                         onChange={e => handleFieldChange(e, 'man_day')}
                         readOnly={ReadOnlySetting}
                     ></input>
