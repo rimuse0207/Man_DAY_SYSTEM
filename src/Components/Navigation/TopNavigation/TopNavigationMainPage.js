@@ -30,12 +30,11 @@ const NavigationMainPageMainDivBox = styled.div`
         margin: 0 auto;
     }
     .Navigation_Icons {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         background-color: lightgray;
         border-radius: 50%;
         background-size: cover;
-        box-shadow: 0px 0px 3px 5px lightgray;
         background-repeat: repeat;
         background-position-y: center;
 
@@ -43,7 +42,7 @@ const NavigationMainPageMainDivBox = styled.div`
             padding: 10px;
             width: 100%;
             height: 100%;
-            color: darkgray;
+            color: #fff;
         }
     }
     .Main_Logo_Container {

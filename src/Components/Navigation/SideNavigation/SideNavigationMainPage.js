@@ -162,7 +162,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
             </div>
             <div>
                 <div className="PersonalNavigation_WorkStatus">
-                    <div>
+                    <div style={{ marginBottom: '30px' }}>
                         <ul className="PersonalNavigation_WorkStatus_ListsShow">
                             {User_Side_Menu_List.filter(item => item.Menu_Select === NavState).map(item =>
                                 item.Menu_List.map(list => {
@@ -183,8 +183,8 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                         </ul>
                     </div>
                     {Login_Info.admin_access.some(list => list.accessMenuCode === NavState?.toLowerCase()) ? (
-                        <div style={{ marginTop: '30px' }}>
-                            <div>관리자</div>
+                        <div style={{ borderTop: '2px solid lightgray' }}>
+                            <div style={{ marginTop: '20px' }}>관리자</div>
                             <ul className="PersonalNavigation_WorkStatus_ListsShow">
                                 {Admin_Side_Menu_List.filter(item => item.Menu_Select === NavState?.toLowerCase()).map(item =>
                                     item.Menu_List.map(list => {

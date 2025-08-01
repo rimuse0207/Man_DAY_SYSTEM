@@ -39,13 +39,15 @@ export const InputPageMainDivBox = styled.div`
 
 const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, Today_Date }) => {
     const HandleClicksAddChild = () => {
+        const cacl_man = 8 - List_Items?.child?.reduce((pre, acc) => pre + Number(acc.man_day), 0);
+
         const Insert_Data = {
             index: `${moment().format('YYYYMMDDHHmmss')}`,
             date: List_Items.date,
             depart: null,
             sub_depart: null,
             divide: null,
-            man_day: 0,
+            man_day: cacl_man > 0 && cacl_man <= 8 ? cacl_man : cacl_man < 0 ? 1 : 0,
         };
         const Concat_Data = List_Items.child.concat(Insert_Data);
 
@@ -127,8 +129,14 @@ const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, T
             </div>
             <div style={{ borderTop: '1px solid lightgray' }}>
                 <div style={{ textAlign: 'end' }}>
-                    <h5>Man-day 합</h5>
-                    <div>{List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)}</div>
+                    <h5>Man-day(시간) 합</h5>
+                    {Number(List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)) === 8 ? (
+                        <div>{List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)} 시간</div>
+                    ) : (
+                        <div style={{ color: 'red', fontWeight: 'bolder' }}>
+                            {List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)} 시간
+                        </div>
+                    )}
                 </div>
             </div>
             {Today_Date === Select_Date && !List_Items.holidayChecking ? (

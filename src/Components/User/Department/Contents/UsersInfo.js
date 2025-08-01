@@ -48,6 +48,12 @@ export const UserInfoMainDivBox = styled.div`
             }
         }
     }
+    thead {
+        position: sticky;
+        top: -10px;
+        height: 30px;
+        background-color: #fff;
+    }
     .Detail_Info_Button_Container {
         &:hover {
             cursor: pointer;
@@ -161,7 +167,7 @@ const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {
     };
 
     return (
-        <UserInfoMainDivBox>
+        <UserInfoMainDivBox style={{ height: 'calc(100vh - 270px)', overflow: 'auto' }}>
             <h4 style={{ marginBottom: '10px' }}>부서원 목록</h4>
             <div>
                 <div>

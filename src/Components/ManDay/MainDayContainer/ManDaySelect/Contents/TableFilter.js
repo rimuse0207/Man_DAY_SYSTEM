@@ -193,7 +193,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                             options={Depart_Option_Lists.map(list => {
                                 return { value: list.itemCode, label: list.itemName };
                             })}
-                            placeholder="선택 해 주세요."
+                            placeholder="선택해 주세요."
                         ></Select>
                     </div>
                 </div>
@@ -233,7 +233,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                                     });
                                 }
                             }}
-                            placeholder="설비군을 선택해주세요."
+                            placeholder="선택해 주세요."
                         ></Select>
                     </div>
                 </div>
@@ -259,7 +259,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
                                     });
                                 }
                             }}
-                            placeholder="설비명을 선택해주세요."
+                            placeholder="선택해 주세요."
                         ></Select>
                     </div>
                 </div>

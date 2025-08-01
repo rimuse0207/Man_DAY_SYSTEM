@@ -12,7 +12,8 @@ import { MdOutlineArrowBackIosNew } from 'react-icons/md';
 import { MdArrowForwardIos } from 'react-icons/md';
 import { getWeekOfMonth } from '../../CommonFunc/CommonFunc';
 import { BsFillQuestionSquareFill } from 'react-icons/bs';
-
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 moment.locale('ko');
 
 export const ContentMainPageMainDivBox = styled.div`
@@ -136,6 +137,9 @@ export const ContentMainPageMainDivBox = styled.div`
             opacity: 0.7;
         }
     }
+    .react-confirm-alert-overlay {
+        background-color: lightgray;
+    }
 `;
 
 const ContentMainPage = () => {
@@ -245,11 +249,25 @@ const ContentMainPage = () => {
 
     // 수정모드 취소
     const Cancel_Man_Day_Data = async () => {
-        await Getting_Man_Day_Info_Befroe_Data();
-        toast.show({
-            title: `수정모드가 취소 되었습니다.`,
-            successCheck: true,
-            duration: 2000,
+        confirmAlert({
+            title: '정말 취소 하시겠습니까?',
+            message: '취소하시면 저장되지 않은 데이터는 삭제됩니다.',
+            buttons: [
+                {
+                    label: '예',
+                    onClick: async () => {
+                        await Getting_Man_Day_Info_Befroe_Data();
+                        toast.show({
+                            title: `수정모드가 취소 되었습니다.`,
+                            successCheck: true,
+                            duration: 2000,
+                        });
+                    },
+                },
+                {
+                    label: '아니오',
+                },
+            ],
         });
     };
 
@@ -261,7 +279,7 @@ const ContentMainPage = () => {
         }).filter(item => item.length > 0);
         if (ChcekNull.length > 0) {
             toast.show({
-                title: `대분류/설비명/구분을 전부 입력 해야 저장이 가능합니다.`,
+                title: `설비군/설비명/업무 유형을 전부 입력 해야 저장이 가능합니다.`,
                 successCheck: false,
                 duration: 6000,
             });
@@ -307,9 +325,7 @@ const ContentMainPage = () => {
         });
         if (Sending_Man_Day_Real_Data.status) {
             toast.show({
-                title: `${getWeekOfMonth(WeekContainer.represent_Date)} Man_Day ${
-                    WeekContainer.Mode === 'updating' ? `수정` : `입력`
-                } 완료되었습니다.`,
+                title: `금주 Man_Day ${WeekContainer.Mode === 'updating' ? `수정` : `입력`} 완료되었습니다.`,
                 successCheck: true,
                 duration: 6000,
             });
@@ -325,13 +341,13 @@ const ContentMainPage = () => {
             if (Handle_Getting_Before_Man_Day_Data.data.Have_Previous_data) {
                 setWeekContainer(Handle_Getting_Before_Man_Day_Data.data.data);
                 toast.show({
-                    title: `이전 주 데이터를 불러왔습니다.`,
+                    title: `이전주의 저장한 데이터를 불러왔습니다.`,
                     successCheck: true,
                     duration: 3000,
                 });
             } else {
                 toast.show({
-                    title: `이전 주 데이터가 없습니다.`,
+                    title: `이전주의 저장한 데이터가 없습니다.`,
                     successCheck: false,
                     duration: 5000,
                 });
@@ -352,13 +368,13 @@ const ContentMainPage = () => {
         });
         if (Save_Temporarily_Man_Dat_Info_Data_Axios.status) {
             toast.show({
-                title: `${moment(Select_Date).format('MM월 DD일')}의 데이터를 임시 저장 완료하였습니다.`,
+                title: `데이터를 임시저장하였습니다.`,
                 successCheck: true,
                 duration: 5000,
             });
         } else {
             toast.show({
-                title: `${moment(Select_Date).format('MM월 DD일')}의 데이터를 임시 저장에 실패하였습니다.`,
+                title: `데이터 임시저장에 실패하였습니다.`,
                 successCheck: false,
                 duration: 5000,
             });
@@ -380,13 +396,13 @@ const ContentMainPage = () => {
                     Date_Lists: Handle_Getting_Save_Temporarily_Man_Dat_Data.data.data.Date_Lists,
                 });
                 toast.show({
-                    title: `임시 저장된 데이터를 불러왔습니다.`,
+                    title: `임시 저장한 데이터를 불러왔습니다.`,
                     successCheck: true,
                     duration: 3000,
                 });
             } else {
                 toast.show({
-                    title: `임시 저장된 데이터가 없습니다.`,
+                    title: `임시 저장한 데이터가 없습니다.`,
                     successCheck: false,
                     duration: 3000,
                 });

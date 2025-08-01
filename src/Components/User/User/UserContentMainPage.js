@@ -73,51 +73,51 @@ const UserContentMainPage = () => {
                         <button onClick={() => setAddUserModalOpen(true)}>추 가</button>
                     </UserContentMainPageButtonContainer>
                 </div>
-
-                <table style={{ fontSize: '0.9em' }}>
-                    <thead>
-                        <tr style={{ backgroundColor: 'RGB(239, 244, 252)' }}>
-                            <th>이름</th>
-                            <th>직급</th>
-                            <th>부서</th>
-                            <th>호봉</th>
-                            <th>연차</th>
-                            <th>ID</th>
-                            <th>직군</th>
-                            <th>읽기전용 체크</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {User_Lists_State.filter(
-                            item =>
-                                item?.name?.toLowerCase().includes(SearchInput?.toLowerCase()) ||
-                                item?.email?.toLowerCase().includes(SearchInput?.toLowerCase()) ||
-                                item?.user_department?.toLowerCase().includes(SearchInput?.toLowerCase())
-                        ).map(list => {
-                            return (
-                                <tr
-                                    key={list.email}
-                                    onClick={() => {
-                                        setSelect_User(list);
-                                        setUser_Modal_IsOpen(true);
-                                    }}
-                                    style={list.email === Select_User?.email ? { backgroundColor: 'RGB(239, 244, 252)' } : {}}
-                                >
-                                    <td>{list.name}</td>
-                                    <td>{list.user_position}</td>
-                                    <td>{list.user_department}</td>
-                                    <td>{list.user_salarygrade}</td>
-                                    <td>{list.user_gradebounce}</td>
-                                    <td>{list.email}</td>
-                                    <td>{list.user_occupational}</td>
-                                    <td>{list.readOnly === 1 ? 'O' : 'X'}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-
-                <div style={{ marginBottom: '50px' }}></div>
+                <div style={{ height: 'calc(100vh - 250px)', overflow: 'auto' }}>
+                    <table style={{ fontSize: '0.9em' }}>
+                        <thead style={{ position: 'sticky', top: '-1px', height: '30px' }}>
+                            <tr style={{ backgroundColor: 'RGB(239, 244, 252)' }}>
+                                <th>이름</th>
+                                <th>직급</th>
+                                <th>부서</th>
+                                <th>호봉</th>
+                                <th>연차</th>
+                                <th>ID</th>
+                                <th>직군</th>
+                                <th>읽기전용 체크</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {User_Lists_State.filter(
+                                item =>
+                                    item?.name?.toLowerCase().includes(SearchInput?.toLowerCase()) ||
+                                    item?.email?.toLowerCase().includes(SearchInput?.toLowerCase()) ||
+                                    item?.user_department?.toLowerCase().includes(SearchInput?.toLowerCase())
+                            ).map(list => {
+                                return (
+                                    <tr
+                                        key={list.email}
+                                        onClick={() => {
+                                            setSelect_User(list);
+                                            setUser_Modal_IsOpen(true);
+                                        }}
+                                        style={list.email === Select_User?.email ? { backgroundColor: 'RGB(239, 244, 252)' } : {}}
+                                    >
+                                        <td>{list.name}</td>
+                                        <td>{list.user_position}</td>
+                                        <td>{list.user_department}</td>
+                                        <td>{list.user_salarygrade}</td>
+                                        <td>{list.user_gradebounce}</td>
+                                        <td>{list.email}</td>
+                                        <td>{list.user_occupational}</td>
+                                        <td>{list.readOnly === 1 ? 'O' : 'X'}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    <div style={{ marginBottom: '50px' }}></div>
+                </div>
             </UserInfoMainDivBox>
             {User_Modal_IsOpen ? (
                 <UserModal

@@ -27,9 +27,12 @@ const SelectTableMainDivBox = styled.div`
     }
 
     thead {
+        position: sticky;
+        top: -1px;
+        height: 32px;
         tr {
-            position: sticky;
-            top: 0px;
+            /* position: sticky;
+            top: 0px; */
         }
     }
 `;
@@ -47,7 +50,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                         <th>설비군</th>
                         <th>설비명</th>
                         <th>업무 유형</th>
-                        <th>Man-day</th>
+                        <th>Man-day(시간)</th>
                         <th>입력여부</th>
                     </tr>
                 </thead>
@@ -65,7 +68,7 @@ const SelectTable = ({ Man_Day_Infos }) => {
                                             <td>{user.depart}</td>
                                             <td>{user.sub_depart}</td>
                                             <td>{user.divideCode}</td>
-                                            <td>{user.manDay.toFixed(1)}</td>
+                                            <td>{user.manDay.toFixed(1)} 시간</td>
                                             <td>입력완료</td>
                                         </tr>
                                     );

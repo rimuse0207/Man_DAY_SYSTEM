@@ -79,7 +79,7 @@ const DayCell = styled.div`
     padding: 5px;
     background-color: ${({ isCurrentMonth }) => (isCurrentMonth ? 'white' : '#f0f0f0')};
     color: ${({ isCurrentMonth }) => (isCurrentMonth ? 'black' : '#aaa')};
-    display: flex;
+    /* display: flex; */
     align-items: flex-start;
     justify-content: flex-start;
     font-size: 12px;
@@ -89,11 +89,14 @@ const DayCell = styled.div`
 `;
 
 const EventBar = styled.div`
-    position: absolute;
-    top: ${({ top, row }) => `${top + row * 22 - 90}px`}; /* Bar 간격 */
+    /* position: absolute; */
+    /* Bar 간격 */
+    /* top: ${({ top, row }) => `${top + row * 22 - 90}px`};
     left: ${({ left }) => `${left}%`};
-    width: ${({ width }) => `${width}%`};
+    width: ${({ width }) => `${width}%`}; */
+    width: 100%;
     height: 18px;
+    margin-top: 2px;
     background-color: rgba(255, 87, 34, 0.8);
     border-radius: 5px;
     /* display: flex;
@@ -155,6 +158,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
             TodayChecking: dateObj.toDateString() === todayStr,
             holidayChecking: Holiday_List.some(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
             holidayNaming: Holiday_List.filter(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+            date: moment(dateObj).format('YYYY-MM-DD'),
         });
         index++;
     }
@@ -170,6 +174,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
             TodayChecking: dateObj.toDateString() === todayStr,
             holidayChecking: Holiday_List.some(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
             holidayNaming: Holiday_List.filter(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+            date: moment(dateObj).format('YYYY-MM-DD'),
         });
         index++;
     }
@@ -186,6 +191,7 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
             TodayChecking: dateObj.toDateString() === todayStr,
             holidayChecking: Holiday_List.some(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
             holidayNaming: Holiday_List.filter(item => item.holidayDate === moment(dateObj).format('YYYY-MM-DD')),
+            date: moment(dateObj).format('YYYY-MM-DD'),
         });
         index++;
     }
@@ -275,6 +281,14 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
         });
     };
 
+    const groupedEventsByDate = {}; // index 기준 (0~41)
+
+    eventBars.forEach(event => {
+        const dayIndex = Math.floor(event.top / 150) * 7 + Math.floor((event.left / 100) * 7);
+        if (!groupedEventsByDate[dayIndex]) groupedEventsByDate[dayIndex] = [];
+        groupedEventsByDate[dayIndex].push(event);
+    });
+
     return (
         <div>
             <CalendarWrapper className="AnnualLeaveCalendarTableMainDivBox">
@@ -297,11 +311,10 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
                             <div style={day === '토' ? { color: 'blue' } : day === '일' ? { color: 'red' } : {}}>{day}</div>
                         </DayCell>
                     ))}
-                    {days.map((date, index) => (
+                    {/* {days.map((date, index) => (
                         <DayCell
                             key={index}
                             isCurrentMonth={date.isCurrentMonth}
-                            // onClick={() => HandleAddSchedule(date)}
                             dynamicHeight={Math.max(0, ...eventBars.map(o => o.row))}
                             style={date.TodayChecking ? { background: '#eff1d1' } : {}}
                         >
@@ -320,8 +333,56 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
                                 </span>
                             </div>
                         </DayCell>
-                    ))}
-                    {eventBars.map((bar, idx) => (
+                    ))} */}
+                    {days.map((date, index) => {
+                        const dayEvents = groupedEventsByDate[index] || [];
+                        const visibleEvents = dayEvents.slice(0, 5);
+                        const extraCount = dayEvents.length - 5;
+
+                        return (
+                            <DayCell
+                                key={index}
+                                isCurrentMonth={date.isCurrentMonth}
+                                dynamicHeight={dayEvents.length} // 높이 자동 조절
+                                style={date.TodayChecking ? { background: '#eff1d1' } : {}}
+                            >
+                                {/* 날짜 */}
+                                <div
+                                    style={
+                                        date.dayOfWeek === 0 || date.holidayChecking
+                                            ? { color: 'red', height: '18px' }
+                                            : date.dayOfWeek === 6
+                                            ? { color: 'blue', height: '18px' }
+                                            : { height: '18px' }
+                                    }
+                                >
+                                    {date.day}{' '}
+                                    <span style={{ fontSize: '0.8em' }}>
+                                        {date.holidayNaming.length > 0 ? `( ${date.holidayNaming[0]?.holidayName} )` : ''}
+                                    </span>
+                                </div>
+                                <div>
+                                    {eventBars
+                                        .filter(item => item.date === date.date)
+                                        .map((bar, idx) => (
+                                            <EventBar
+                                                key={idx}
+                                                top={bar.top * idx}
+                                                left={bar.left}
+                                                width={bar.width}
+                                                row={bar.row}
+                                                onMouseEnter={e => handleMouseEnter(e, bar, idx)}
+                                                onMouseLeave={handleMouseLeave}
+                                            >
+                                                {bar.sub_depart} {bar.divideCode} {bar.manDay.toFixed(1)}
+                                            </EventBar>
+                                        ))}
+                                </div>
+                            </DayCell>
+                        );
+                    })}
+
+                    {/* {eventBars.map((bar, idx) => (
                         <EventBar
                             key={idx}
                             top={bar.top}
@@ -333,7 +394,8 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
                         >
                             {bar.sub_depart} {bar.divideCode} {bar.manDay.toFixed(1)}
                         </EventBar>
-                    ))}
+                    ))} */}
+
                     {hoveredEvent && (
                         <div
                             className="Popup show"
@@ -361,8 +423,8 @@ const Calendar = ({ year, month, onMonthChange, events, Change_Color_State, Holi
                                         <td>{hoveredEvent.divideCode}</td>
                                     </tr>
                                     <tr>
-                                        <th>Man_day</th>
-                                        <td>{hoveredEvent.manDay.toFixed(1)}</td>
+                                        <th>Man-day(시간)</th>
+                                        <td>{hoveredEvent.manDay.toFixed(1)} 시간</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -45,7 +45,7 @@ const Table = ({ Table_State }) => {
                         <th>설비군</th>
                         <th>설비명</th>
                         <th>업무 유형</th>
-                        <th>Man-Day</th>
+                        <th>Man-day(시간)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,7 +61,7 @@ const Table = ({ Table_State }) => {
                                 <td>{list.depart}</td>
                                 <td>{list.sub_depart}</td>
                                 <td>{list.divideCode}</td>
-                                <td>{list.manDay.toFixed(1)}</td>
+                                <td>{list.manDay.toFixed(1)} 시간</td>
                             </tr>
                         );
                     })}

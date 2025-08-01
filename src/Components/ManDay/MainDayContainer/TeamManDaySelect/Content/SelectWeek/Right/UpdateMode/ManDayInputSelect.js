@@ -30,7 +30,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
         });
     };
     return (
-        <SelectBoxsMainDivBox>
+        <SelectBoxsMainDivBox style={{ fontSize: '0.8em' }}>
             <div className="Input_GR">
                 <div className="Title">설비군</div>
                 <div className="Answer">
@@ -114,7 +114,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                 </div>
             </div>
             <div className="Input_GR">
-                <div className="Title">Man-day</div>
+                <div className="Title">Man-day(시간)</div>
                 <div className="Answer">
                     <input
                         value={Now_Data.manDay}

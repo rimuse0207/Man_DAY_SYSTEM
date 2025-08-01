@@ -122,6 +122,14 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                                 handleFieldChange(e, 'depart');
                                 handleFieldChange({ target: { value: 'AA9901' } }, 'sub_depart');
                                 handleFieldChange(null, 'divide');
+                            } else if (e?.target?.value === 'AA08') {
+                                handleFieldChange(e, 'depart');
+                                handleFieldChange({ target: { value: 'AA0801' } }, 'sub_depart');
+                                handleFieldChange(null, 'divide');
+                            } else if (e?.target?.value === 'AA09') {
+                                handleFieldChange(e, 'depart');
+                                handleFieldChange({ target: { value: 'AA0901' } }, 'sub_depart');
+                                handleFieldChange(null, 'divide');
                             } else {
                                 handleFieldChange(e, 'depart');
                                 handleFieldChange(null, 'sub_depart');

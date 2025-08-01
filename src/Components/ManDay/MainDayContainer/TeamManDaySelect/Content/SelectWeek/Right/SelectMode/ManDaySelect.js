@@ -80,9 +80,9 @@ const ManDaySelect = ({ Now_Select_User, NowDate, setSelect_Modes }) => {
                                                             </div>
                                                         </div>
                                                         <div className="Input_GR">
-                                                            <div className="Title">Man-day</div>
+                                                            <div className="Title">Man-day(시간)</div>
                                                             <div className="Answer" style={{ textAlign: 'center' }}>
-                                                                {item.manDay.toFixed(1)}
+                                                                {item.manDay.toFixed(1)} 시간
                                                             </div>
                                                         </div>
                                                     </SelectBoxsMainDivBox>
