@@ -325,7 +325,7 @@ const ContentMainPage = () => {
         });
         if (Sending_Man_Day_Real_Data.status) {
             toast.show({
-                title: `금주 Man_Day ${WeekContainer.Mode === 'updating' ? `수정` : `입력`} 완료되었습니다.`,
+                title: `금주 Man_day 데이터가 ${WeekContainer.Mode === 'updating' ? `수정되었습니다.` : `입력되었습니다.`} `,
                 successCheck: true,
                 duration: 6000,
             });
