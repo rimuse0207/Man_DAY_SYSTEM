@@ -240,7 +240,7 @@ const ContentMainPage = () => {
     // 수정모드로 변경
     const Change_the_Mode = () => {
         toast.show({
-            title: `수정모드로 변경처리 되었습니다.`,
+            title: `수정모드로 변경 처리되었습니다.`,
             successCheck: true,
             duration: 2000,
         });
@@ -258,7 +258,7 @@ const ContentMainPage = () => {
                     onClick: async () => {
                         await Getting_Man_Day_Info_Befroe_Data();
                         toast.show({
-                            title: `수정모드가 취소 되었습니다.`,
+                            title: `수정모드가 취소되었습니다.`,
                             successCheck: true,
                             duration: 2000,
                         });
@@ -298,7 +298,7 @@ const ContentMainPage = () => {
 
         if (Sum_Check.length > 0) {
             toast.show({
-                title: `Man-day는 일별 합산이 8이 되어야 합니다.`,
+                title: `Man-day(시간)는 일별 합산이 8이 되어야 합니다.`,
                 successCheck: false,
                 duration: 6000,
             });
@@ -311,7 +311,7 @@ const ContentMainPage = () => {
         });
         if (Man_Day_Check) {
             toast.show({
-                title: `Man-day는 0이상만 저장 됩니다.`,
+                title: `Man-day(시간)는 0이상만 저장 됩니다.`,
                 successCheck: false,
                 duration: 6000,
             });
