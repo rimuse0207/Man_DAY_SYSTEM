@@ -119,36 +119,26 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         value={Now_Data.depart}
                         onChange={e => {
                             if (e?.target?.value === 'AA99') {
+                                handleFieldChange(null, 'divide');
                                 handleFieldChange(e, 'depart');
                                 handleFieldChange({ target: { value: 'AA9901' } }, 'sub_depart');
-                                handleFieldChange(null, 'divide');
                             } else if (e?.target?.value === 'AA08') {
+                                handleFieldChange(null, 'divide');
                                 handleFieldChange(e, 'depart');
                                 handleFieldChange({ target: { value: 'AA0801' } }, 'sub_depart');
-                                handleFieldChange(null, 'divide');
                             } else if (e?.target?.value === 'AA09') {
+                                handleFieldChange(null, 'divide');
                                 handleFieldChange(e, 'depart');
                                 handleFieldChange({ target: { value: 'AA0901' } }, 'sub_depart');
-                                handleFieldChange(null, 'divide');
                             } else {
-                                handleFieldChange(e, 'depart');
-                                handleFieldChange(null, 'sub_depart');
                                 handleFieldChange(null, 'divide');
+                                handleFieldChange(null, 'sub_depart');
+                                handleFieldChange(e, 'depart');
                             }
                         }}
                     >
                         <option value={null}></option>
-                        {/* {Input_Title_Lists.map(list => {
-                            return (
-                                <option
-                                    value={list.Major_Category_Code}
-                                    data-name={list.Major_Category_Name}
-                                    key={list.Major_Category_Code}
-                                >
-                                    {list.Major_Category_Name}
-                                </option>
-                            );
-                        })} */}
+
                         {Depart_Option_Lists.map(list => {
                             return (
                                 <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
@@ -166,22 +156,11 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         name="sub_depart"
                         value={Now_Data.sub_depart}
                         onChange={e => {
+                            // handleFieldChange(null, 'divide');
                             handleFieldChange(e, 'sub_depart');
-                            handleFieldChange(null, 'divide');
                         }}
                     >
                         <option value={null}></option>
-                        {/* {Input_Title_Lists.map(item => {
-                            if (item.Major_Category_Code === Now_Data.depart) {
-                                return item.Eqipment_lists.map(list => {
-                                    return (
-                                        <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
-                                            {list.itemName}
-                                        </option>
-                                    );
-                                });
-                            }
-                        })} */}
 
                         {Sub_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.depart)
                             .sort((a, b) => a.itemRank - b.itemRank)
@@ -200,13 +179,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                 <div className="Answer">
                     <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
                         <option value={null}></option>
-                        {/* {Divide_Lists.map(list => {
-                            return (
-                                <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
-                                    {list.itemName}
-                                </option>
-                            );
-                        })} */}
+
                         {Divide_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.sub_depart)
                             .sort((a, b) => a.itemRank - b.itemRank)
                             .map(list => {
@@ -219,27 +192,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                     </select>
                 </div>
             </div>
-            {/* <div className="Input_GR">
-                <div className="Title">업무 유형</div>
-                <div className="Answer">
-                    <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
-                        <option value={null}></option>
-                        {Divide_Lists.filter(item => {
-                            if (Annuals) {
-                                return item.parentCode === 'AA12' ? item : '';
-                            } else {
-                                return item.parentCode === 'AA12' ? '' : item;
-                            }
-                        }).map(list => {
-                            return (
-                                <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
-                                    {list.itemName}
-                                </option>
-                            );
-                        })}
-                    </select>
-                </div>
-            </div> */}
+
             <div className="Input_GR">
                 <div className="Title">Man-day(시간)</div>
                 <div className="Answer">
