@@ -16,7 +16,7 @@ const BarGraph = ({ Bar_State }) => {
             <ResponsiveBar
                 data={Bar_State}
                 // maxValue={1.2}
-                keys={['rate']}
+                keys={['man_day']}
                 indexBy="equipment"
                 margin={{ top: 50, right: 100, bottom: 60, left: 50 }}
                 padding={0.6}

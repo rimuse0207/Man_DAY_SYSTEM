@@ -60,6 +60,15 @@ export const UserInfoMainDivBox = styled.div`
             color: blue;
         }
     }
+    .Person_Tbody_Table {
+        tr {
+            &:hover {
+                cursor: pointer;
+                opacity: 0.8;
+                background-color: rgb(239, 244, 252);
+            }
+        }
+    }
 `;
 
 const UsersInfo = ({ NowSelect, Department_State, setDepartment_State }) => {

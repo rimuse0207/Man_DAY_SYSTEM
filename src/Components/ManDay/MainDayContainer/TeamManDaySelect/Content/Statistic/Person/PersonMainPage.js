@@ -53,7 +53,7 @@ const PersonMainPage = ({ menuCode }) => {
                     <span>{User_Info_State?.user_salarygrade}</span>
                 </div>
                 <div className="User_Content_Container">
-                    <span>팀 : </span>
+                    <span>파트 : </span>
                     <span>{User_Info_State?.user_department}</span>
                 </div>
             </div>

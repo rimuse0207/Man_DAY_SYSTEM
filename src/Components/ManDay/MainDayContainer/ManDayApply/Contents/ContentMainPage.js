@@ -275,7 +275,7 @@ const ContentMainPage = () => {
     const Save_Man_Day_Data = async () => {
         /// 일별로 항목이 공란이 있는지 확인
         const ChcekNull = WeekContainer.Date_Lists.map(list => {
-            return list.child.filter(item => !item.depart || !item.sub_depart || item.divide === 'nothing');
+            return list.child.filter(item => !item.depart || !item.sub_depart || item.divide === 'nothing' || item.man_day === '');
         }).filter(item => item.length > 0);
         if (ChcekNull.length > 0) {
             toast.show({

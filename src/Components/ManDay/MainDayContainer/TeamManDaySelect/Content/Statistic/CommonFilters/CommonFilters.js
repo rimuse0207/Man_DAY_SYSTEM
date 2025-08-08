@@ -11,6 +11,9 @@ import { ko } from 'date-fns/esm/locale';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import { Request_Get_Axios } from '../../../../../../../API';
+import { TbHierarchy3 } from 'react-icons/tb';
+import PersonSelectModal from './PersonSelectModal/PersonSelectModal';
+import DepartSelectModal from './DepartSelectModal/DepartSelectModal';
 
 const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
     const dispatch = useDispatch();
@@ -20,6 +23,8 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [Equipment_Options, setEquipment_Options] = useState([]);
     const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
+    const [PersonSelectModalIsOpen, setPersonSelectModalIsOpen] = useState(false);
+    const [DepartSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
 
     useEffect(() => {
         Getting_Team_Member_Lists();
@@ -27,6 +32,7 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
             return {
                 value: list.itemCode,
                 label: list.itemName,
+                parentCode: list.itemParentCode,
             };
         });
 
@@ -42,6 +48,10 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                 Getting_Team_Member_Lists_Axios.data.Team_Options ? Getting_Team_Member_Lists_Axios.data.Team_Options : []
             );
         }
+    };
+
+    const HandleClickModalsForPerson = async () => {
+        setPersonSelectModalIsOpen(true);
     };
 
     return (
@@ -95,15 +105,21 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
 
                     {menuCode === 'Team' ? (
                         <div className="Filter_GR">
-                            <div className="Filter_Title">팀명</div>
+                            <div className="Filter_Title">팀, 파트</div>
                             <div className="Filter_Content">
-                                <Select
-                                    styles={customStyles}
-                                    value={Filter_State.team}
-                                    isClearable
-                                    options={DepartmentFilterOptions}
-                                    onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, team: e }))}
-                                ></Select>
+                                <input
+                                    value={Filter_State.statisticTeam?.itemName ? Filter_State.statisticTeam?.itemName : null}
+                                    placeholder="선택된 팀,파트가 없습니다."
+                                    onClick={() => setDepartSelectModalIsOpen(true)}
+                                    readOnly
+                                ></input>
+                                {/* <div>
+                                    <div>
+                                        {Filter_State.statisticTeam?.itemName
+                                            ? Filter_State.statisticTeam?.itemName
+                                            : '선택된 팀,파트가 없습니다.'}
+                                    </div>
+                                </div> */}
                             </div>
                         </div>
                     ) : (
@@ -122,6 +138,9 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                                     onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, name: e }))}
                                     placeholder="선택 해 주세요."
                                 ></Select>
+                            </div>
+                            <div className="Search_Icon_Container" onClick={() => HandleClickModalsForPerson()}>
+                                <TbHierarchy3 />
                             </div>
                         </div>
                     ) : (
@@ -214,6 +233,8 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                     </div>
                 </div>
             </TableFilterMainDivBox>
+            {PersonSelectModalIsOpen ? <PersonSelectModal onClose={() => setPersonSelectModalIsOpen(false)}></PersonSelectModal> : <></>}
+            {DepartSelectModalIsOpen ? <DepartSelectModal onClose={() => setDepartSelectModalIsOpen(false)}></DepartSelectModal> : <></>}
         </SelectAllFilterMainDivBox>
     );
 };

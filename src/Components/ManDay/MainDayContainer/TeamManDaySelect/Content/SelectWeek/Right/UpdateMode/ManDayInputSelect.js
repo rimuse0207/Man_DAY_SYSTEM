@@ -13,22 +13,66 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
     const handleFieldChange = (e, fieldName) => {
         const newValue = e?.target?.value;
 
-        setWeekContainer(prev => {
-            const updatedDateLists = prev.man_day_infos.map(dayItem => {
-                if (dayItem.date === Now_Data.date && dayItem.indexs === Now_Data.indexs) {
+        if (fieldName === 'manDay') {
+            const val = e.target.value;
+            if (val === '') {
+                setWeekContainer(prev => {
+                    const updatedDateLists = prev.man_day_infos.map(dayItem => {
+                        if (dayItem.date === Now_Data.date && dayItem.indexs === Now_Data.indexs) {
+                            return {
+                                ...dayItem,
+                                [fieldName]: '', // 동적으로 키 설정
+                            };
+                        }
+                        return dayItem;
+                    });
                     return {
-                        ...dayItem,
-                        [fieldName]: newValue, // 동적으로 키 설정
+                        ...prev,
+                        man_day_infos: updatedDateLists,
                     };
-                }
-                return dayItem;
+                });
+                return;
+            }
+
+            const num = Number(val);
+
+            // 숫자인지 확인하고, 0~8 사이일 때만 반영
+            if (!isNaN(num) && Number.isInteger(num) && num >= 0 && num <= 8) {
+                setWeekContainer(prev => {
+                    const updatedDateLists = prev.man_day_infos.map(dayItem => {
+                        if (dayItem.date === Now_Data.date && dayItem.indexs === Now_Data.indexs) {
+                            return {
+                                ...dayItem,
+                                [fieldName]: num, // 동적으로 키 설정
+                            };
+                        }
+                        return dayItem;
+                    });
+                    return {
+                        ...prev,
+                        man_day_infos: updatedDateLists,
+                    };
+                });
+            }
+        } else {
+            setWeekContainer(prev => {
+                const updatedDateLists = prev.man_day_infos.map(dayItem => {
+                    if (dayItem.date === Now_Data.date && dayItem.indexs === Now_Data.indexs) {
+                        return {
+                            ...dayItem,
+                            [fieldName]: newValue, // 동적으로 키 설정
+                        };
+                    }
+                    return dayItem;
+                });
+                return {
+                    ...prev,
+                    man_day_infos: updatedDateLists,
+                };
             });
-            return {
-                ...prev,
-                man_day_infos: updatedDateLists,
-            };
-        });
+        }
     };
+
     return (
         <SelectBoxsMainDivBox style={{ fontSize: '0.8em' }}>
             <div className="Input_GR">
@@ -66,17 +110,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                         }}
                     >
                         <option value={null}></option>
-                        {/* {Input_Title_Lists.map(item => {
-                            if (item.Major_Category_Code === Now_Data.departCode) {
-                                return item.Eqipment_lists.map(list => {
-                                    return (
-                                        <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
-                                            {list.itemName}
-                                        </option>
-                                    );
-                                });
-                            }
-                        })} */}
+
                         {Sub_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.departCode)
                             .sort((a, b) => a.itemRank - b.itemRank)
                             .map(list => {
@@ -94,13 +128,7 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                 <div className="Answer">
                     <select value={Now_Data.divide} onChange={e => handleFieldChange(e, 'divide')}>
                         <option value={null}></option>
-                        {/* {Divide_Lists.map(list => {
-                            return (
-                                <option value={list.itemCode} data-name={list.itemName} key={list.itemCode}>
-                                    {list.itemName}
-                                </option>
-                            );
-                        })} */}
+
                         {Divide_Depart_Option_Lists.filter(item => item.itemParentCode === Now_Data.subDepartCode)
                             .sort((a, b) => a.itemRank - b.itemRank)
                             .map(list => {

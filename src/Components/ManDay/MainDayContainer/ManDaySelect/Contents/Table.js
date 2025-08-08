@@ -61,7 +61,7 @@ const Table = ({ Table_State }) => {
                                 <td>{list.depart}</td>
                                 <td>{list.sub_depart}</td>
                                 <td>{list.divideCode}</td>
-                                <td>{list.manDay.toFixed(1)} 시간</td>
+                                <td>{list.manDay.toFixed(0)} 시간</td>
                             </tr>
                         );
                     })}

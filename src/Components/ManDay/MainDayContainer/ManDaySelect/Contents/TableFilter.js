@@ -29,6 +29,20 @@ export const TableFilterMainDivBox = styled.div`
             align-items: center;
             border-left: 1px solid lightgray;
             margin-right: 10px;
+            .Search_Icon_Container{
+                    border: 1px solid lightgray;
+                    height: 90%;
+                    padding: 10px;
+                    border-top-right-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                    line-height: 0px;
+                    border-left: none;
+                    &:hover{
+                        cursor: pointer;
+                        opacity:0.5;
+                    }
+                }
+            }
             .Filter_Title {
                 width: 100px;
                 text-align: center;

@@ -54,7 +54,7 @@ const UpdateModeMainPage = ({ Now_Select_User, NowDate, setSelect_Modes, Getting
 
     const Handle_Change_Data_Man_Day_Func = async () => {
         // 대분류, 설비명, 구분 공란 체크
-        if (WeekContainer?.man_day_infos?.some(item => !item.departCode || !item.subDepartCode || !item.divide)) {
+        if (WeekContainer?.man_day_infos?.some(item => !item.departCode || !item.subDepartCode || !item.divide || item.manDay === '')) {
             toast.show({
                 title: `공란을 전부 작성 해 주세요.`,
                 successCheck: false,

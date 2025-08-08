@@ -21,7 +21,7 @@ const PieGraph = ({ Pie_State }) => {
                 theme={{
                     labels: {
                         text: {
-                            fontSize: '2vmin',
+                            fontSize: '1.3vmin',
                             fill: '#000000',
                         },
                     },

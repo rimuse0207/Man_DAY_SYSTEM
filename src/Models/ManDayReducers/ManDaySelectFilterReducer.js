@@ -17,6 +17,7 @@ export const initState = {
             value: 'all',
             label: '전체',
         },
+        statisticTeam: null,
     },
 };
 

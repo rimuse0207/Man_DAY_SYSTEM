@@ -62,7 +62,7 @@ export const MyListMainDivBox = styled.div`
     }
 `;
 const SelectWeekMainPageMainDivBox = styled.div`
-    height: calc(100vh - 150px);
+    height: calc(100vh - 145px);
     overflow: auto;
     .GetWeekOfMonth_Container {
         margin-top: 20px;

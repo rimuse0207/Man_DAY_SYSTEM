@@ -131,10 +131,10 @@ const InputPage = ({ List_Items, WeekContainer, setWeekContainer, Select_Date, T
                 <div style={{ textAlign: 'end' }}>
                     <h5>Man-day(시간) 합</h5>
                     {Number(List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)) === 8 ? (
-                        <div>{List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)} 시간</div>
+                        <div>{List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(0)} 시간</div>
                     ) : (
                         <div style={{ color: 'red', fontWeight: 'bolder' }}>
-                            {List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(1)} 시간
+                            {List_Items.child.reduce((pre, acc) => pre + Number(acc.man_day), 0).toFixed(0)} 시간
                         </div>
                     )}
                 </div>

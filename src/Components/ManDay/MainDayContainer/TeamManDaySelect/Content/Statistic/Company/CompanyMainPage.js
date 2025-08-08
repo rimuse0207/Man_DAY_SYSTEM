@@ -12,6 +12,7 @@ const CompanyMainPage = ({ menuCode }) => {
     const [sub_depart_Bar_State, setsub_depart_Bar_State] = useState([]);
     const [department_Pie_State, setdepartment_Pie_State] = useState([]);
     const [gradbounce_Pie_State, setgradbounce_Pie_State] = useState([]);
+    const [CompanyInfos, setCompanyInfos] = useState({ value: 'all', label: '전체' });
 
     useEffect(() => {
         Getting_Company_Data();
@@ -26,6 +27,7 @@ const CompanyMainPage = ({ menuCode }) => {
                 setsub_depart_Bar_State(Getting_Company_Data_Axios.data.sub_depart_Bar_Data);
                 setdepartment_Pie_State(Getting_Company_Data_Axios.data.User_Counting_Pie_Data);
                 setgradbounce_Pie_State(Getting_Company_Data_Axios.data.Based_Annual_Leave_User_Count_Pie_Data);
+                setCompanyInfos(Filter_State.company);
             }
         } catch (error) {
             console.log(error);
@@ -41,9 +43,11 @@ const CompanyMainPage = ({ menuCode }) => {
                     <span>{gradbounce_Pie_State.reduce((pre, acc) => pre + acc.value, 0)}명</span>
                 </div>
             </div>
-            <h3 style={{ textAlign: 'center' }}>
-                {Filter_State.company.value === 'all' ? 'YC & EXICON' : Filter_State.company.value} Man_day
-            </h3>
+            {CompanyInfos?.value ? (
+                <h3 style={{ textAlign: 'center' }}>{CompanyInfos.value === 'all' ? 'YC & EXICON' : CompanyInfos.value} Man_day</h3>
+            ) : (
+                <></>
+            )}
             <BarGraph Bar_State={depart_Bar_State}></BarGraph>
             <BarGraph Bar_State={sub_depart_Bar_State}></BarGraph>
             <h3 style={{ textAlign: 'center' }}>

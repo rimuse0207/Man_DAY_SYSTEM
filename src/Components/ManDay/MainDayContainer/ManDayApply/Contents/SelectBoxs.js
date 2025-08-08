@@ -96,33 +96,68 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
         }
     };
 
-    const Man_Fixed = Man_Days => {
-        setWeekContainer(prev => {
-            const updatedDateLists = prev.Date_Lists.map(dayItem => {
-                if (dayItem.date === Now_Data.date) {
-                    const updatedChildren = dayItem.child.map(childItem => {
-                        if (childItem.index === Now_Data.index) {
-                            return {
-                                ...childItem,
-                                man_day: Man_Days, // 동적으로 키 설정
-                            };
-                        }
-                        return childItem;
-                    });
+    const Man_Fixed = (e, Man_Days) => {
+        if (Man_Days === '') {
+            setWeekContainer(prev => {
+                const updatedDateLists = prev.Date_Lists.map(dayItem => {
+                    if (dayItem.date === Now_Data.date) {
+                        const updatedChildren = dayItem.child.map(childItem => {
+                            if (childItem.index === Now_Data.index) {
+                                return {
+                                    ...childItem,
+                                    man_day: '', // 동적으로 키 설정
+                                };
+                            }
+                            return childItem;
+                        });
 
-                    return {
-                        ...dayItem,
-                        child: updatedChildren,
-                    };
-                }
-                return dayItem;
+                        return {
+                            ...dayItem,
+                            child: updatedChildren,
+                        };
+                    }
+                    return dayItem;
+                });
+
+                return {
+                    ...prev,
+                    Date_Lists: updatedDateLists,
+                };
             });
+            return;
+        }
 
-            return {
-                ...prev,
-                Date_Lists: updatedDateLists,
-            };
-        });
+        const num = Number(Man_Days);
+
+        // 숫자인지 확인하고, 0~8 사이일 때만 반영
+        if (!isNaN(num) && Number.isInteger(num) && num >= 0 && num <= 8) {
+            setWeekContainer(prev => {
+                const updatedDateLists = prev.Date_Lists.map(dayItem => {
+                    if (dayItem.date === Now_Data.date) {
+                        const updatedChildren = dayItem.child.map(childItem => {
+                            if (childItem.index === Now_Data.index) {
+                                return {
+                                    ...childItem,
+                                    man_day: num, // 동적으로 키 설정
+                                };
+                            }
+                            return childItem;
+                        });
+
+                        return {
+                            ...dayItem,
+                            child: updatedChildren,
+                        };
+                    }
+                    return dayItem;
+                });
+
+                return {
+                    ...prev,
+                    Date_Lists: updatedDateLists,
+                };
+            });
+        }
     };
 
     return (
@@ -201,7 +236,7 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                         min={0}
                         max={8}
                         step={1}
-                        onChange={e => Man_Fixed(e.target.value)}
+                        onChange={e => Man_Fixed(e, e.target.value)}
                         readOnly={ReadOnlySetting}
                     ></input>
                 </div>
