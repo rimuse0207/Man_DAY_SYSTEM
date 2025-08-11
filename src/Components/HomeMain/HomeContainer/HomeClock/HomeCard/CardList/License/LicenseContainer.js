@@ -77,7 +77,7 @@ const LicenseContainer = () => {
                             <thead>
                                 <tr>
                                     {WeekContainer.map(list => {
-                                        return <th>{moment(list.date).format('MM.DD dd')}</th>;
+                                        return <th key={list.date}>{moment(list.date).format('MM.DD dd')}</th>;
                                     })}
                                 </tr>
                             </thead>

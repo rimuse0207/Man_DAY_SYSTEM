@@ -40,7 +40,7 @@ const CompanyMainPage = ({ menuCode }) => {
             <div className="User_Info_Container">
                 <div className="User_Content_Container">
                     <span>총원 : </span>
-                    <span>{gradbounce_Pie_State.reduce((pre, acc) => pre + acc.value, 0)}명</span>
+                    <span>{department_Pie_State.reduce((pre, acc) => pre + acc.value, 0)}명</span>
                 </div>
             </div>
             {CompanyInfos?.value ? (
@@ -48,7 +48,9 @@ const CompanyMainPage = ({ menuCode }) => {
             ) : (
                 <></>
             )}
+            <h3>설비군</h3>
             <BarGraph Bar_State={depart_Bar_State}></BarGraph>
+            <h3>설비명</h3>
             <BarGraph Bar_State={sub_depart_Bar_State}></BarGraph>
             <h3 style={{ textAlign: 'center' }}>
                 {Filter_State.company.value === 'all' ? 'YC & EXICON' : Filter_State.company.value} 인력 구성

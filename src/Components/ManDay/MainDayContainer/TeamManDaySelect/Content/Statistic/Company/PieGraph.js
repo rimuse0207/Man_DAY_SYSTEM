@@ -32,20 +32,27 @@ const PieGraph = ({ Pie_State }) => {
                         },
                     },
                 }}
+                tooltip={({ datum }) => (
+                    <div style={{ padding: '6px 9px', background: 'white', border: '1px solid #ccc' }}>
+                        <strong>{datum.data.name}</strong>: {datum.value}
+                    </div>
+                )}
+                arcLabel={e => e.data.name}
                 legends={[
                     {
-                        anchor: 'bottom', // 위치
-                        direction: 'row', // item 그려지는 방향
-                        justify: false, // 글씨, 색상간 간격 justify 적용 여부
-                        translateX: 0, // chart와 X 간격
-                        translateY: 56, // chart와 Y 간격
-                        itemsSpacing: 20, // item간 간격
-                        itemWidth: 100, // item width
-                        itemHeight: 18, // item height
-                        itemDirection: 'left-to-right', // item 내부에 그려지는 방향
-                        itemOpacity: 1, // item opacity
-                        symbolSize: 15, // symbol (색상 표기) 크기
-                        symbolShape: 'square', // symbol (색상 표기) 모양
+                        anchor: 'bottom',
+                        direction: 'row',
+                        translateY: 56,
+                        itemWidth: 100,
+                        itemHeight: 18,
+                        symbolSize: 15,
+                        symbolShape: 'square',
+
+                        // name으로 보이게 커스터마이징
+                        label: datum => {
+                            const matched = Pie_State.find(item => item.id === datum.id);
+                            return matched ? matched.name : datum.id;
+                        },
                     },
                 ]}
             />

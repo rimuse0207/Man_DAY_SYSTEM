@@ -29,6 +29,7 @@ export const InputPageMainDivBox = styled.div`
         justify-content: space-between;
         .Delete_Button {
             color: red;
+            font-size: 1.2em;
             &:hover {
                 cursor: pointer;
                 opacity: 0.5;

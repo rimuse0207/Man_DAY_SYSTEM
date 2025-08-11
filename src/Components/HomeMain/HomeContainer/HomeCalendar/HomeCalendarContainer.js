@@ -17,7 +17,7 @@ const HomeCalendarContainer = () => {
 
     const Getting_Holiday_Lists = async () => {
         const Getting_Holiday_Lists = await Request_Get_Axios('/API/PLM/user/Getting_Holiday_Lists', {
-            Select_Date: `${year}-${month > 10 ? month + 1 : `0${month + 1}`}`,
+            Select_Date: `${year}-${month >= 9 ? month + 1 : `0${month + 1}`}`,
         });
         if (Getting_Holiday_Lists.status) {
             setHoliday_List(Getting_Holiday_Lists.data);

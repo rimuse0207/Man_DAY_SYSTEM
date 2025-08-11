@@ -63,19 +63,21 @@ const UpdateModeMainPage = ({ Now_Select_User, NowDate, setSelect_Modes, Getting
             return;
         }
 
-        /// Manday 합산 1 체크
+        /// Manday 합산 8 체크
         const Checking_Number_Sum_One = datess.map(list => {
             return {
                 date: list.date,
                 data: WeekContainer?.man_day_infos?.filter(item => item.date === list.date),
             };
         });
+        console.log(Checking_Number_Sum_One);
         const Chechking_Man_Day_Sum = Checking_Number_Sum_One.map(item => {
             return {
                 date: item.date,
                 man_day: item.data.reduce((pre, acc) => pre + Number(acc.manDay), 0),
             };
         });
+        console.log(Chechking_Man_Day_Sum);
         if (Chechking_Man_Day_Sum.some(item => item.man_day !== 8 && item.man_day !== 0)) {
             toast.show({
                 title: `Man-day 합산은 8이 되어야 합니다.`,
