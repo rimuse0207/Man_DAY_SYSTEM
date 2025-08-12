@@ -8,6 +8,7 @@
     "@mui/material": "^7.2.0",
     "@nivo/axes": "^0.92.0",
     "@nivo/bar": "^0.92.0",
+    "@nivo/colors": "^0.92.0",
     "@nivo/core": "^0.92.0",
     "@nivo/pie": "^0.92.0",
     "@testing-library/dom": "^10.4.0",

@@ -5,20 +5,20 @@ import styled from 'styled-components';
 export const BarsMainDivBox = styled.div`
     width: 100%;
     /* height: 100%; */
-    height: calc(100vh - 450px);
+    height: calc(90vh - 450px);
     text-align: center;
     position: relative;
 `;
 
-const BarGraph = ({ Bar_State }) => {
+const BarGraph = ({ Bar_State, keys }) => {
     return (
         <BarsMainDivBox>
             <ResponsiveBar
                 data={Bar_State}
                 // maxValue={1.2}
-                keys={['man_day']}
+                keys={[keys ? '단위: 천만원' : 'man_day']}
                 indexBy="equipment"
-                margin={{ top: 50, right: 100, bottom: 60, left: 50 }}
+                margin={{ top: 50, right: 130, bottom: 60, left: 50 }}
                 padding={0.6}
                 colors={['skyblue', 'gray']}
                 colorBy="id"

@@ -10,6 +10,7 @@ const TeamMainPage = ({ menuCode }) => {
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [Bar_State, setBar_State] = useState([]);
     const [Pie_State, setPie_State] = useState([]);
+    const [grade_bounce_Pie_State, setgrade_bounce_Pie_State] = useState([]);
     const [TextInfo, setTextInfo] = useState(null);
 
     useEffect(() => {
@@ -25,6 +26,7 @@ const TeamMainPage = ({ menuCode }) => {
         if (Getting_Person_Bar_State_Axios.status) {
             setBar_State(Getting_Person_Bar_State_Axios.data.Bar_Data);
             setPie_State(Getting_Person_Bar_State_Axios.data.Pie_Data);
+            setgrade_bounce_Pie_State(Getting_Person_Bar_State_Axios.data.Grade_Bounce_Pie_Data);
             setTextInfo(Filter_State.statisticTeam);
         }
     };
@@ -41,13 +43,27 @@ const TeamMainPage = ({ menuCode }) => {
                 <BarGraph Bar_State={Bar_State}></BarGraph>
             </div>
             <div style={{ display: 'flex' }}>
-                <div style={{ width: '50%' }}>
+                {/* <div style={{ width: '50%' }}>
                     <PieGraph Pie_State={Pie_State}></PieGraph>
-                </div>
+                </div> */}
+                {TextInfo?.itemName ? (
+                    TextInfo?.divideType === 'PART' ? (
+                        <></>
+                    ) : (
+                        <div style={{ width: '50%' }}>
+                            <h3 style={{ textAlign: 'center' }}>{TextInfo?.itemName} 구성</h3>
+                            <PieGraph Pie_State={Pie_State}></PieGraph>
+                        </div>
+                    )
+                ) : (
+                    <></>
+                )}
                 <div style={{ width: '50%' }}>
-                    {/* <PieGraph Pie_State={gradbounce_Pie_State.filter(item => item.value > 0)}></PieGraph> */}
+                    <h3 style={{ textAlign: 'center' }}>연차 분포</h3>
+                    <PieGraph Pie_State={grade_bounce_Pie_State.filter(item => item.value > 0)}></PieGraph>
                 </div>
             </div>
+            <div style={{ padding: '20px' }}></div>
         </PersonMainPageMainDivBox>
     );
 };

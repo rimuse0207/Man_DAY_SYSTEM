@@ -5,6 +5,7 @@ import { Request_Get_Axios } from '../../../../../../../API';
 import { useSelector } from 'react-redux';
 import BarGraph from '../Person/BarGraph';
 import PieGraph from './PieGraph';
+import Loader from '../../../../../../Loader/Loader';
 
 const CompanyMainPage = ({ menuCode }) => {
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
@@ -13,14 +14,17 @@ const CompanyMainPage = ({ menuCode }) => {
     const [department_Pie_State, setdepartment_Pie_State] = useState([]);
     const [gradbounce_Pie_State, setgradbounce_Pie_State] = useState([]);
     const [CompanyInfos, setCompanyInfos] = useState({ value: 'all', label: '전체' });
-
+    const [companyChecking, setcompanyChecking] = useState(false);
+    const [Loading_Check, setLoading_Check] = useState(false);
     useEffect(() => {
         Getting_Company_Data();
-    }, []);
+    }, [companyChecking]);
     const Getting_Company_Data = async () => {
+        setLoading_Check(true);
         try {
             const Getting_Company_Data_Axios = await Request_Get_Axios('/API/PLM/Getting_Company_Data', {
                 Filter_State,
+                companyChecking: !companyChecking,
             });
             if (Getting_Company_Data_Axios.status) {
                 setdepart_Bar_State(Getting_Company_Data_Axios.data.depart_Bar_Data);
@@ -32,6 +36,7 @@ const CompanyMainPage = ({ menuCode }) => {
         } catch (error) {
             console.log(error);
         }
+        setLoading_Check(false);
     };
 
     return (
@@ -41,6 +46,15 @@ const CompanyMainPage = ({ menuCode }) => {
                 <div className="User_Content_Container">
                     <span>총원 : </span>
                     <span>{department_Pie_State.reduce((pre, acc) => pre + acc.value, 0)}명</span>
+                </div>
+                <div>
+                    <input
+                        type="checkbox"
+                        value={companyChecking}
+                        onClick={() => setcompanyChecking(!companyChecking)}
+                        id="inputChecking"
+                    ></input>
+                    <label htmlFor="inputChecking">관계사 업무에 참여하는 MD 반영하기</label>
                 </div>
             </div>
             {CompanyInfos?.value ? (
@@ -63,6 +77,8 @@ const CompanyMainPage = ({ menuCode }) => {
                     <PieGraph Pie_State={gradbounce_Pie_State.filter(item => item.value > 0)}></PieGraph>
                 </div>
             </div>
+            <div style={{ padding: '20px' }}></div>
+            <Loader loading={Loading_Check}></Loader>
         </PersonMainPageMainDivBox>
     );
 };

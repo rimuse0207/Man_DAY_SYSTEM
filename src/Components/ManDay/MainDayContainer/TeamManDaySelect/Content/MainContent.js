@@ -26,7 +26,7 @@ const MainContent = () => {
     const [Menu_Lists, setMenu_Lists] = useState([
         { menuName: '금주 조회', menuCode: 'selectWeek', Component: SelectWeekMainPage },
         { menuName: '전체 조회', menuCode: 'selectAll', Component: SelectAllMainPage },
-        // { menuName: ' 통 계 ', menuCode: 'statistic', Component: StatisticMainPage },
+        { menuName: ' 통 계 ', menuCode: 'statistic', Component: StatisticMainPage },
     ]);
     const [Now_Select_Menu, setNow_Select_Menu] = useState('selectWeek');
     return (

@@ -44,7 +44,6 @@ const DepartSelectModal = ({ onClose }) => {
     };
 
     const Selected_Team_Part_Data = async () => {
-        console.log(NowSelect);
         dispatch(
             Insert_Man_Day_Select_Reducer_State_Func({
                 ...Filter_State,

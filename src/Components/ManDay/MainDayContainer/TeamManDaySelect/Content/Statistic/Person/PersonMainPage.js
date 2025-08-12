@@ -61,6 +61,7 @@ const PersonMainPage = ({ menuCode }) => {
                 <h2 style={{ textAlign: 'center' }}>{User_Info_State?.name} Man_day</h2>
                 <BarGraph Bar_State={Bar_State}></BarGraph>
             </div>
+            <div style={{ padding: '20px' }}></div>
         </PersonMainPageMainDivBox>
     );
 };

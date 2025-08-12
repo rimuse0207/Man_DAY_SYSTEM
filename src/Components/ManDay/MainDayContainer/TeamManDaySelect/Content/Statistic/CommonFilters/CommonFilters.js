@@ -148,49 +148,57 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                     )}
 
                     {menuCode === 'Company' ? (
-                        <div className="Filter_GR">
-                            <div className="Filter_Title">회사명</div>
-                            <div className="Filter_Content">
-                                <Select
-                                    styles={customStyles}
-                                    value={Filter_State.company}
-                                    options={[
-                                        {
-                                            value: 'all',
-                                            label: '전체',
-                                        },
-                                        {
-                                            value: 'YC',
-                                            label: '와이씨(YC)',
-                                        },
-                                        {
-                                            value: 'EXICON',
-                                            label: '엑시콘(EXICON)',
-                                        },
-                                    ]}
-                                    onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, company: e }))}
-                                    placeholder="선택 해 주세요."
-                                ></Select>
+                        <>
+                            {' '}
+                            <div className="Filter_GR">
+                                <div className="Filter_Title">회사명</div>
+                                <div className="Filter_Content">
+                                    <Select
+                                        styles={customStyles}
+                                        value={Filter_State.company}
+                                        options={[
+                                            {
+                                                value: 'all',
+                                                label: '전체',
+                                            },
+                                            {
+                                                value: 'YC',
+                                                label: '와이씨(YC)',
+                                            },
+                                            {
+                                                value: 'EXICON',
+                                                label: '엑시콘(EXICON)',
+                                            },
+                                        ]}
+                                        onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, company: e }))}
+                                        placeholder="선택 해 주세요."
+                                    ></Select>
+                                </div>
                             </div>
-                        </div>
+                        </>
                     ) : (
                         <></>
                     )}
 
-                    {menuCode === 'Equipments' ? (
-                        <div className="Filter_GR">
-                            <div className="Filter_Title">설비명</div>
-                            <div className="Filter_Content">
-                                <Select
-                                    styles={customStyles}
-                                    value={Filter_State.sub_depart}
-                                    options={Equipment_Options}
-                                    isClearable
-                                    onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
-                                    placeholder="선택 해 주세요."
-                                ></Select>
+                    {menuCode === 'Equipments' || menuCode === 'Salary' ? (
+                        <>
+                            {' '}
+                            <div className="Filter_GR">
+                                <div className="Filter_Title">설비명</div>
+                                <div className="Filter_Content">
+                                    <Select
+                                        styles={customStyles}
+                                        value={Filter_State.sub_depart}
+                                        options={Equipment_Options}
+                                        isClearable
+                                        onChange={e =>
+                                            dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))
+                                        }
+                                        placeholder="선택 해 주세요."
+                                    ></Select>
+                                </div>
                             </div>
-                        </div>
+                        </>
                     ) : (
                         <></>
                     )}
