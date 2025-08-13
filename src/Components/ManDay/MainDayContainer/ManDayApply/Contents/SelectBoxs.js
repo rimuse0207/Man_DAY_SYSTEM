@@ -73,7 +73,36 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
         if (divide && divide !== 'nothing') {
             if (divide === 'BB07' || divide === 'BB12') {
                 setReadOnlySetting(true);
-                Man_Fixed(8);
+                // Man_Fixed(8);
+                setWeekContainer(prev => {
+                    const updatedDateLists = prev.Date_Lists.map(dayItem => {
+                        if (dayItem.date === Now_Data.date) {
+                            const updatedChildren = dayItem.child.map(childItem => {
+                                if (childItem.index === Now_Data.index) {
+                                    return {
+                                        ...childItem,
+                                        man_day: 8, // 동적으로 키 설정
+                                        depart: depart, // 동적으로 키 설정
+                                        sub_depart: subDepart, // 동적으로 키 설정
+                                        divide: divide, // 동적으로 키 설정
+                                    };
+                                }
+                                return childItem;
+                            });
+
+                            return {
+                                ...dayItem,
+                                child: updatedChildren,
+                            };
+                        }
+                        return dayItem;
+                    });
+
+                    return {
+                        ...prev,
+                        Date_Lists: updatedDateLists,
+                    };
+                });
                 toast.show({
                     title: `Man-day(시간)는 8로 고정됩니다.`,
                     successCheck: true,
@@ -81,7 +110,35 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
                 });
             } else if (divide === 'BB08') {
                 setReadOnlySetting(true);
-                Man_Fixed(4);
+                setWeekContainer(prev => {
+                    const updatedDateLists = prev.Date_Lists.map(dayItem => {
+                        if (dayItem.date === Now_Data.date) {
+                            const updatedChildren = dayItem.child.map(childItem => {
+                                if (childItem.index === Now_Data.index) {
+                                    return {
+                                        ...childItem,
+                                        man_day: 4, // 동적으로 키 설정
+                                        depart: depart, // 동적으로 키 설정
+                                        sub_depart: subDepart, // 동적으로 키 설정
+                                        divide: divide, // 동적으로 키 설정
+                                    };
+                                }
+                                return childItem;
+                            });
+
+                            return {
+                                ...dayItem,
+                                child: updatedChildren,
+                            };
+                        }
+                        return dayItem;
+                    });
+
+                    return {
+                        ...prev,
+                        Date_Lists: updatedDateLists,
+                    };
+                });
 
                 toast.show({
                     title: `Man-day(시간)는 4로 고정됩니다.`,
