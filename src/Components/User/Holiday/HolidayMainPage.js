@@ -9,6 +9,7 @@ import { DepartmentMainPageMainDivBox } from '../Department/DepartmentMainPage';
 import styled from 'styled-components';
 import { toast } from '../../ToastMessage/ToastManager';
 import HolidayTableList from './Left/HolidayTableList';
+import HolidayInputMainPage from './Right/HolidayInputMainPage';
 
 const HolidayMainPageMainDivBox = styled.div`
     height: calc(100vh - 100px);
@@ -126,7 +127,9 @@ const HolidayMainPage = () => {
                                 <HolidayTableList Holiday_List={Holiday_List}></HolidayTableList>
                             </UserInfoMainDivBox>
                         </div>
-                        <div className="Right_Content" style={{ width: '50%' }}></div>
+                        <div className="Right_Content" style={{ width: '50%' }}>
+                            <HolidayInputMainPage Getting_Holiday_Lists={() => Getting_Holiday_Lists()}></HolidayInputMainPage>
+                        </div>
                         <div className="Button_Container">
                             <button onClick={() => Handle_Getting_Holiday_Lists_From_Public_open_API_Can_use_1000times_for_one_month()}>
                                 자동으로 갱신

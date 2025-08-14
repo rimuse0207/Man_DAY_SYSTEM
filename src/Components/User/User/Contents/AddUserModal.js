@@ -5,6 +5,8 @@ import Select from 'react-select';
 import { UserModalMainDivBox } from './UserModal';
 import { Request_Get_Axios, Request_Post_Axios } from '../../../../API';
 import { toast } from '../../../ToastMessage/ToastManager';
+import { TbHierarchy3 } from 'react-icons/tb';
+import DepartSelectModal from '../../../ManDay/MainDayContainer/TeamManDaySelect/Content/Statistic/CommonFilters/DepartSelectModal/DepartSelectModal';
 
 const styles = {
     control: provided => ({
@@ -35,6 +37,7 @@ const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
     };
     const [Input_User_Info, setInput_User_Info] = useState(initial_state);
     const [Option_Lists, setOption_Lists] = useState([]);
+    const [DepartSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
     // 공통항목 가져오기
     useEffect(() => {
         Getting_Common_Info_Data();
@@ -181,18 +184,36 @@ const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
                                 <tr>
                                     <th>부서</th>
 
-                                    <td>
-                                        <Select
-                                            value={Input_User_Info.department}
-                                            onChange={e => {
-                                                setInput_User_Info({ ...Input_User_Info, department: e });
+                                    <td style={{ display: 'flex' }}>
+                                        <div style={{ width: 'calc(100% - 40px)' }}>
+                                            <Select
+                                                value={Input_User_Info.department}
+                                                onChange={e => {
+                                                    setInput_User_Info({ ...Input_User_Info, department: e });
+                                                }}
+                                                isClearable
+                                                options={Option_Lists.filter(item => item.divideType === 'department').map(list => {
+                                                    return { value: list.itemCode, label: list.itemName };
+                                                })}
+                                                styles={styles}
+                                            ></Select>
+                                        </div>
+                                        <div
+                                            style={{
+                                                border: '1px solid lightgray',
+                                                borderRadius: '5px',
+                                                width: '40px',
+                                                textAlign: 'center',
+                                                fontSize: '1.3em',
+                                                lineHeight: '38px',
                                             }}
-                                            isClearable
-                                            options={Option_Lists.filter(item => item.divideType === 'department').map(list => {
-                                                return { value: list.itemCode, label: list.itemName };
-                                            })}
-                                            styles={styles}
-                                        ></Select>
+                                            className="Search_Icon_Container"
+                                            onClick={() => {
+                                                setDepartSelectModalIsOpen(true);
+                                            }}
+                                        >
+                                            <TbHierarchy3 />
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -270,6 +291,16 @@ const AddUserModal = ({ Getting_All_User_Info, onClose }) => {
                         </button>
                     </UserContentMainPageButtonContainer>
                 </UserModalMainDivBox>
+                {DepartSelectModalIsOpen ? (
+                    <DepartSelectModal
+                        onClose={() => setDepartSelectModalIsOpen(false)}
+                        Select_Types={'user'}
+                        Input_User_Info={Input_User_Info}
+                        setInput_User_Info={data => setInput_User_Info(data)}
+                    ></DepartSelectModal>
+                ) : (
+                    <></>
+                )}
             </Modal>
         </Overlay>
     );

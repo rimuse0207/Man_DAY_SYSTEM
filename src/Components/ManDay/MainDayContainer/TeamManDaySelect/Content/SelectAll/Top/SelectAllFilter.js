@@ -11,6 +11,8 @@ import {
 import { ko } from 'date-fns/esm/locale';
 import styled from 'styled-components';
 import { toast } from '../../../../../../ToastMessage/ToastManager';
+import { TbHierarchy3 } from 'react-icons/tb';
+import DepartSelectModal from '../../Statistic/CommonFilters/DepartSelectModal/DepartSelectModal';
 
 export const SelectAllFilterMainDivBox = styled.div`
     .Filter_Container {
@@ -64,55 +66,13 @@ export const customStyles = {
 };
 const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptions, Getting_Man_Day_Info_Data, Excel_Download }) => {
     const dispatch = useDispatch();
-    // const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
-    // const Divide_Lists = useSelector(state => state.Man_Day_Select_Items_State.divide_Lists_data);
 
     const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
     const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
     const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
-
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
-    const [sub_Depart_options, setsub_Depart_options] = useState([]);
-    // useEffect(() => {
-    //     Sub_Depart();
-    // }, [Input_Title_Lists, Filter_State.depart]);
+    const [DepartSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
 
-    // const Sub_Depart = async e => {
-    //     if (e) {
-    //         const [a] = await Input_Title_Lists.filter(item => item.Major_Category_Code === e.value).map(list => {
-    //             return list.Eqipment_lists.map(options => {
-    //                 return {
-    //                     value: options.itemCode,
-    //                     label: options.itemName,
-    //                 };
-    //             });
-    //         });
-    //         setsub_Depart_options(a);
-    //     } else if (Filter_State.depart) {
-    //         const [a] = await Input_Title_Lists.filter(item => item.Major_Category_Code === Filter_State.depart.value).map(list => {
-    //             return list.Eqipment_lists.map(options => {
-    //                 return {
-    //                     value: options.itemCode,
-    //                     label: options.itemName,
-    //                 };
-    //             });
-    //         });
-    //         setsub_Depart_options(a);
-    //     } else {
-    //         const a = await Input_Title_Lists.map(list => {
-    //             return list.Eqipment_lists.map(item => {
-    //                 return {
-    //                     vlaue: item.itemCode,
-    //                     label: item.itemName,
-    //                 };
-    //             });
-    //         });
-    //         const Grouping_One_Array = a.reduce((acc, group) => {
-    //             return acc.concat(group);
-    //         }, []);
-    //         setsub_Depart_options(Grouping_One_Array);
-    //     }
-    // };
     return (
         <SelectAllFilterMainDivBox>
             <TableFilterMainDivBox>
@@ -198,6 +158,14 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                                 onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, team: e }))}
                                 placeholder="선택해 주세요."
                             ></Select>
+                        </div>
+                        <div
+                            className="Search_Icon_Container"
+                            onClick={() => {
+                                setDepartSelectModalIsOpen(true);
+                            }}
+                        >
+                            <TbHierarchy3 />
                         </div>
                     </div>
                     <div className="Filter_GR">
@@ -383,6 +351,11 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
                     </div>
                 </div>
             </TableFilterMainDivBox>
+            {DepartSelectModalIsOpen ? (
+                <DepartSelectModal onClose={() => setDepartSelectModalIsOpen(false)} Select_Types={'team'}></DepartSelectModal>
+            ) : (
+                <></>
+            )}
         </SelectAllFilterMainDivBox>
     );
 };

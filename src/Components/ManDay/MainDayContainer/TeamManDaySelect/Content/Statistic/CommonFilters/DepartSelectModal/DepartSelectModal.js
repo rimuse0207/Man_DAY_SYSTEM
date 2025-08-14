@@ -24,7 +24,7 @@ const ButtonContainer = styled.div`
     }
 `;
 
-const DepartSelectModal = ({ onClose }) => {
+const DepartSelectModal = ({ onClose, Select_Types, Input_User_Info, setInput_User_Info }) => {
     const dispatch = useDispatch();
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [Department_State, setDepartment_State] = useState([]);
@@ -44,12 +44,30 @@ const DepartSelectModal = ({ onClose }) => {
     };
 
     const Selected_Team_Part_Data = async () => {
-        dispatch(
-            Insert_Man_Day_Select_Reducer_State_Func({
-                ...Filter_State,
-                statisticTeam: { itemCode: NowSelect.itemCode, itemName: NowSelect.itemName, divideType: NowSelect.divideType },
-            })
-        );
+        if (Select_Types === 'team') {
+            dispatch(
+                Insert_Man_Day_Select_Reducer_State_Func({
+                    ...Filter_State,
+                    team: { value: NowSelect.itemCode, label: NowSelect.itemName },
+                })
+            );
+        } else if (Select_Types === 'user') {
+            setInput_User_Info({
+                ...Input_User_Info,
+                department: {
+                    value: NowSelect.itemCode,
+                    label: NowSelect.itemName,
+                },
+            });
+        } else {
+            dispatch(
+                Insert_Man_Day_Select_Reducer_State_Func({
+                    ...Filter_State,
+                    statisticTeam: { itemCode: NowSelect.itemCode, itemName: NowSelect.itemName, divideType: NowSelect.divideType },
+                })
+            );
+        }
+
         onClose();
     };
 
