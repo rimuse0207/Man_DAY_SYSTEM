@@ -166,7 +166,7 @@ const LoginMainPage = () => {
     const before_Login_Checkig = async () => {
         try {
             const Login_Checking = await Request_Get_Axios('/Ce_Route/Login/Token_Checking');
-
+            console.log(Login_Checking);
             if (Login_Checking.status && Login_Checking.data.token === 'Validable') {
                 // Token이 살아 있어, Home으로 이동
                 Navigate('/Home');

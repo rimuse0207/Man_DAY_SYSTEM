@@ -447,7 +447,7 @@ const ContentMainPage = () => {
                         window.open(
                             '/Man_Day/Example',
                             '입력 예시',
-                            'menubar=no, toolbar=no, location=no, scrollbars=no, status=no, width=1200px, height=700px'
+                            'menubar=no, toolbar=no, location=no, scrollbars=no, status=no, width=1200px, height=800px'
                         )
                     }
                 >
