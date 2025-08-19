@@ -6,6 +6,7 @@ import BarGraph from '../Person/BarGraph';
 import PieGraph from '../Company/PieGraph';
 import { PersonMainPageMainDivBox } from '../Person/PersonMainPage';
 import Loader from '../../../../../../Loader/Loader';
+import { toast } from '../../../../../../ToastMessage/ToastManager';
 
 const EquipmentsMainPage = ({ menuCode }) => {
     const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
@@ -49,7 +50,20 @@ const EquipmentsMainPage = ({ menuCode }) => {
     };
     return (
         <PersonMainPageMainDivBox>
-            <CommonFilters menuCode={menuCode} Getting_Person_Bar_State={() => Getting_Equipment_Bar_State()}></CommonFilters>
+            <CommonFilters
+                menuCode={menuCode}
+                Getting_Person_Bar_State={() => {
+                    if (!Filter_State.sub_depart) {
+                        toast.show({
+                            title: `설비명을 선택 해 주세요.`,
+                            successCheck: false,
+                            duration: 5000,
+                        });
+                    } else {
+                        Getting_Equipment_Bar_State();
+                    }
+                }}
+            ></CommonFilters>
             <div className="User_Info_Container">
                 <div className="User_Content_Container">
                     <span>총원 : </span>

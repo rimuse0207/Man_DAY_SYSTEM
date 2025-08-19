@@ -22,12 +22,14 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
     const Input_Title_Lists = useSelector(state => state.Man_Day_Select_Items_State.Equipment_Lists_data);
     const Filter_State = useSelector(state => state.Man_Day_Select_Filter_Reducer_State.Filters_State);
     const [Equipment_Options, setEquipment_Options] = useState([]);
+    const [StatisticEquipmentOptions, setStatisticEquipmentOptions] = useState([]);
     const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
     const [PersonSelectModalIsOpen, setPersonSelectModalIsOpen] = useState(false);
     const [DepartSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
 
     useEffect(() => {
         Getting_Team_Member_Lists();
+        Getting_Equipments_Lists_For_Using_Filter_Options();
         const a = Sub_Depart_Option_Lists?.flatMap(list => {
             return {
                 value: list.itemCode,
@@ -38,6 +40,16 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
 
         setEquipment_Options(a);
     }, []);
+
+    const Getting_Equipments_Lists_For_Using_Filter_Options = async () => {
+        const Getting_Equipments_Lists_For_Using_Filter_Options_Axios = await Request_Get_Axios(
+            '/API/PLM/Getting_Equipments_Lists_For_Using_Filter_Options'
+        );
+        if (Getting_Equipments_Lists_For_Using_Filter_Options_Axios.status) {
+            setStatisticEquipmentOptions(Getting_Equipments_Lists_For_Using_Filter_Options_Axios.data);
+        }
+    };
+
     const Getting_Team_Member_Lists = async () => {
         const Getting_Team_Member_Lists_Axios = await Request_Get_Axios('/API/PLM/Getting_Team_Member_All_Lists_For_Using_Filter_Options');
         if (Getting_Team_Member_Lists_Axios.status) {
@@ -184,12 +196,43 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                         <>
                             {' '}
                             <div className="Filter_GR">
+                                <div className="Filter_Title">회사명</div>
+                                <div className="Filter_Content">
+                                    <Select
+                                        styles={customStyles}
+                                        value={Filter_State.equipment_company}
+                                        options={[
+                                            {
+                                                value: 'YC',
+                                                label: '와이씨(YC)',
+                                            },
+                                            {
+                                                value: 'EXICON',
+                                                label: '엑시콘(EXICON)',
+                                            },
+                                        ]}
+                                        onChange={e =>
+                                            dispatch(
+                                                Insert_Man_Day_Select_Reducer_State_Func({
+                                                    ...Filter_State,
+                                                    equipment_company: e,
+                                                    sub_depart: null,
+                                                })
+                                            )
+                                        }
+                                        placeholder="선택 해 주세요."
+                                    ></Select>
+                                </div>
+                            </div>
+                            <div className="Filter_GR">
                                 <div className="Filter_Title">설비명</div>
                                 <div className="Filter_Content">
                                     <Select
                                         styles={customStyles}
                                         value={Filter_State.sub_depart}
-                                        options={Equipment_Options}
+                                        options={StatisticEquipmentOptions.filter(
+                                            item => item.company === Filter_State.equipment_company.value
+                                        )}
                                         isClearable
                                         onChange={e =>
                                             dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))

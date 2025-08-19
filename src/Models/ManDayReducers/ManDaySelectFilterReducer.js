@@ -18,6 +18,10 @@ export const initState = {
             label: '전체',
         },
         statisticTeam: null,
+        equipment_company: {
+            value: 'YC',
+            label: '와이씨(YC)',
+        },
     },
 };
 
