@@ -34,6 +34,7 @@ const PersonMainPage = ({ menuCode }) => {
             const Getting_Person_Bar_State_Axios = await Request_Get_Axios('/API/PLM/Getting_Person_Bar_State', {
                 Filter_State,
             });
+
             if (Getting_Person_Bar_State_Axios.status) {
                 setBar_State(Getting_Person_Bar_State_Axios.data.BarGraphData);
                 setUser_Info_State(Getting_Person_Bar_State_Axios.data.Personal_Infos_SQL);
@@ -46,15 +47,15 @@ const PersonMainPage = ({ menuCode }) => {
             <div className="User_Info_Container">
                 <div className="User_Content_Container">
                     <span>연차 : </span>
-                    <span>{User_Info_State?.user_gradebounce}년</span>
+                    <span>{User_Info_State?.gradebounceName}년</span>
                 </div>
                 <div className="User_Content_Container">
                     <span>호봉 : </span>
-                    <span>{User_Info_State?.user_salarygrade}</span>
+                    <span>{User_Info_State?.salarygradeName}</span>
                 </div>
                 <div className="User_Content_Container">
                     <span>파트 : </span>
-                    <span>{User_Info_State?.user_department}</span>
+                    <span>{User_Info_State?.departmentPartName}</span>
                 </div>
             </div>
             <div>

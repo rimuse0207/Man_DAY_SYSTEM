@@ -24,8 +24,9 @@ const CompanyMainPage = ({ menuCode }) => {
         try {
             const Getting_Company_Data_Axios = await Request_Get_Axios('/API/PLM/Getting_Company_Data', {
                 Filter_State,
-                companyChecking: !companyChecking,
+                companyChecking: companyChecking,
             });
+
             if (Getting_Company_Data_Axios.status) {
                 setdepart_Bar_State(Getting_Company_Data_Axios.data.depart_Bar_Data);
                 setsub_depart_Bar_State(Getting_Company_Data_Axios.data.sub_depart_Bar_Data);

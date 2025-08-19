@@ -28,7 +28,7 @@ const SalaryMainPage = ({ menuCode }) => {
             const Getting_Person_Bar_State_Axios = await Request_Get_Axios('/API/PLM/Getting_Equipments_Salary_Bar_State', {
                 Filter_State,
                 Types: Select_Types,
-                companyChecking: !companyChecking,
+                companyChecking: companyChecking,
             });
             if (Getting_Person_Bar_State_Axios.status) {
                 setusers_Expenses(Getting_Person_Bar_State_Axios.data.userExpense);
