@@ -17,13 +17,39 @@ const BarGraph = ({ Bar_State, keys }) => {
                 data={Bar_State}
                 // maxValue={1.2}
                 keys={[keys ? '단위: 천만원' : 'man_day']}
-                indexBy="equipment"
+                indexBy="id"
                 margin={{ top: 50, right: 130, bottom: 60, left: 50 }}
                 padding={0.6}
                 colors={['skyblue', 'gray']}
                 colorBy="id"
                 enableGridY={true}
                 enableLabel={true}
+                tooltip={({ indexValue, value, data }) => (
+                    <div
+                        style={{
+                            padding: '6px 12px',
+                            background: 'white',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                        }}
+                    >
+                        man-day - {data.equipment} : <strong>{value}</strong>
+                    </div>
+                )}
+                axisBottom={{
+                    tickSize: 5,
+                    tickPadding: 5,
+                    tickRotation: 0,
+                    // legend: '장비명',
+                    legendPosition: 'middle',
+                    legendOffset: 40,
+                    format: id => {
+                        // id → 데이터에서 indexBy로 지정된 값
+                        // 해당 row의 equipment을 표시하도록 변환
+                        const item = Bar_State.find(d => d.id === id);
+                        return item ? item.equipment : id;
+                    },
+                }}
                 legends={[
                     {
                         dataFrom: 'keys',
@@ -44,8 +70,6 @@ const BarGraph = ({ Bar_State, keys }) => {
                     tickRotation: 0,
                     legendPosition: 'middle',
                     legendOffset: -40,
-                    // tickValues: [0, 0.4, 0.8, 1.2],
-                    // format: value => Number(value),
                 }}
             />
         </BarsMainDivBox>

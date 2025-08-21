@@ -25,13 +25,18 @@ const EquipmentsMainPage = ({ menuCode }) => {
     }, [Select_Types, companyChecking]);
     const Getting_Equipment_Bar_State = async () => {
         setLoading_Check(true);
+        setNow_Equipment(null);
+        setusers_Expenses(null);
+        setBar_State([]);
+        setPie_State([]);
+        setgradbounce_Pie_State([]);
         if (Filter_State.sub_depart) {
             const Getting_Person_Bar_State_Axios = await Request_Get_Axios('/API/PLM/Getting_Equipments_Bar_State', {
                 Filter_State,
                 Types: Select_Types,
                 companyChecking: companyChecking,
             });
-
+            console.log(Getting_Person_Bar_State_Axios);
             if (Getting_Person_Bar_State_Axios.status) {
                 setusers_Expenses(Getting_Person_Bar_State_Axios.data.userExpense);
                 setNow_Equipment(Filter_State?.sub_depart);

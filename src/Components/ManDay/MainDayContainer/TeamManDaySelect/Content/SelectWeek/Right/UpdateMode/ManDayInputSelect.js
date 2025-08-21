@@ -148,8 +148,8 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
                         value={Now_Data.manDay}
                         type="number"
                         min={0}
-                        max={1}
-                        step={0.1}
+                        max={8}
+                        step={1}
                         onChange={e => handleFieldChange(e, 'manDay')}
                     ></input>
                 </div>

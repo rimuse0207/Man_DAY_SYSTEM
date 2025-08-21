@@ -64,9 +64,16 @@ export const customStyles = {
         lineHeight: '1.5',
     }),
 };
-const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptions, Getting_Man_Day_Info_Data, Excel_Download }) => {
+const SelectAllFilter = ({
+    UserLists,
+    PersonFilterOptions,
+    DepartmentFilterOptions,
+    Getting_Man_Day_Info_Data,
+    Excel_Download,
+    Develop_Operate_Excel_Download,
+}) => {
     const dispatch = useDispatch();
-
+    const Login_Info = useSelector(state => state.Login_Info_Reducer_State.Login_Info);
     const Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists);
     const Sub_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists);
     const Divide_Depart_Option_Lists = useSelector(state => state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists);
@@ -318,6 +325,26 @@ const SelectAllFilter = ({ UserLists, PersonFilterOptions, DepartmentFilterOptio
 
                 <div className="Filter_Button_Group">
                     <div className="Filter_Button_Container">
+                        {Login_Info.team === '개발운영팀' || Login_Info.id === 'sjyoo@dhk.co.kr' ? (
+                            <div className="Update_Button_Container">
+                                <button
+                                    onClick={() => {
+                                        Develop_Operate_Excel_Download();
+                                    }}
+                                    style={{
+                                        width: '200px',
+                                        backgroundColor: '#fff',
+                                        color: 'black',
+                                        border: '1px solid lightgray',
+                                        fontWeight: 'bolder',
+                                    }}
+                                >
+                                    개발운영팀 엑셀 내보내기
+                                </button>
+                            </div>
+                        ) : (
+                            <></>
+                        )}
                         <div className="Update_Button_Container">
                             <button
                                 onClick={() => {
