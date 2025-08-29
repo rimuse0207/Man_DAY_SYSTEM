@@ -101,7 +101,13 @@ const UserContentMainPage = () => {
                                             setSelect_User(list);
                                             setUser_Modal_IsOpen(true);
                                         }}
-                                        style={list.email === Select_User?.email ? { backgroundColor: 'RGB(239, 244, 252)' } : {}}
+                                        style={
+                                            list.inservice === 0
+                                                ? { opacity: '0.5' }
+                                                : list.email === Select_User?.email
+                                                ? { backgroundColor: 'RGB(239, 244, 252)' }
+                                                : {}
+                                        }
                                     >
                                         <td>{list.name}</td>
                                         <td>{list.user_position}</td>

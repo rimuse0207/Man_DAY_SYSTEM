@@ -117,6 +117,10 @@ const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, 
             if (!window.confirm('정말로 퇴직처리 하시겠습니까?')) {
                 return;
             }
+        } else if (Select_Type === 'cancel') {
+            if (!window.confirm('정말로 원복처리 하시겠습니까?')) {
+                return;
+            }
         }
 
         const Handle_Reset_Password_Axios = await Request_Post_Axios('/API/PLM/user/Handle_Reset_Password', {
@@ -131,9 +135,23 @@ const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, 
                     duration: 10000,
                 });
                 setUpdate_Mode(false);
-            } else {
+            } else if (Select_Type === 'retire') {
                 toast.show({
                     title: `${Select_User.name}님을 퇴직처리 하였습니다.`,
+                    successCheck: true,
+                    duration: 10000,
+                });
+                await Getting_All_User_Info();
+                setUpdate_Mode(false);
+                onClose();
+            } else {
+                toast.show({
+                    title: `${Select_User.name}님을 원복처리 하였습니다.`,
+                    successCheck: true,
+                    duration: 10000,
+                });
+                toast.show({
+                    title: `원복처리되어 비밀번호가 1234로 변경되었습니다.`,
                     successCheck: true,
                     duration: 10000,
                 });
@@ -201,7 +219,12 @@ const UserModal = ({ isOpen, onClose, Select_User, Update_Mode, setUpdate_Mode, 
                                         취소
                                     </button>
                                     <button onClick={() => Handle_Reset_Password('password_reset')}>비밀번호 초기화</button>
-                                    <button onClick={() => Handle_Reset_Password('retire')}>퇴직</button>
+
+                                    {Select_User.inservice === 1 ? (
+                                        <button onClick={() => Handle_Reset_Password('retire')}>퇴직</button>
+                                    ) : (
+                                        <button onClick={() => Handle_Reset_Password('cancel')}>원복</button>
+                                    )}
                                 </>
                             ) : (
                                 <>
