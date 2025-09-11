@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ManDayUpdateMode from '../UpdateMode/ManDayUpdateMode';
 import { ContentMainPageMainDivBox } from '../../../../../ManDayApply/Contents/ContentMainPage';
 import { toast } from '../../../../../../../ToastMessage/ToastManager';
-import { Request_Post_Axios } from '../../../../../../../../API';
+import { Request_Get_Axios, Request_Post_Axios } from '../../../../../../../../API';
 
 const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_Team_Member_Lists }) => {
     const [datess, setdatess] = useState([
@@ -76,12 +76,6 @@ const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_T
                 man_day: item.data.reduce((pre, acc) => pre + Number(acc.manDay), 0),
             };
         });
-        console.log(Chechking_Man_Day_Sum);
-
-        // const tolerance = 0.00001;
-        // const totalSum = Chechking_Man_Day_Sum.map(item => Number(item.man_day)).reduce((a, b) => a + b, 0);
-        // console.log(totalSum);
-        console.log(Chechking_Man_Day_Sum.some(item => item.man_day !== 8 && item.man_day !== 0));
         if (Chechking_Man_Day_Sum.some(item => item.man_day !== 8 && item.man_day !== 0)) {
             toast.show({
                 title: `Man-day 합산은 8이 되어야 합니다.`,
@@ -110,6 +104,28 @@ const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_T
         }
     };
 
+    // 사용자 임시저장 데이터 가져오기
+    const Getting_Temp_Save_Data = async () => {
+        const Getting_Temp_Save_Data = await Request_Get_Axios('/API/PLM/Getting_Admin_Save_Temporarily_Man_Dat_Data', {
+            Select_Date: NowDate,
+            email: WeekContainer.email,
+        });
+        if (Getting_Temp_Save_Data.status) {
+            if (Getting_Temp_Save_Data.data.Have_Temporarily_Data) {
+                setWeekContainer({
+                    ...WeekContainer,
+                    man_day_infos: Getting_Temp_Save_Data.data.data,
+                });
+            } else {
+                toast.show({
+                    title: `임시저장한 데이터가 없습니다.`,
+                    successCheck: false,
+                    duration: 4000,
+                });
+            }
+        }
+    };
+
     return (
         <ContentMainPageMainDivBox>
             <h3 style={{ textAlign: 'center' }}>
@@ -129,6 +145,13 @@ const ManDayInsertMode = ({ NowDate, Now_Select_User, setSelect_Modes, Getting_T
             </div>
             <div className="Mode_Button_Containers">
                 <button onClick={() => setSelect_Modes('reading')}>취소</button>
+                <button
+                    onClick={() => {
+                        Getting_Temp_Save_Data();
+                    }}
+                >
+                    임시저장 불러오기
+                </button>
                 <button
                     onClick={() => {
                         Handle_Input_Data_Man_Day_Func();

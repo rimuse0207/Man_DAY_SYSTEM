@@ -389,6 +389,7 @@ const ContentMainPage = () => {
                 Select_Date,
             }
         );
+        console.log(Handle_Getting_Save_Temporarily_Man_Dat_Data);
         if (Handle_Getting_Save_Temporarily_Man_Dat_Data.status) {
             if (Handle_Getting_Save_Temporarily_Man_Dat_Data.data.Have_Temporarily_Data) {
                 setWeekContainer({
