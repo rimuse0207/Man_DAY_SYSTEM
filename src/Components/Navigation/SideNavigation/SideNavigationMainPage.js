@@ -158,6 +158,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
         "jiseop.kim@exicon.co.kr",
         "hsoh@exicon.co.kr",
         "sooyoung.chung@exicon.co.kr",
+        "jiseop.kim@yccorp.com",
       ],
     },
   ]);
