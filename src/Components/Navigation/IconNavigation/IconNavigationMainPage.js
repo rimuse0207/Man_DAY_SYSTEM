@@ -114,6 +114,7 @@ const IconNavigationMainPage = () => {
         "sooyoung.chung@exicon.co.kr",
         "sjyoo@dhk.co.kr",
         "jiseop.kim@yccorp.com",
+        "sooyoung.chung@yccorp.com",
       ],
     },
   ]);
