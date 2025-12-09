@@ -150,7 +150,7 @@ const TopNavigationMainPage = () => {
         "jiseop.kim@exicon.co.kr",
         "hsoh@exicon.co.kr",
         "sooyoung.chung@exicon.co.kr",
-        // "sjyoo@dhk.co.kr",
+        "sjyoo@dhk.co.kr",
       ],
     },
   ]);

@@ -4,6 +4,7 @@ import { MdOutlineMoveToInbox } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "../../../../ToastMessage/ToastManager";
 import { request } from "../../../../../API";
+import Loader from "../../../../Loader/Loader";
 
 const ExcelUploadMainDivBox = styled.div`
   h2 {
@@ -283,7 +284,7 @@ const VideoUpload = ({ Getting_File_Info_Datas }) => {
   const [files, setFiles] = useState([]);
   const [uploadedInfo, setUploadedInfo] = useState([]);
   const [isActive, setActive] = useState(false);
-
+  const [Loading_Check, setLoading_Check] = useState(false);
   const fileInputRef = React.useRef(null);
 
   const setFileInfo = (files) => {
@@ -353,6 +354,7 @@ const VideoUpload = ({ Getting_File_Info_Datas }) => {
     });
 
     try {
+      setLoading_Check(true);
       const res = await request.post(
         "/API/PLM/VideoUpload/VideoFilesUpload",
         formData,
@@ -365,7 +367,7 @@ const VideoUpload = ({ Getting_File_Info_Datas }) => {
       );
 
       if (res.status === 200) {
-        // await Getting_File_Info_Datas();
+        await Getting_File_Info_Datas();
         fileInputRef.current.value = "";
 
         setFiles([]);
@@ -385,10 +387,13 @@ const VideoUpload = ({ Getting_File_Info_Datas }) => {
         duration: 6000,
       });
     }
+
+    setLoading_Check(false);
   };
 
   return (
     <ExcelUploadMainDivBox>
+      <Loader loading={Loading_Check}></Loader>
       <h2 style={{ marginTop: "30px" }}>Video 파일 업로드</h2>
 
       <div
