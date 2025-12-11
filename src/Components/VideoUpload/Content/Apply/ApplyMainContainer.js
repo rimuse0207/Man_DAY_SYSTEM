@@ -8,9 +8,9 @@ const ApplyMainContainer = () => {
 
   const Getting_File_Info_Datas = async () => {
     const Getting_File_Info_Datas_Axios = await Request_Get_Axios(
-      "/API/PLM/VideoUpload/Getting_File_Upload_Lists"
+      "/VideoUpload/Getting_File_Upload_Lists"
     );
-    console.log(Getting_File_Info_Datas_Axios);
+
     if (Getting_File_Info_Datas_Axios.status) {
       setFileUploadLists(Getting_File_Info_Datas_Axios.data);
     }

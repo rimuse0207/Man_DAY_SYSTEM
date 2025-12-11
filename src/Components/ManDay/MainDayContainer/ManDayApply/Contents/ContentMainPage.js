@@ -231,7 +231,7 @@ const ContentMainPage = () => {
   // 이전 데이터 불러오기
   const Getting_Man_Day_Info_Befroe_Data = async () => {
     const Getting_Man_Day_Info_Before_Data_Axios = await Request_Get_Axios(
-      `/API/PLM/Getting_Man_Day_Info_Before_Data`,
+      `/ManDayInfo/Getting_Man_Day_Info_Before_Data`,
       {
         Select_Date,
       }
@@ -337,7 +337,7 @@ const ContentMainPage = () => {
 
     setLoadin_Check(true);
     const Sending_Man_Day_Real_Data = await Request_Post_Axios(
-      "/API/PLM/Sending_Man_Day_Real_Data",
+      "/ManDayInfo/Sending_Man_Day_Real_Data",
       {
         WeekContainer,
         Login_Info,
@@ -361,7 +361,7 @@ const ContentMainPage = () => {
   // 한달 이내의 이전 데이터 가져오기
   const Handle_Getting_Before_Data = async () => {
     const Handle_Getting_Before_Man_Day_Data = await Request_Get_Axios(
-      `/API/PLM/Handle_Getting_Before_Man_Day_Data`,
+      `/ManDayInfo/Handle_Getting_Before_Man_Day_Data`,
       { Select_Date }
     );
     if (Handle_Getting_Before_Man_Day_Data.status) {
@@ -391,7 +391,7 @@ const ContentMainPage = () => {
   // 임시 저장
   const Save_Temporarily_Man_Data_Info_Data = async () => {
     const Save_Temporarily_Man_Dat_Info_Data_Axios = await Request_Post_Axios(
-      "/API/PLM/Save_Temporarily_Man_Dat_Info_Data",
+      "/ManDayInfo/Save_Temporarily_Man_Dat_Info_Data",
       {
         WeekContainer,
       }
@@ -415,7 +415,7 @@ const ContentMainPage = () => {
   const Handle_Getting_Save_Temporarily_Man_Dat_Data = async () => {
     const Handle_Getting_Save_Temporarily_Man_Dat_Data =
       await Request_Get_Axios(
-        `/API/PLM/Handle_Getting_Save_Temporarily_Man_Dat_Data`,
+        `/ManDayInfo/Handle_Getting_Save_Temporarily_Man_Dat_Data`,
         {
           Select_Date,
         }

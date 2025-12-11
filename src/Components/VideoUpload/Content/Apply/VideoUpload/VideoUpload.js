@@ -356,7 +356,7 @@ const VideoUpload = ({ Getting_File_Info_Datas }) => {
     try {
       setLoading_Check(true);
       const res = await request.post(
-        "/API/PLM/VideoUpload/VideoFilesUpload",
+        "/VideoUpload/VideoFilesUpload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
