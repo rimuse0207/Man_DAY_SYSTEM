@@ -2,6 +2,12 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import ScheduleRegistration from "./ScheduleRegistration/ScheduleRegistration";
 import moment from "moment";
+import WeekCalendarCells from "./CalendarCells/WeekCalendarCells";
+import NowCalendarCells from "./CalendarCells/NowCalendarCells";
+import EventCalendarCells from "./CalendarCells/EventCalendarCells";
+import { useCalendarEventHooks } from "./CalendarEventHooks/CalendarEventHooks";
+import HoverEventView from "./HoverEventView";
+import CalendarModal from "./CalendarModal/CalendarModal";
 
 const CalendarWrapper = styled.div`
   width: 100%;
@@ -121,14 +127,15 @@ const EventBar = styled.div`
 const Calendar = ({
   year,
   month,
-  onMonthChange,
+  Select_Month_UI,
   events,
   Change_Color_State,
-  Holiday_List,
+  EventType,
 }) => {
-  const [hoveredEvent, setHoveredEvent] = useState(null);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const { hoveredEvent, popupPosition, handleMouseEnter, handleMouseLeave } =
+    useCalendarEventHooks();
   const [ChooseDate, setChooseDate] = useState(moment().format("YYYY-MM-DD"));
+  const [Selected_Data, setSelected_Data] = useState(null);
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const prevLastDay = new Date(year, month, 0);
@@ -139,79 +146,54 @@ const Calendar = ({
   const daysInMonth = lastDayOfMonth.getDate();
   const prevDaysInMonth = prevLastDay.getDate();
 
-  const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
-
+  const daysOfWeek = [
+    { label: "일", color: "red" },
+    { label: "월", color: "black" },
+    { label: "화", color: "black" },
+    { label: "수", color: "black" },
+    { label: "목", color: "black" },
+    { label: "금", color: "black" },
+    { label: "토", color: "blue" },
+  ];
   const days = [];
-  let index = 0;
-  const today = new Date();
-  const todayStr = today.toDateString(); // 비교용 문자열
-  // 이전 달 날짜 추가
+
   for (let i = startDay - 1; i >= 0; i--) {
-    const day = prevDaysInMonth - i;
-    const dateObj = new Date(year, month - 1, day);
+    const date = new Date(year, month - 1, prevDaysInMonth - i);
     days.push({
       day: prevDaysInMonth - i,
       isCurrentMonth: false,
-      isWeekend: index % 7 === 0 || index % 7 === 6,
-      dayOfWeek: index % 7, // 0:일, 6:토
-      TodayChecking: dateObj.toDateString() === todayStr,
-      holidayChecking: Holiday_List.some(
-        (item) => item.holidayDate === moment(dateObj).format("YYYY-MM-DD")
-      ),
-      holidayNaming: Holiday_List.filter(
-        (item) => item.holidayDate === moment(dateObj).format("YYYY-MM-DD")
-      ),
-      date: moment(dateObj).format("YYYY-MM-DD"),
+      dayOfWeek: date.getDay(),
+      date: moment(date).format("YYYY-MM-DD"),
     });
-    index++;
   }
-
-  // 이번 달 날짜 추가
   for (let i = 1; i <= daysInMonth; i++) {
-    const dateObj = new Date(year, month, i);
+    const date = new Date(year, month, i);
     days.push({
       day: i,
       isCurrentMonth: true,
-      isWeekend: index % 7 === 0 || index % 7 === 6,
-      dayOfWeek: index % 7,
-      TodayChecking: dateObj.toDateString() === todayStr,
-      holidayChecking: Holiday_List.some(
-        (item) => item.holidayDate === moment(dateObj).format("YYYY-MM-DD")
-      ),
-      holidayNaming: Holiday_List.filter(
-        (item) => item.holidayDate === moment(dateObj).format("YYYY-MM-DD")
-      ),
-      date: moment(dateObj).format("YYYY-MM-DD"),
+      dayOfWeek: date.getDay(),
+      date: moment(date).format("YYYY-MM-DD"),
     });
-    index++;
   }
-
-  // 다음 달 날짜로 주 마무리
   while (days.length % 7 !== 0) {
-    const day = days.length - daysInMonth - startDay + 1;
-    const dateObj = new Date(year, month + 1, day);
+    const date = new Date(
+      year,
+      month + 1,
+      days.length - daysInMonth - startDay + 1
+    );
     days.push({
       day: days.length - daysInMonth - startDay + 1,
       isCurrentMonth: false,
-      isWeekend: index % 7 === 0 || index % 7 === 6,
-      dayOfWeek: index % 7,
-      TodayChecking: dateObj.toDateString() === todayStr,
-      holidayChecking: Holiday_List.some(
-        (item) => item.holidayDate === moment(dateObj).format("YYYY-MM-DD")
-      ),
-      holidayNaming: Holiday_List.filter(
-        (item) => item.holidayDate === moment(dateObj).format("YYYY-MM-DD")
-      ),
-      date: moment(dateObj).format("YYYY-MM-DD"),
+      dayOfWeek: date.getDay(),
+      date: moment(date).format("YYYY-MM-DD"),
     });
-    index++;
   }
 
   const eventLayers = {};
 
   const eventBars = events.flatMap((event) => {
-    const startDate = new Date(event.date);
-    const endDate = new Date(event.date);
+    const startDate = new Date(event.start_date);
+    const endDate = new Date(event.end_date);
 
     if (
       (startDate.getFullYear() !== year && endDate.getFullYear() !== year) ||
@@ -247,7 +229,7 @@ const Calendar = ({
       const weekEnd = Math.min(weekStart + 6, endIndex);
       bars.push({
         ...event,
-        top: (Math.floor(currentStart / 7) + 1) * 150,
+        top: Math.floor(currentStart / 7) + 1,
         left: ((currentStart % 7) / 7) * 100,
         width: (((weekEnd % 7) - (currentStart % 7) + 1) / 7) * 100,
         row: row,
@@ -259,174 +241,48 @@ const Calendar = ({
     return bars;
   });
 
-  const handleMouseEnter = (e, event, index) => {
-    const parentElement = e.currentTarget.closest(
-      ".AnnualLeaveCalendarTableMainDivBox"
-    ); // 부모 요소 찾기
-    if (!parentElement) return;
-
-    const parentRect = parentElement.getBoundingClientRect(); // 부모 요소 위치 정보 가져오기
-    let popupX = e.clientX - parentRect.left + parentElement.scrollLeft; // 화면 기준 X 좌표
-    let popupY = e.clientY - parentRect.top + parentElement.scrollTop - 30; // 부모 요소 내 Y 좌표
-
-    // 금요일(5) 또는 토요일(6)일 때 왼쪽으로 이동
-    if (e.clientX >= 1200) {
-      popupX -= 270; // 왼쪽으로 이동
+  const HandleAddSchedule = (day_info) => {
+    if (EventType === "Home") {
+      setChooseDate(`${year}-${month + 1}-${day_info.day}`);
+      setScheduleRegistrationIsModalOpen(true);
+    } else if (EventType === "SiteAllowance") {
+      setChooseDate(`${year}-${month + 1}-${day_info.day}`);
+      setScheduleRegistrationIsModalOpen(true);
     }
-
-    // 4번째 주(3) 이상이면 위로 이동
-    if (e.clientY >= 300) {
-      popupY -= 170; // 위로 이동
-    }
-
-    setHoveredEvent(event);
-    setPopupPosition({ x: popupX, y: popupY });
   };
 
-  const handleMouseLeave = () => {
-    setHoveredEvent(null);
+  const OnClickEventData = (Select_Datas) => {
+    setSelected_Data(Select_Datas);
+    setScheduleRegistrationIsModalOpen(true);
   };
-
-  const groupedEventsByDate = {}; // index 기준 (0~41)
-
-  eventBars.forEach((event) => {
-    const dayIndex =
-      Math.floor(event.top / 150) * 7 + Math.floor((event.left / 100) * 7);
-    if (!groupedEventsByDate[dayIndex]) groupedEventsByDate[dayIndex] = [];
-    groupedEventsByDate[dayIndex].push(event);
-  });
 
   return (
     <div>
       <CalendarWrapper className="AnnualLeaveCalendarTableMainDivBox">
-        <CalendarHeader>
-          <Button onClick={() => onMonthChange(-1)}>〈 이전 달</Button>
-          <h3>
-            {year}년 {month + 1}월
-          </h3>
-          <Button onClick={() => onMonthChange(1)}>다음 달 〉</Button>
-        </CalendarHeader>
+        {Select_Month_UI()}
         <CalendarGrid>
-          {daysOfWeek.map((day) => (
-            <DayCell
-              key={day}
-              isCurrentMonth={true}
-              isHeader={true}
-              style={{ justifyContent: "center", alignItems: "center" }}
-              dynamicHeight={Math.max(0, ...eventBars.map((o) => o.row))}
-            >
-              <div
-                style={
-                  day === "토"
-                    ? { color: "blue" }
-                    : day === "일"
-                    ? { color: "red" }
-                    : {}
-                }
-              >
-                {day}
-              </div>
-            </DayCell>
-          ))}
-
-          {days.map((date, index) => {
-            const dayEvents = groupedEventsByDate[index] || [];
-
-            return (
-              <DayCell
-                key={index}
-                isCurrentMonth={date.isCurrentMonth}
-                dynamicHeight={dayEvents.length} // 높이 자동 조절
-                style={date.TodayChecking ? { background: "#eff1d1" } : {}}
-              >
-                {/* 날짜 */}
-                <div
-                  style={
-                    date.dayOfWeek === 0 || date.holidayChecking
-                      ? { color: "red", height: "18px" }
-                      : date.dayOfWeek === 6
-                      ? { color: "blue", height: "18px" }
-                      : { height: "18px" }
-                  }
-                >
-                  {date.day}{" "}
-                  <span style={{ fontSize: "0.8em" }}>
-                    {date.holidayNaming.length > 0
-                      ? `( ${date.holidayNaming[0]?.holidayName} )`
-                      : ""}
-                  </span>
-                </div>
-                <div>
-                  {eventBars
-                    .filter((item) => item.date === date.date)
-                    .map((bar, idx) => (
-                      <EventBar
-                        key={idx}
-                        top={bar.top * idx}
-                        left={bar.left}
-                        width={bar.width}
-                        row={bar.row}
-                        onMouseEnter={(e) => handleMouseEnter(e, bar, idx)}
-                        onMouseLeave={handleMouseLeave}
-                      >
-                        {bar.sub_depart} {bar.divideCode}{" "}
-                        {bar.manDay.toFixed(1)}
-                      </EventBar>
-                    ))}
-                </div>
-              </DayCell>
-            );
-          })}
-
+          <WeekCalendarCells daysOfWeek={daysOfWeek}></WeekCalendarCells>
+          <NowCalendarCells
+            days={days}
+            HandleAddSchedule={(data) => HandleAddSchedule(data)}
+            eventBars={eventBars}
+          ></NowCalendarCells>
+          <EventCalendarCells
+            eventBars={eventBars}
+            handleMouseEnter={(e, data, id) => handleMouseEnter(e, data, id)}
+            handleMouseLeave={handleMouseLeave}
+            EventType={EventType}
+            OnClickEventData={(data) => OnClickEventData(data)}
+          ></EventCalendarCells>
           {hoveredEvent && (
-            <div
-              className="Popup show"
-              style={{
-                position: "absolute",
-                top: `${popupPosition.y}px`,
-                left: `${popupPosition.x}px`,
-              }}
-            >
-              <h2 style={{ marginBottom: "10px" }}>
-                {hoveredEvent.date} Man_day
-              </h2>
-
-              <table>
-                <tbody>
-                  <tr>
-                    <th>설 비 군</th>
-                    <td>{hoveredEvent.depart}</td>
-                  </tr>
-                  <tr>
-                    <th>설 비 명</th>
-                    <td>{hoveredEvent.sub_depart}</td>
-                  </tr>
-                  <tr>
-                    <th>구분 항목</th>
-                    <td>{hoveredEvent.divideCode}</td>
-                  </tr>
-                  <tr>
-                    <th>Man-day(시간)</th>
-                    <td>{hoveredEvent.manDay.toFixed(1)} 시간</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <HoverEventView
+              popupPosition={popupPosition}
+              hoveredEvent={hoveredEvent}
+              EventType={EventType}
+            ></HoverEventView>
           )}
         </CalendarGrid>
       </CalendarWrapper>
-      {ScheduleRegistrationIsModalOpen ? (
-        <ScheduleRegistration
-          ChooseDate={ChooseDate}
-          ScheduleRegistrationIsModalOpen={ScheduleRegistrationIsModalOpen}
-          setScheduleRegistrationIsModalOpen={() =>
-            setScheduleRegistrationIsModalOpen(false)
-          }
-          Change_Color_State={() => Change_Color_State()}
-        ></ScheduleRegistration>
-      ) : (
-        ""
-      )}
     </div>
   );
 };
