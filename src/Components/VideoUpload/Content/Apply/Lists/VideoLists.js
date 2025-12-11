@@ -134,10 +134,10 @@ const VideoLists = ({ fileUploadLists = [] }) => {
                       className="URLHover"
                       onDoubleClick={() =>
                         window.open(
-                          `${process.env.REACT_APP_VIDEO_HOST}/API/PLM/VideoUpload/VideoStream/${list.fileName}`
+                          `${process.env.REACT_APP_VIDEO_HOST}/API/AssociateCompany/YC/Man_Day/VideoUpload/VideoStream/${list.fileName}`
                         )
                       }
-                    >{`${process.env.REACT_APP_VIDEO_HOST}/API/PLM/VideoUpload/VideoStream/${list.fileName}`}</td>
+                    >{`${process.env.REACT_APP_VIDEO_HOST}/API/AssociateCompany/YC/Man_Day/VideoUpload/VideoStream/${list.fileName}`}</td>
                     <td>{list.originalName}</td>
                     <td>
                       {Math.floor(list.size / 1000 / 1000).toLocaleString()} MB
