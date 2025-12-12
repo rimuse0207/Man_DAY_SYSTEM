@@ -193,8 +193,7 @@ const LoginMainPage = () => {
           localStorage.removeItem("Token");
         }
       } else {
-        // Token이 없음
-
+        // Token이 없
         localStorage.removeItem("Token");
       }
     } catch (error) {
@@ -280,7 +279,7 @@ const LoginMainPage = () => {
     const Login_Check = await Request_Post_Axios("/Login/Login", LoginDataInfo);
 
     if (Login_Check.status) {
-      if (Login_Check.data) {
+      if (Login_Check.data.LoginChecking) {
         if (Login_Check.data.passwordChange) {
           toast.show({
             title: `비밀번호 변경 이후의 사용 가능합니다.`,
@@ -293,6 +292,7 @@ const LoginMainPage = () => {
             email: LoginDataInfo.email,
           });
         } else {
+          console.log("Login 성공");
           localStorage.setItem("Token", Login_Check.data.CreateJWTToken.token);
           localStorage.setItem(
             "userId",
