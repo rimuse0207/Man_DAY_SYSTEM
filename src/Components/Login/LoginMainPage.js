@@ -185,11 +185,16 @@ const LoginMainPage = () => {
     try {
       const Login_Checking = await Request_Get_Axios("/Login/Token_Checking");
 
-      if (Login_Checking.status && Login_Checking.data?.token === "Validable") {
-        // Token이 살아 있어, Home으로 이동
-        Navigate("/Home");
+      if (Login_Checking.status) {
+        if (Login_Checking.data?.token === "Validable") {
+          // Token이 살아 있어, Home으로 이동
+          Navigate("/Home");
+        } else {
+          localStorage.removeItem("Token");
+        }
       } else {
         // Token이 없음
+
         localStorage.removeItem("Token");
       }
     } catch (error) {
