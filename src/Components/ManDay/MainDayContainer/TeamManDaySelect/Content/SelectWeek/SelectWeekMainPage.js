@@ -134,6 +134,11 @@ const SelectWeekMainPage = () => {
     dispatch(Man_Day_Select_Option_fetchData());
   }, []);
   const Today_Date = moment().clone().startOf("isoWeek").format("YYYY-MM-DD");
+  const Next_Date = moment()
+    .add(7, "days")
+    .clone()
+    .startOf("isoWeek")
+    .format("YYYY-MM-DD");
   const [NowDate, setNowDate] = useState(
     moment().clone().startOf("isoWeek").format("YYYY-MM-DD")
   );
@@ -224,7 +229,7 @@ const SelectWeekMainPage = () => {
 
           {(Login_Info.team === "개발운영팀" ||
             Login_Info.id === "sjyoo@dhk.co.kr") &&
-          Today_Date !==
+          Next_Date !==
             moment(NowDate).clone().startOf("isoWeek").format("YYYY-MM-DD") ? (
             <div
               style={{ marginLeft: "20px" }}

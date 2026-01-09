@@ -8,7 +8,10 @@ import { toast } from "../../../../ToastMessage/ToastManager";
 import { useSelector } from "react-redux";
 import Loader from "../../../../Loader/Loader";
 import ReadingBoxs from "./ReadingBoxs";
-import { MdOutlineArrowBackIosNew } from "react-icons/md";
+import {
+  MdOutlineArrowBackIosNew,
+  MdOutlineArrowForwardIos,
+} from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
 import { getWeekOfMonth } from "../../CommonFunc/CommonFunc";
 import { BsFillQuestionSquareFill } from "react-icons/bs";
@@ -144,6 +147,11 @@ export const ContentMainPageMainDivBox = styled.div`
 
 const ContentMainPage = () => {
   const Today_Date = moment().clone().startOf("isoWeek").format("YYYY-MM-DD");
+  const Next_Date = moment()
+    .add(7, "days")
+    .clone()
+    .startOf("isoWeek")
+    .format("YYYY-MM-DD");
   const Login_Info = useSelector(
     (state) => state.Login_Info_Reducer_State.Login_Info
   );
@@ -490,7 +498,7 @@ const ContentMainPage = () => {
         >
           <BsFillQuestionSquareFill />
         </h2>
-        {Today_Date === Select_Date ? (
+        {Next_Date === Select_Date ? (
           ""
         ) : (
           <div
@@ -508,7 +516,7 @@ const ContentMainPage = () => {
       </div>
       {(WeekContainer?.Mode === "writing" ||
         WeekContainer?.Mode === "updating") &&
-      Today_Date === Select_Date ? (
+      (Today_Date === Select_Date || Next_Date === Select_Date) ? (
         <div className="Button_Group">
           <ul>
             <li>
@@ -551,19 +559,22 @@ const ContentMainPage = () => {
                 setWeekContainer={(data) => setWeekContainer(data)}
                 Select_Date={Select_Date}
                 Today_Date={Today_Date}
+                Next_Date={Next_Date}
               ></InputPage>
             );
           })}
         </div>
-        {WeekContainer.Mode === "reading" && Today_Date === Select_Date ? (
-          Today_Date === Select_Date ? (
+        {WeekContainer.Mode === "reading" &&
+        (Today_Date === Select_Date || Next_Date === Select_Date) ? (
+          Today_Date === Select_Date || Next_Date === Select_Date ? (
             <div className="Update_Button_Container">
               <button onClick={() => Change_the_Mode()}>수정</button>
             </div>
           ) : (
             <></>
           )
-        ) : WeekContainer.Mode === "updating" && Today_Date === Select_Date ? (
+        ) : WeekContainer.Mode === "updating" &&
+          (Today_Date === Select_Date || Next_Date === Select_Date) ? (
           <div style={{ display: "flex", justifyContent: "end" }}>
             <div className="Cancel_Button_Container">
               <button onClick={() => Cancel_Man_Day_Data()}>취소</button>
@@ -577,7 +588,7 @@ const ContentMainPage = () => {
               <button onClick={() => Save_Man_Day_Data()}>수정 완료</button>
             </div>
           </div>
-        ) : Today_Date === Select_Date ? (
+        ) : Today_Date === Select_Date || Next_Date === Select_Date ? (
           <div style={{ display: "flex", justifyContent: "end" }}>
             <div className="Update_Button_Container">
               <button onClick={() => Save_Temporarily_Man_Data_Info_Data()}>
