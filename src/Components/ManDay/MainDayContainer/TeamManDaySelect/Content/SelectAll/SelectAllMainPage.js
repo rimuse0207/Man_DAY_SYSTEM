@@ -20,7 +20,7 @@ const SelectAllMainPage = () => {
   const [Man_Day_Infos, setMan_Day_Infos] = useState([]);
   const [Loading_Check, setLoading_Check] = useState(false);
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
   useEffect(() => {
     Getting_Team_Member_Lists();
@@ -29,18 +29,18 @@ const SelectAllMainPage = () => {
 
   const Getting_Team_Member_Lists = async () => {
     const Getting_Team_Member_Lists_Axios = await Request_Get_Axios(
-      "/TeamLeaderManDay/Getting_Team_Member_All_Lists_For_Using_Filter_Options"
+      "/TeamLeaderManDay/Getting_Team_Member_All_Lists_For_Using_Filter_Options",
     );
     if (Getting_Team_Member_Lists_Axios.status) {
       setPersonFilterOptions(
         Getting_Team_Member_Lists_Axios.data.Person_Options
           ? Getting_Team_Member_Lists_Axios.data.Person_Options
-          : []
+          : [],
       );
       setDepartmentFilterOptions(
         Getting_Team_Member_Lists_Axios.data.Team_Options
           ? Getting_Team_Member_Lists_Axios.data.Team_Options
-          : []
+          : [],
       );
     }
   };
@@ -50,7 +50,7 @@ const SelectAllMainPage = () => {
       "/TeamLeaderManDay/Getting_Man_Day_Info_Data",
       {
         Filter_State: Select_Filter ? Select_Filter : Filter_State,
-      }
+      },
     );
     if (Getting_Man_Day_Info_Data_Axios.status) {
       setMan_Day_Infos(Getting_Man_Day_Info_Data_Axios.data);
@@ -108,7 +108,7 @@ const SelectAllMainPage = () => {
 
       XLSX.writeFile(
         workbook,
-        `${moment().format("YYMMDD")}_Man-Day 데이터.xlsx`
+        `${moment().format("YYMMDD")}_Man-Day 데이터.xlsx`,
       );
     } else {
       toast.show({
@@ -125,11 +125,11 @@ const SelectAllMainPage = () => {
       "/TeamLeaderManDay/Develop_Operate_Excel_Download",
       {
         Filter_State,
-      }
+      },
     );
     if (Develop_Operate_Excel_Download_Axios.status) {
       await Develop_Operate_Making_Excel(
-        Develop_Operate_Excel_Download_Axios.data
+        Develop_Operate_Excel_Download_Axios.data,
       );
     }
   };
@@ -147,6 +147,7 @@ const SelectAllMainPage = () => {
           list.gradebounceName === "인턴" ? 1 : list.gradebounceName,
       };
     });
+    console.log(Selected_Data);
 
     Intern_Change.forEach((data) => {
       flattenedData.push({
@@ -160,9 +161,7 @@ const SelectAllMainPage = () => {
         설비군: data.departName,
         설비명: data.subDepartName,
         업무유형: data.divideName,
-        MM: `${(Number(data.sum_man_day / data.counts / 8) * 100).toFixed(
-          5
-        )} %`,
+        MM: `${(Number(data.sum_man_day / data.counts) * 100).toFixed(5)} %`,
         연차구분: dusckrnqns(data.gradebounceww),
         연차: data.gradebounceName,
         호봉: data.salarygradeName,
@@ -182,7 +181,7 @@ const SelectAllMainPage = () => {
 
       XLSX.writeFile(
         workbook,
-        `개발운영팀 ${moment().format("YYMMDD")}_Man-Day 데이터.xlsx`
+        `개발운영팀 ${moment().format("YYMMDD")}_Man-Day 데이터.xlsx`,
       );
     } else {
       toast.show({
