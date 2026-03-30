@@ -11,7 +11,7 @@ export const useApiExecute = (apiFunc) => {
       try {
         setIsLoading(true);
         const response = await apiFunc(path, sendingData);
-        console.log(response);
+
         if (!response.status) {
           callbacks.onError?.(response.message);
           return;
