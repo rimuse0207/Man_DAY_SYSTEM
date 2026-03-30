@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { UserTableMainDivBox } from "../../../Access/AccessLists/UserTable";
 import { UserInfoMainDivBox } from "../UsersInfo";
 import { FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
-import { Request_Post_Axios } from "../../../../../API";
 import { toast } from "../../../../ToastMessage/ToastManager";
+import { useApi } from "../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../API/config";
 
 const UserSelectTable = ({
   onClose,
-  NowSelect,
-  Now_Select_Menu,
-  User_Lists,
   NowSelectedUser,
   setNowSelectedUser,
   setChecked_user_lists,
@@ -18,18 +15,22 @@ const UserSelectTable = ({
   Choose_Lists,
   Department_Including_User_Data,
 }) => {
+  const { request: addDepartmentAccessUser } = useApi(
+    API_CONFIG.UserAPI.ADD_DEPARTMENT_ACCESS_USER,
+  );
+
   const Handle_Clicks_User = (Selected_User) => {
-    const a = NowSelectedUser.map((list) => {
+    const checked = NowSelectedUser.map((list) => {
       return {
         ...list,
         checked:
           list.email === Selected_User.email ? !list.checked : list.checked,
       };
     });
-    setNowSelectedUser(a);
+    setNowSelectedUser(checked);
     if (Selected_User.checked) {
       setChecked_user_lists(
-        Checked_user_lists.filter((item) => item.email !== Selected_User.email)
+        Checked_user_lists.filter((item) => item.email !== Selected_User.email),
       );
     } else {
       setChecked_user_lists(Checked_user_lists.concat(Selected_User));
@@ -37,28 +38,23 @@ const UserSelectTable = ({
   };
 
   const Handle_Add_Access_User_Lists = async () => {
-    const Handle_Add_Access_User_Axios = await Request_Post_Axios(
-      "/User/Handle_Add_Access_User_Lists",
+    addDepartmentAccessUser(
       {
         Checked_user_lists,
         Choose_Lists,
-      }
+      },
+      {
+        onSuccess: async () => {
+          await Department_Including_User_Data();
+          onClose();
+          toast.show({
+            title: `${Checked_user_lists.length}명의 인원 ${Choose_Lists.itemName} 부서 조회 권한이 등록 되었습니다.`,
+            successCheck: true,
+            duration: 6000,
+          });
+        },
+      },
     );
-    if (Handle_Add_Access_User_Axios.status) {
-      await Department_Including_User_Data();
-      onClose();
-      toast.show({
-        title: `${Checked_user_lists.length}명의 인원 ${Choose_Lists.itemName} 부서 조회 권한이 등록 되었습니다.`,
-        successCheck: true,
-        duration: 6000,
-      });
-    } else {
-      toast.show({
-        title: `IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-    }
   };
 
   return (
@@ -86,14 +82,7 @@ const UserSelectTable = ({
           <table>
             <thead>
               <tr>
-                <th
-                  style={{ width: "100px" }}
-                  onClick={() => {
-                    // HandleClicks_All_Users();
-                  }}
-                >
-                  {/* {AllChecking ? <FaRegCheckSquare /> : <FaRegSquare></FaRegSquare>} */}
-                </th>
+                <th style={{ width: "100px" }}></th>
                 <th>이름</th>
                 <th>직위</th>
                 <th>부서</th>
@@ -103,37 +92,33 @@ const UserSelectTable = ({
             </thead>
             <tbody>
               {NowSelectedUser.map((list) => {
-                return list.disabled ? (
+                const blockSetting = list.disabled;
+                const isChecked = list.checked;
+                return (
                   <tr
                     key={list.email}
-                    style={{ backgroundColor: "#efefff", opacity: "0.5" }}
-                  >
-                    <td style={{ width: "100px" }}></td>
-                    <td>{list.name}</td>
-                    <td>{list.user_position}</td>
-                    <td>{list.user_department}</td>
-                    <td>{list.email}</td>
-                    <td>{list.user_occupational}</td>
-                  </tr>
-                ) : (
-                  <tr
-                    key={list.email}
-                    onClick={() => {
-                      Handle_Clicks_User(list);
-                    }}
                     style={
-                      list?.checked
-                        ? { backgroundColor: "RGB(239, 244, 252)" }
-                        : {}
+                      blockSetting
+                        ? { backgroundColor: "#efefff", opacity: "0.5" }
+                        : { backgroundColor: "RGB(239, 244, 252)" }
                     }
+                    onClick={() => {
+                      if (!blockSetting) {
+                        Handle_Clicks_User(list);
+                      }
+                    }}
                   >
-                    <td style={list?.checked ? { color: "blue" } : {}}>
-                      {list?.checked ? (
-                        <FaRegCheckSquare />
-                      ) : (
-                        <FaRegSquare></FaRegSquare>
-                      )}
-                    </td>
+                    {blockSetting ? (
+                      <td style={{ width: "100px" }}></td>
+                    ) : (
+                      <td style={isChecked ? { color: "blue" } : {}}>
+                        {isChecked ? (
+                          <FaRegCheckSquare />
+                        ) : (
+                          <FaRegSquare></FaRegSquare>
+                        )}
+                      </td>
+                    )}
                     <td>{list.name}</td>
                     <td>{list.user_position}</td>
                     <td>{list.user_department}</td>

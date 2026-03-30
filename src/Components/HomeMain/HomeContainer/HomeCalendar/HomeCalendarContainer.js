@@ -1,27 +1,28 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Calendar from "./Calendar";
-import { Request_Get_Axios } from "../../../../API";
 import { useMonthMove } from "../MonthMove/MonthMove";
+import { useApi } from "../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../API/config";
 
 const HomeCalendarContainer = () => {
   const { year, month, Select_Month_UI } = useMonthMove();
+  const { request: getHomeCalendarData } = useApi(
+    API_CONFIG.HomeAPI.CALENDAR_DATA,
+  );
   const [events, setEvents] = useState([]);
 
-  const Change_Color_State = useCallback(async () => {
-    const Getting_PIMS_Data = await Request_Get_Axios(
-      "/Home/Getting_Month_Man_Day_Select",
+  useEffect(() => {
+    getHomeCalendarData(
       {
         date: `${year}-${month + 1}`,
-      }
+      },
+      {
+        onSuccess: (data) => {
+          setEvents(data || []);
+        },
+      },
     );
-    if (Getting_PIMS_Data.status) {
-      setEvents(Getting_PIMS_Data.data);
-    }
-  }, [year, month]);
-
-  useEffect(() => {
-    Change_Color_State();
-  }, [Change_Color_State]);
+  }, [getHomeCalendarData, year, month]);
 
   return (
     <Calendar
@@ -29,7 +30,6 @@ const HomeCalendarContainer = () => {
       month={month}
       Select_Month_UI={Select_Month_UI}
       events={events}
-      Change_Color_State={Change_Color_State}
       EventType={"Home"}
     />
   );

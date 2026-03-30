@@ -1,57 +1,51 @@
 import React, { useEffect, useState } from "react";
 import CommonFilters from "../CommonFilters/CommonFilters";
 import { PersonMainPageMainDivBox } from "../Person/PersonMainPage";
-import { Request_Get_Axios } from "../../../../../../../API";
 import { useSelector } from "react-redux";
 import BarGraph from "../Person/BarGraph";
 import PieGraph from "./PieGraph";
-import Loader from "../../../../../../Loader/Loader";
+import { useApi } from "../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../API/config";
 
 const CompanyMainPage = ({ menuCode }) => {
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
   const [depart_Bar_State, setdepart_Bar_State] = useState([]);
   const [sub_depart_Bar_State, setsub_depart_Bar_State] = useState([]);
   const [department_Pie_State, setdepartment_Pie_State] = useState([]);
   const [gradbounce_Pie_State, setgradbounce_Pie_State] = useState([]);
+
   const [CompanyInfos, setCompanyInfos] = useState({
     value: "all",
     label: "전체",
   });
   const [companyChecking, setcompanyChecking] = useState(false);
-  const [Loading_Check, setLoading_Check] = useState(false);
+
+  const { request: getCompanyBar } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_COMPANY_BAR,
+  );
+
   useEffect(() => {
     Getting_Company_Data();
   }, [companyChecking]);
-  const Getting_Company_Data = async () => {
-    setLoading_Check(true);
-    try {
-      const Getting_Company_Data_Axios = await Request_Get_Axios(
-        "/TeamLeaderManDay/Getting_Company_Data",
-        {
-          Filter_State,
-          companyChecking: companyChecking,
-        }
-      );
 
-      if (Getting_Company_Data_Axios.status) {
-        setdepart_Bar_State(Getting_Company_Data_Axios.data.depart_Bar_Data);
-        setsub_depart_Bar_State(
-          Getting_Company_Data_Axios.data.sub_depart_Bar_Data
-        );
-        setdepartment_Pie_State(
-          Getting_Company_Data_Axios.data.User_Counting_Pie_Data
-        );
-        setgradbounce_Pie_State(
-          Getting_Company_Data_Axios.data.Based_Annual_Leave_User_Count_Pie_Data
-        );
-        setCompanyInfos(Filter_State.company);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    setLoading_Check(false);
+  const Getting_Company_Data = async () => {
+    getCompanyBar(
+      {
+        Filter_State,
+        companyChecking: companyChecking,
+      },
+      {
+        onSuccess: (data) => {
+          setdepart_Bar_State(data.depart_Bar_Data);
+          setsub_depart_Bar_State(data.sub_depart_Bar_Data);
+          setdepartment_Pie_State(data.User_Counting_Pie_Data);
+          setgradbounce_Pie_State(data.Based_Annual_Leave_User_Count_Pie_Data);
+          setCompanyInfos(Filter_State.company);
+        },
+      },
+    );
   };
 
   return (
@@ -79,13 +73,11 @@ const CompanyMainPage = ({ menuCode }) => {
           </label>
         </div>
       </div>
-      {CompanyInfos?.value ? (
+      {CompanyInfos?.value && (
         <h3 style={{ textAlign: "center" }}>
           {CompanyInfos.value === "all" ? "YC & EXICON" : CompanyInfos.value}{" "}
           Man_day
         </h3>
-      ) : (
-        <></>
       )}
       <h3>설비군</h3>
       <BarGraph Bar_State={depart_Bar_State}></BarGraph>
@@ -108,7 +100,6 @@ const CompanyMainPage = ({ menuCode }) => {
         </div>
       </div>
       <div style={{ padding: "20px" }}></div>
-      <Loader loading={Loading_Check}></Loader>
     </PersonMainPageMainDivBox>
   );
 };

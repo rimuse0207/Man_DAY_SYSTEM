@@ -12,7 +12,7 @@ import ManDayExampleMainPage from "../ManDay/ManDayExampleMainPage";
 import VideoUploadMainPage from "../VideoUpload/VideoUploadMainPage";
 const RouterMainPage = () => {
   const User_Info = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
+    (state) => state.Login_Info_Reducer_State.Login_Info,
   );
   const [RouterInfo, setRouterInfo] = useState([
     {
@@ -72,6 +72,7 @@ const RouterMainPage = () => {
       element: <VideoUploadMainPage></VideoUploadMainPage>,
       withAuthorization: true,
       withAdminAuthorization: false,
+      needAccessToken: "video",
     },
   ]);
 

@@ -1,31 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { UserTableMainDivBox } from "../../../../../../../User/Access/AccessLists/UserTable";
 import { UserInfoMainDivBox } from "../../../../../../../User/Department/Contents/UsersInfo";
-import { Request_Get_Axios } from "../../../../../../../../API";
 import { useDispatch, useSelector } from "react-redux";
 import { Insert_Man_Day_Select_Reducer_State_Func } from "../../../../../../../../Models/ManDayReducers/ManDaySelectFilterReducer";
+import { useApi } from "../../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../../API/config";
 
 const PersonTableLists = ({ onClose, NowSelect }) => {
   const dispatch = useDispatch();
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
   const [NowSelectedUser, setNowSelectedUser] = useState([]);
+
+  const { request: getDepartmentMember } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_DEPARTMENT_MEMBER,
+  );
 
   useEffect(() => {
     if (NowSelect) Getting_Department_Users();
   }, [NowSelect]);
 
   const Getting_Department_Users = async () => {
-    const Getting_Department_Users_Axios = await Request_Get_Axios(
-      "/TeamLeaderManDay/Getting_Department_Users",
+    getDepartmentMember(
       {
         itemCode: NowSelect.itemCode,
-      }
+      },
+      {
+        onSuccess: (data) => {
+          setNowSelectedUser(data);
+        },
+      },
     );
-    if (Getting_Department_Users_Axios.status) {
-      setNowSelectedUser(Getting_Department_Users_Axios.data);
-    }
   };
 
   const Handle_Clicks_User = (Selected) => {
@@ -33,7 +39,7 @@ const PersonTableLists = ({ onClose, NowSelect }) => {
       Insert_Man_Day_Select_Reducer_State_Func({
         ...Filter_State,
         name: { value: Selected.email, label: Selected.name },
-      })
+      }),
     );
     onClose(false);
   };

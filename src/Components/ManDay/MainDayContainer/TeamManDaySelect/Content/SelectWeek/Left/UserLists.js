@@ -4,6 +4,9 @@ import { toast } from "../../../../../../ToastMessage/ToastManager";
 import { useSelector } from "react-redux";
 import { Request_Post_Axios } from "../../../../../../../API";
 import moment from "moment";
+import { accessCheck } from "../../../../../../Common/Utils/ManDay/sortingOptions";
+import { useApi } from "../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../API/config";
 
 const UserListsMainDivBox = styled.div`
   table {
@@ -67,7 +70,11 @@ const UserLists = ({
   setSelect_Modes,
 }) => {
   const Login_Info = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
+    (state) => state.Login_Info_Reducer_State.Login_Info,
+  );
+  const hasAccess = accessCheck(Login_Info);
+  const { request: sendingMail } = useApi(
+    API_CONFIG.TeamLeaderAPI.SENDING_MAIL,
   );
 
   // 미입력자에게 메일 발송
@@ -77,11 +84,12 @@ const UserLists = ({
     if (
       !window.confirm(
         `${Nothing_User_Lists.length}명의 인원에게 메일을 발송 하시겠습니까?
-               `
+               `,
       )
     ) {
       return;
     }
+
     if (Nothing_User_Lists.length === 0) {
       toast.show({
         title: `메일을 보낼 사용자가 없습니다.`,
@@ -89,51 +97,66 @@ const UserLists = ({
         duration: 4000,
       });
       return;
-    } else {
-      const Handle_Send_Mail_For_This_Week = await Request_Post_Axios(
-        "/TeamLeaderManDay/Handle_Send_Mail_For_This_Week",
-        {
-          Nothing_User_Lists,
-        }
-      );
-      if (Handle_Send_Mail_For_This_Week.status) {
-        toast.show({
-          title: `메일을 정상적으로 보냈습니다.`,
-          successCheck: true,
-          duration: 4000,
-        });
-      } else {
-        toast.show({
-          title: `오류가 발생되었습니다. IT팀에 문의바랍니다.`,
-          successCheck: false,
-          duration: 4000,
-        });
-      }
     }
+
+    // 메일 전송
+    sendingMail(
+      { Nothing_User_Lists },
+      {
+        onSuccess: () => {
+          toast.show({
+            title: `메일을 정상적으로 보냈습니다.`,
+            successCheck: true,
+            duration: 4000,
+          });
+        },
+      },
+    );
   };
 
-  const checkInputStatus = (user_list, emailToCheck, referenceDate) => {
+  const Filter_User_List = (user_list, referenceDate) => {
     // 1. 기준일이 속한 주의 월~금 날짜 리스트 구하기
     const weekdays = [];
     const startOfWeek = moment(referenceDate).startOf("isoWeek"); // 월요일
     for (let i = 0; i < 5; i++) {
       weekdays.push(startOfWeek.clone().add(i, "days").format("YYYY-MM-DD"));
     }
-    // 2. 해당 email의 user 찾기
+    return user_list.filter((user) => {
+      const userDatesSet = new Set(
+        user.man_day_infos.map((info) =>
+          moment(info.date).format("YYYY-MM-DD"),
+        ),
+      );
+
+      const matchedCount = weekdays.filter((date) =>
+        userDatesSet.has(date),
+      ).length;
+
+      return matchedCount < 5; // '입력'이 아닌 유저만
+    });
+  };
+
+  const checkInputStatus = (user_list, emailToCheck, referenceDate) => {
+    // 기준일이 속한 주의 월~금 날짜 리스트 구하기
+    const weekdays = [];
+    const startOfWeek = moment(referenceDate).startOf("isoWeek"); // 월요일
+    for (let i = 0; i < 5; i++) {
+      weekdays.push(startOfWeek.clone().add(i, "days").format("YYYY-MM-DD"));
+    }
+    // 해당 email의 user 찾기
     const user = user_list.find((user) => user.email === emailToCheck?.email);
     if (!user) return "사용자 없음";
 
-    // 3. 중복 제거된 날짜 리스트 만들기
+    // 중복 제거된 날짜 리스트 만들기
     const userDatesSet = new Set(
-      user.man_day_infos.map((info) => moment(info.date).format("YYYY-MM-DD"))
+      user.man_day_infos.map((info) => moment(info.date).format("YYYY-MM-DD")),
     );
 
-    // 4. 해당 주의 날짜 중 몇 개가 포함되어 있는지 확인
+    // 해당 주의 날짜 중 몇 개가 포함되어 있는지 확인
     const matchedCount = weekdays.filter((date) =>
-      userDatesSet.has(date)
+      userDatesSet.has(date),
     ).length;
 
-    // 5. 조건에 따른 결과 반환
     if (matchedCount === 0)
       return (
         <td
@@ -173,40 +196,15 @@ const UserLists = ({
     );
   };
 
-  const Filter_User_List = (user_list, referenceDate) => {
-    // 1. 기준일이 속한 주의 월~금 날짜 리스트 구하기
-    const weekdays = [];
-    const startOfWeek = moment(referenceDate).startOf("isoWeek"); // 월요일
-    for (let i = 0; i < 5; i++) {
-      weekdays.push(startOfWeek.clone().add(i, "days").format("YYYY-MM-DD"));
-    }
-    return user_list.filter((user) => {
-      const userDatesSet = new Set(
-        user.man_day_infos.map((info) => moment(info.date).format("YYYY-MM-DD"))
-      );
-
-      const matchedCount = weekdays.filter((date) =>
-        userDatesSet.has(date)
-      ).length;
-
-      return matchedCount < 5; // '입력'이 아닌 유저만
-    });
-  };
-
   return (
     <UserListsMainDivBox>
-      {NowDate === Today_Date &&
-      (Login_Info.team === "개발운영팀" ||
-        Login_Info.id === "sjyoo@dhk.co.kr") ? (
+      {NowDate === Today_Date && hasAccess && (
         <div className="Nothing_Data_User_Button_Container">
           <button onClick={() => Handle_Send_Mail_User()}>
             미 입력 자 메일 발송
           </button>
         </div>
-      ) : (
-        <></>
       )}
-
       <table>
         <thead>
           <tr>

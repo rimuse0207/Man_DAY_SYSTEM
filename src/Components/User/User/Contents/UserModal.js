@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, Fragment } from "react";
+import styled from "styled-components";
+import { useApi } from "../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../API/config";
 import {
-  ButtonContainer,
-  CancelButton,
-  Message,
   Modal,
   Overlay,
 } from "../../Department/Contents/Modal/DepartmentMoveModal";
-import styled from "styled-components";
-import { UserContentMainPageButtonContainer } from "../UserContentMainPage";
-import { Request_Get_Axios, Request_Post_Axios } from "../../../../API";
-import Select from "react-select";
-import { toast } from "../../../ToastMessage/ToastManager";
+import UpdateMode from "./ModeComponents/UpdateMode";
+import ReadMode from "./ModeComponents/ReadMode";
 
 export const UserModalMainDivBox = styled.div`
   .Float_Top_Container {
@@ -31,21 +28,17 @@ export const UserModalMainDivBox = styled.div`
     border-collapse: collapse;
     font-size: 0.8em;
   }
-
   th,
   td {
     border: none;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     padding: 15px;
-    border-left: none;
-    border-right: none;
   }
   td {
     padding-left: 10px;
     text-align: start;
   }
-
   th {
     color: black;
     text-align: center;
@@ -60,23 +53,21 @@ export const UserModalMainDivBox = styled.div`
     width: 99%;
   }
 `;
-const styles = {
-  control: (provided) => ({
-    ...provided,
-    height: "40px",
-  }),
-  valueContainer: (provided) => ({
-    ...provided,
-    height: "40px",
-  }),
-  indicatorsContainer: (provided) => ({
-    ...provided,
-    height: "40px",
-  }),
-};
+
+const formatUserInfo = (user) => ({
+  ...user,
+  department: { value: user.departmentCode, label: user.user_department },
+  salarygrade: { value: user.salarygradeCode, label: user.user_salarygrade },
+  occupational: { value: user.occupationalCode, label: user.user_occupational },
+  gradebounce: { value: user.gradebounceCode, label: user.user_gradebounce },
+  position: { value: user.positionCode, label: user.user_position },
+  SelectreadOnly: {
+    value: user.readOnly === 1 ? "readOnly" : "writeAndreading",
+    label: user.readOnly === 1 ? "읽기전용" : "쓰기/읽기",
+  },
+});
 
 const UserModal = ({
-  isOpen,
   onClose,
   Select_User,
   Update_Mode,
@@ -84,440 +75,41 @@ const UserModal = ({
   Getting_All_User_Info,
   setSelect_User,
 }) => {
-  const [Input_User_Info, setInput_User_Info] = useState({
-    ...Select_User,
-    department: {
-      value: Select_User.departmentCode,
-      label: Select_User.user_department,
-    },
-    salarygrade: {
-      value: Select_User.salarygradeCode,
-      label: Select_User.user_salarygrade,
-    },
-    occupational: {
-      value: Select_User.occupationalCode,
-      label: Select_User.user_occupational,
-    },
-    gradebounce: {
-      value: Select_User.gradebounceCode,
-      label: Select_User.user_gradebounce,
-    },
-    position: {
-      value: Select_User.positionCode,
-      label: Select_User.user_position,
-    },
-    SelectreadOnly: {
-      value: Select_User.readOnly === 1 ? "readOnly" : "writeAndreading",
-      label: Select_User.readOnly === 1 ? "읽기전용" : "쓰기/읽기",
-    },
-  });
+  const [Input_User_Info, setInput_User_Info] = useState(() =>
+    formatUserInfo(Select_User),
+  );
   const [Option_Lists, setOption_Lists] = useState([]);
 
-  // 수정을 위한 데이터 변경
+  const { request: getCommonData } = useApi(API_CONFIG.UserAPI.GET_COMMON_DATA);
   useEffect(() => {
-    setInput_User_Info({
-      ...Select_User,
-      department: {
-        value: Select_User.departmentCode,
-        label: Select_User.user_department,
-      },
-      salarygrade: {
-        value: Select_User.salarygradeCode,
-        label: Select_User.user_salarygrade,
-      },
-      occupational: {
-        value: Select_User.occupationalCode,
-        label: Select_User.user_occupational,
-      },
-      gradebounce: {
-        value: Select_User.gradebounceCode,
-        label: Select_User.user_gradebounce,
-      },
-      position: {
-        value: Select_User.positionCode,
-        label: Select_User.user_position,
-      },
-      SelectreadOnly: {
-        value: Select_User.readOnly === 1 ? "readOnly" : "writeAndreading",
-        label: Select_User.readOnly === 1 ? "읽기전용" : "쓰기/읽기",
-      },
-    });
-  }, [Update_Mode]);
+    getCommonData({}, { onSuccess: (data) => setOption_Lists(data) });
+  }, [getCommonData]);
 
-  // 공통항목 가져오기
   useEffect(() => {
-    Getting_Common_Info_Data();
-  }, [Select_User]);
-  const Getting_Common_Info_Data = async () => {
-    const Getting_Common_Info_Data_Axios = await Request_Get_Axios(
-      "/User/Getting_Common_Info_Data"
-    );
-    if (Getting_Common_Info_Data_Axios.status) {
-      setOption_Lists(Getting_Common_Info_Data_Axios.data);
-    }
-  };
-
-  // 비밀번호 초기화 및 퇴직자 처리
-  const Handle_Reset_Password = async (Select_Type) => {
-    if (Select_Type === "retire") {
-      if (!window.confirm("정말로 퇴직처리 하시겠습니까?")) {
-        return;
-      }
-    } else if (Select_Type === "cancel") {
-      if (!window.confirm("정말로 원복처리 하시겠습니까?")) {
-        return;
-      }
-    }
-
-    const Handle_Reset_Password_Axios = await Request_Post_Axios(
-      "/User/Handle_Reset_Password",
-      {
-        Select_User,
-        Select_Menu: Select_Type,
-      }
-    );
-    if (Handle_Reset_Password_Axios.status) {
-      if (Select_Type === "password_reset") {
-        toast.show({
-          title: `${Select_User.name}님의 비밀번호를 '1234'로 변경처리 하였습니다.`,
-          successCheck: true,
-          duration: 10000,
-        });
-        setUpdate_Mode(false);
-      } else if (Select_Type === "retire") {
-        toast.show({
-          title: `${Select_User.name}님을 퇴직처리 하였습니다.`,
-          successCheck: true,
-          duration: 10000,
-        });
-        await Getting_All_User_Info();
-        setUpdate_Mode(false);
-        onClose();
-      } else {
-        toast.show({
-          title: `${Select_User.name}님을 원복처리 하였습니다.`,
-          successCheck: true,
-          duration: 10000,
-        });
-        toast.show({
-          title: `원복처리되어 비밀번호가 1234로 변경되었습니다.`,
-          successCheck: true,
-          duration: 10000,
-        });
-        await Getting_All_User_Info();
-        setUpdate_Mode(false);
-        onClose();
-      }
-    }
-  };
-
-  const Handle_Update_User_Info_Data = async () => {
-    if (
-      !Input_User_Info.department ||
-      !Input_User_Info.salarygrade ||
-      !Input_User_Info.occupational ||
-      !Input_User_Info.gradebounce ||
-      !Input_User_Info.gradebounce
-    ) {
-      toast.show({
-        title: `빈 항목을 전부 채워 주세요.`,
-        successCheck: false,
-        duration: 6000,
-      });
-      return;
-    }
-    const Handle_Update_User_Info_Data_Axios = await Request_Post_Axios(
-      "/User/Handle_Update_User_Info_Data",
-      {
-        Input_User_Info,
-      }
-    );
-
-    if (Handle_Update_User_Info_Data_Axios.status) {
-      toast.show({
-        title: `사용자를 정상적으로 변경 처리하였습니다.`,
-        successCheck: true,
-        duration: 6000,
-      });
-      setSelect_User(Handle_Update_User_Info_Data_Axios.data);
-      await Getting_All_User_Info();
-      setUpdate_Mode(false);
-    } else {
-      toast.show({
-        title: `오류가 발생되었습니다. IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-    }
-  };
+    setInput_User_Info(formatUserInfo(Select_User));
+  }, [Select_User, Update_Mode]);
 
   return (
     <Overlay>
       <Modal>
         <UserModalMainDivBox>
-          <div className="Float_Top_Container">
-            <div>
-              <h4>사용자 상세</h4>
-              <div style={{ fontSize: "0.8em" }}>
-                사용자 상세를 조회하고 수정/관리 할 수 있습니다.
-              </div>
-            </div>
-            <UserContentMainPageButtonContainer>
-              {Update_Mode ? (
-                <>
-                  <button
-                    onClick={() => {
-                      setUpdate_Mode(false);
-                    }}
-                  >
-                    취소
-                  </button>
-                  <button
-                    onClick={() => Handle_Reset_Password("password_reset")}
-                  >
-                    비밀번호 초기화
-                  </button>
-
-                  {Select_User.inservice === 1 ? (
-                    <button onClick={() => Handle_Reset_Password("retire")}>
-                      퇴직
-                    </button>
-                  ) : (
-                    <button onClick={() => Handle_Reset_Password("cancel")}>
-                      원복
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      onClose();
-                    }}
-                  >
-                    취소
-                  </button>
-                  <button onClick={() => setUpdate_Mode(true)}>수정</button>
-                </>
-              )}
-            </UserContentMainPageButtonContainer>
-          </div>
-          <div>
-            <div></div>
-          </div>
-          <div>
-            <table>
-              <tbody>
-                <tr>
-                  <th>ID</th>
-                  <td>{Select_User.email}</td>
-                </tr>
-                <tr>
-                  <th>이름</th>
-                  {Update_Mode ? (
-                    <td style={{ padding: "10px" }}>
-                      <input
-                        value={Input_User_Info.name}
-                        onChange={(e) =>
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            name: e.target.value,
-                          })
-                        }
-                      ></input>
-                    </td>
-                  ) : (
-                    <td>{Select_User.name}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>직위</th>
-                  {Update_Mode ? (
-                    <td>
-                      <Select
-                        value={Input_User_Info.position}
-                        onChange={(e) => {
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            position: e,
-                          });
-                        }}
-                        isClearable
-                        options={Option_Lists.filter(
-                          (item) => item.divideType === "position"
-                        ).map((list) => {
-                          return { value: list.itemCode, label: list.itemName };
-                        })}
-                        styles={styles}
-                      ></Select>
-                    </td>
-                  ) : (
-                    <td>{Select_User.user_position}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>부서</th>
-                  {Update_Mode ? (
-                    <td>
-                      <Select
-                        value={Input_User_Info.department}
-                        onChange={(e) => {
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            department: e,
-                          });
-                        }}
-                        isClearable
-                        options={Option_Lists.filter(
-                          (item) => item.divideType === "department"
-                        ).map((list) => {
-                          return { value: list.itemCode, label: list.itemName };
-                        })}
-                        styles={styles}
-                      ></Select>
-                    </td>
-                  ) : (
-                    <td>{Select_User.user_department}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>연차</th>
-                  {Update_Mode ? (
-                    <td>
-                      <Select
-                        value={Input_User_Info.gradebounce}
-                        onChange={(e) => {
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            gradebounce: e,
-                          });
-                        }}
-                        isClearable
-                        options={Option_Lists.filter(
-                          (item) => item.divideType === "gradebounce"
-                        ).map((list) => {
-                          return { value: list.itemCode, label: list.itemName };
-                        })}
-                        styles={styles}
-                      ></Select>
-                    </td>
-                  ) : (
-                    <td>{Select_User.user_gradebounce}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>호봉</th>
-                  {Update_Mode ? (
-                    <td>
-                      <Select
-                        value={Input_User_Info.salarygrade}
-                        onChange={(e) => {
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            salarygrade: e,
-                          });
-                        }}
-                        isClearable
-                        options={Option_Lists.filter(
-                          (item) => item.divideType === "salarygrade"
-                        ).map((list) => {
-                          return { value: list.itemCode, label: list.itemName };
-                        })}
-                        styles={styles}
-                      ></Select>
-                    </td>
-                  ) : (
-                    <td>{Select_User.user_salarygrade}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>직군</th>
-                  {Update_Mode ? (
-                    <td>
-                      <Select
-                        value={Input_User_Info.occupational}
-                        onChange={(e) => {
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            occupational: e,
-                          });
-                        }}
-                        isClearable
-                        options={Option_Lists.filter(
-                          (item) => item.divideType === "occupational"
-                        ).map((list) => {
-                          return { value: list.itemCode, label: list.itemName };
-                        })}
-                        styles={styles}
-                      ></Select>
-                    </td>
-                  ) : (
-                    <td>{Select_User.user_occupational}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>일급(만원)</th>
-                  {Update_Mode ? (
-                    <td style={{ padding: "10px" }}>
-                      <input
-                        type="number"
-                        step={10}
-                        value={Input_User_Info.dailyExpense}
-                        onChange={(e) =>
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            dailyExpense: e.target.value,
-                          })
-                        }
-                      ></input>
-                    </td>
-                  ) : (
-                    <td>{Select_User.dailyExpense}</td>
-                  )}
-                </tr>
-                <tr>
-                  <th>읽기전용</th>
-                  {Update_Mode ? (
-                    <td>
-                      <Select
-                        value={Input_User_Info.SelectreadOnly}
-                        onChange={(e) => {
-                          setInput_User_Info({
-                            ...Input_User_Info,
-                            SelectreadOnly: e,
-                          });
-                        }}
-                        isClearable
-                        options={[
-                          {
-                            value: "readOnly",
-                            label: "읽기전용",
-                          },
-                          {
-                            value: "writeAndreading",
-                            label: "쓰기/읽기",
-                          },
-                        ]}
-                        styles={styles}
-                      ></Select>
-                    </td>
-                  ) : (
-                    <td>
-                      {Select_User.readOnly === 1 ? "읽기전용" : "쓰기/읽기"}
-                    </td>
-                  )}
-                </tr>
-              </tbody>
-            </table>
-          </div>
           {Update_Mode ? (
-            <UserContentMainPageButtonContainer style={{ marginTop: "20px" }}>
-              <button onClick={() => Handle_Update_User_Info_Data()}>
-                수정
-              </button>
-            </UserContentMainPageButtonContainer>
+            <UpdateMode
+              Select_User={Select_User}
+              setUpdate_Mode={(data) => setUpdate_Mode(data)}
+              setSelect_User={(data) => setSelect_User(data)}
+              Input_User_Info={Input_User_Info}
+              Option_Lists={Option_Lists}
+              Getting_All_User_Info={Getting_All_User_Info}
+              onClose={onClose}
+              setInput_User_Info={(data) => setInput_User_Info(data)}
+            ></UpdateMode>
           ) : (
-            <div></div>
+            <ReadMode
+              onClose={onClose}
+              Select_User={Select_User}
+              setUpdate_Mode={(data) => setUpdate_Mode(data)}
+            ></ReadMode>
           )}
         </UserModalMainDivBox>
       </Modal>

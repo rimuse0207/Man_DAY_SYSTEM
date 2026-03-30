@@ -6,25 +6,28 @@ import {
   Overlay,
 } from "../../../../../../../User/Department/Contents/Modal/DepartmentMoveModal";
 import ParentTree from "../../../../../../../User/Department/TreeMenu/ParentTree";
-import { Request_Get_Axios } from "../../../../../../../../API";
 import PersonTableLists from "./PersonTableLists";
+import { useApi } from "../../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../../API/config";
 
 const PersonSelectModal = ({ onClose }) => {
   const [Department_State, setDepartment_State] = useState([]);
   const [NowSelect, setNowSelect] = useState(null);
-  useEffect(() => {
-    Getting_DepartMent_Lists_Data();
-  }, []);
 
-  const Getting_DepartMent_Lists_Data = async () => {
-    const Man_Day_Team_Select_Making_Tree_Structure_Axios =
-      await Request_Get_Axios(
-        "/TeamLeaderManDay/Man_Day_Team_Select_Making_Tree_Structure"
-      );
-    if (Man_Day_Team_Select_Making_Tree_Structure_Axios.status) {
-      setDepartment_State(Man_Day_Team_Select_Making_Tree_Structure_Axios.data);
-    }
-  };
+  const { request: getDepartmentTree } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_DEPARTMENT_TREE,
+  );
+
+  useEffect(() => {
+    getDepartmentTree(
+      {},
+      {
+        onSuccess: (data) => {
+          setDepartment_State(data);
+        },
+      },
+    );
+  }, []);
 
   return (
     <Overlay>

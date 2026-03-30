@@ -6,10 +6,11 @@ import {
   Modal,
   Overlay,
 } from "../../../../../../../User/Department/Contents/Modal/DepartmentMoveModal";
-import { Request_Get_Axios } from "../../../../../../../../API";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { Insert_Man_Day_Select_Reducer_State_Func } from "../../../../../../../../Models/ManDayReducers/ManDaySelectFilterReducer";
+import { useApi } from "../../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../../API/config";
 
 const ButtonContainer = styled.div`
   text-align: end;
@@ -35,55 +36,54 @@ const DepartSelectModal = ({
 }) => {
   const dispatch = useDispatch();
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
   const [Department_State, setDepartment_State] = useState([]);
   const [NowSelect, setNowSelect] = useState(null);
 
-  useEffect(() => {
-    Getting_DepartMent_Lists_Data();
-  }, []);
+  const { request: departTree } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_DEPARTMENT_TREE,
+  );
 
-  const Getting_DepartMent_Lists_Data = async () => {
-    const Man_Day_Team_Select_Making_Tree_Structure_Axios =
-      await Request_Get_Axios(
-        "/TeamLeaderManDay/Man_Day_Team_Select_Making_Tree_Structure"
-      );
-    if (Man_Day_Team_Select_Making_Tree_Structure_Axios.status) {
-      setDepartment_State(Man_Day_Team_Select_Making_Tree_Structure_Axios.data);
-    }
-  };
+  useEffect(() => {
+    departTree({}, { onSuccess: (data) => setDepartment_State(data) });
+  }, [departTree]);
 
   const Selected_Team_Part_Data = async () => {
-    if (Select_Types === "team") {
-      dispatch(
-        Insert_Man_Day_Select_Reducer_State_Func({
-          ...Filter_State,
-          team: { value: NowSelect.itemCode, label: NowSelect.itemName },
-        })
-      );
-    } else if (Select_Types === "user") {
-      setInput_User_Info({
-        ...Input_User_Info,
-        department: {
-          value: NowSelect.itemCode,
-          label: NowSelect.itemName,
-        },
-      });
-    } else {
-      dispatch(
-        Insert_Man_Day_Select_Reducer_State_Func({
-          ...Filter_State,
-          statisticTeam: {
-            itemCode: NowSelect.itemCode,
-            itemName: NowSelect.itemName,
-            divideType: NowSelect.divideType,
+    switch (Select_Types) {
+      case "team": {
+        dispatch(
+          Insert_Man_Day_Select_Reducer_State_Func({
+            ...Filter_State,
+            team: { value: NowSelect.itemCode, label: NowSelect.itemName },
+          }),
+        );
+        return onClose();
+      }
+      case "user": {
+        setInput_User_Info({
+          ...Input_User_Info,
+          department: {
+            value: NowSelect.itemCode,
+            label: NowSelect.itemName,
           },
-        })
-      );
+        });
+        return onClose();
+      }
+      default: {
+        dispatch(
+          Insert_Man_Day_Select_Reducer_State_Func({
+            ...Filter_State,
+            statisticTeam: {
+              itemCode: NowSelect.itemCode,
+              itemName: NowSelect.itemName,
+              divideType: NowSelect.divideType,
+            },
+          }),
+        );
+        return onClose();
+      }
     }
-
-    onClose();
   };
 
   return (

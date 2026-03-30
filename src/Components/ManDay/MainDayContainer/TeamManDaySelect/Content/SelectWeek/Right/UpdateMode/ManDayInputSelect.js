@@ -1,90 +1,57 @@
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 import { SelectBoxsMainDivBox } from "../../../../../ManDayApply/Contents/SelectBoxs";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 
-const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
-  const Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists
-  );
-  const Sub_Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists
-  );
-  const Divide_Depart_Option_Lists = useSelector(
-    (state) =>
-      state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists
+const ManDayInputSelect = ({ Now_Data, setWeekContainer }) => {
+  const {
+    Depart_Option_Lists,
+    Sub_Depart_Option_Lists,
+    Divide_Depart_Option_Lists,
+  } = useSelector(
+    (state) => state.Man_Day_Select_Option_Lists_State,
+    shallowEqual,
   );
 
-  const handleFieldChange = (e, fieldName) => {
-    const newValue = e?.target?.value;
+  const updateCurrentItem = (updates) => {
+    setWeekContainer((prev) => ({
+      ...prev,
+      man_day_infos: prev.man_day_infos.map((item) =>
+        item.date === Now_Data.date && item.indexs === Now_Data.indexs
+          ? { ...item, ...updates }
+          : item,
+      ),
+    }));
+  };
 
-    if (fieldName === "manDay") {
-      const val = e.target.value;
-      if (val === "") {
-        setWeekContainer((prev) => {
-          const updatedDateLists = prev.man_day_infos.map((dayItem) => {
-            if (
-              dayItem.date === Now_Data.date &&
-              dayItem.indexs === Now_Data.indexs
-            ) {
-              return {
-                ...dayItem,
-                [fieldName]: "", // 동적으로 키 설정
-              };
-            }
-            return dayItem;
-          });
-          return {
-            ...prev,
-            man_day_infos: updatedDateLists,
-          };
-        });
-        return;
-      }
+  const handleManDayChange = (e) => {
+    const val = e.target.value;
 
-      const num = Number(val);
+    if (val === "") {
+      updateCurrentItem({ manDay: "" });
+      return;
+    }
 
-      // 숫자인지 확인하고, 0~8 사이일 때만 반영
-      if (!isNaN(num) && Number.isInteger(num) && num >= 0 && num <= 8) {
-        setWeekContainer((prev) => {
-          const updatedDateLists = prev.man_day_infos.map((dayItem) => {
-            if (
-              dayItem.date === Now_Data.date &&
-              dayItem.indexs === Now_Data.indexs
-            ) {
-              return {
-                ...dayItem,
-                [fieldName]: num, // 동적으로 키 설정
-              };
-            }
-            return dayItem;
-          });
-          return {
-            ...prev,
-            man_day_infos: updatedDateLists,
-          };
-        });
-      }
-    } else {
-      setWeekContainer((prev) => {
-        const updatedDateLists = prev.man_day_infos.map((dayItem) => {
-          if (
-            dayItem.date === Now_Data.date &&
-            dayItem.indexs === Now_Data.indexs
-          ) {
-            return {
-              ...dayItem,
-              [fieldName]: newValue, // 동적으로 키 설정
-            };
-          }
-          return dayItem;
-        });
-        return {
-          ...prev,
-          man_day_infos: updatedDateLists,
-        };
-      });
+    const num = Number(val);
+    if (!isNaN(num) && Number.isInteger(num) && num >= 0 && num <= 8) {
+      updateCurrentItem({ manDay: num });
     }
   };
+
+  const subDepartOptions = useMemo(() => {
+    if (!Now_Data.departCode) return [];
+
+    return Sub_Depart_Option_Lists.filter(
+      (item) => item.itemParentCode === Now_Data.departCode,
+    ).sort((a, b) => a.itemRank - b.itemRank);
+  }, [Sub_Depart_Option_Lists, Now_Data.departCode]);
+
+  const divideOptions = useMemo(() => {
+    if (!Now_Data.subDepartCode) return [];
+
+    return Divide_Depart_Option_Lists.filter(
+      (item) => item.itemParentCode === Now_Data.subDepartCode,
+    ).sort((a, b) => a.itemRank - b.itemRank);
+  }, [Divide_Depart_Option_Lists, Now_Data.subDepartCode]);
 
   return (
     <SelectBoxsMainDivBox style={{ fontSize: "0.8em" }}>
@@ -93,97 +60,77 @@ const ManDayInputSelect = ({ Now_Data, setWeekContainer, WeekContainer }) => {
         <div className="Answer">
           <select
             name="departCode"
-            value={Now_Data.departCode}
+            value={Now_Data.departCode || ""}
             onChange={(e) => {
-              handleFieldChange(e, "departCode");
-              handleFieldChange(null, "subDepartCode");
-              handleFieldChange(null, "divide");
+              updateCurrentItem({
+                departCode: e.target.value,
+                subDepartCode: "",
+                divide: "",
+              });
             }}
           >
-            <option value={null}></option>
-            {Depart_Option_Lists.map((list) => {
-              return (
-                <option
-                  value={list.itemCode}
-                  data-name={list.itemName}
-                  key={list.itemCode}
-                >
-                  {list.itemName}
-                </option>
-              );
-            })}
+            <option value=""></option>
+
+            {Depart_Option_Lists.map((list) => (
+              <option value={list.itemCode} key={list.itemCode}>
+                {list.itemName}
+              </option>
+            ))}
           </select>
         </div>
       </div>
+
       <div className="Input_GR">
         <div className="Title">설비명</div>
         <div className="Answer">
           <select
             name="subDepartCode"
-            value={Now_Data.subDepartCode}
+            value={Now_Data.subDepartCode || ""}
             onChange={(e) => {
-              handleFieldChange(e, "subDepartCode");
-              handleFieldChange(null, "divide");
+              updateCurrentItem({
+                subDepartCode: e.target.value,
+                divide: "",
+              });
             }}
           >
-            <option value={null}></option>
-
-            {Sub_Depart_Option_Lists.filter(
-              (item) => item.itemParentCode === Now_Data.departCode
-            )
-              .sort((a, b) => a.itemRank - b.itemRank)
-              .map((list) => {
-                return (
-                  <option
-                    value={list.itemCode}
-                    data-name={list.itemName}
-                    key={list.itemCode}
-                  >
-                    {list.itemName}
-                  </option>
-                );
-              })}
+            <option value=""></option>
+            {subDepartOptions.map((list) => (
+              <option value={list.itemCode} key={list.itemCode}>
+                {list.itemName}
+              </option>
+            ))}
           </select>
         </div>
       </div>
+
       <div className="Input_GR">
         <div className="Title">업무 유형</div>
         <div className="Answer">
           <select
-            value={Now_Data.divide}
-            onChange={(e) => handleFieldChange(e, "divide")}
+            value={Now_Data.divide || ""}
+            onChange={(e) => updateCurrentItem({ divide: e.target.value })}
           >
-            <option value={null}></option>
-
-            {Divide_Depart_Option_Lists.filter(
-              (item) => item.itemParentCode === Now_Data.subDepartCode
-            )
-              .sort((a, b) => a.itemRank - b.itemRank)
-              .map((list) => {
-                return (
-                  <option
-                    value={list.itemCode}
-                    data-name={list.itemName}
-                    key={list.itemCode}
-                  >
-                    {list.itemName}
-                  </option>
-                );
-              })}
+            <option value=""></option>
+            {divideOptions.map((list) => (
+              <option value={list.itemCode} key={list.itemCode}>
+                {list.itemName}
+              </option>
+            ))}
           </select>
         </div>
       </div>
+
       <div className="Input_GR">
         <div className="Title">Man-day(시간)</div>
         <div className="Answer">
           <input
-            value={Now_Data.manDay}
+            value={Now_Data.manDay !== undefined ? Now_Data.manDay : ""}
             type="number"
             min={0}
             max={8}
             step={1}
-            onChange={(e) => handleFieldChange(e, "manDay")}
-          ></input>
+            onChange={handleManDayChange}
+          />
         </div>
       </div>
     </SelectBoxsMainDivBox>

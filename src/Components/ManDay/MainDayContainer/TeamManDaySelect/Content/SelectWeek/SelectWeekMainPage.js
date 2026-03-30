@@ -1,19 +1,18 @@
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { getWeekOfMonth } from "../../../CommonFunc/CommonFunc";
 import styled from "styled-components";
-import { Request_Get_Axios } from "../../../../../../API";
 import UserListsComponent from "./Left/UserLists";
-import { FaUserFriends } from "react-icons/fa";
 import ManDaySelect from "./Right/SelectMode/ManDaySelect";
 import { IoIosArrowBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosArrowForward } from "react-icons/io";
-import { toast } from "../../../../../ToastMessage/ToastManager";
-import ManDayUpdateMode from "./Right/UpdateMode/ManDayUpdateMode";
 import UpdateModeMainPage from "./Right/UpdateMode/UpdateModeMainPage";
 import ManDayInsertMode from "./Right/InsertMode/ManDayInsertMode";
 import { Man_Day_Select_Option_fetchData } from "../../../../../../Models/ReduxThunks/ManDaySelectOptionReducer";
+import { useApi } from "../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../API/config";
+import { accessCheck } from "../../../../../Common/Utils/ManDay/sortingOptions";
 
 export const MyListMainDivBox = styled.div`
   width: 300px;
@@ -130,128 +129,154 @@ const SelectWeekMainPageMainDivBox = styled.div`
 const SelectWeekMainPage = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(Man_Day_Select_Option_fetchData());
-  }, []);
-  const Today_Date = moment().clone().startOf("isoWeek").format("YYYY-MM-DD");
-  const Next_Date = moment()
+  const todayDate = moment().startOf("isoWeek").format("YYYY-MM-DD");
+
+  const [nowDate, setNowDate] = useState(todayDate);
+  const [userLists, setUserLists] = useState([]);
+  const [nowSelectUser, setNowSelectUser] = useState(null);
+  const [selectMode, setSelectMode] = useState("reading");
+
+  const loginInfo = useSelector(
+    (state) => state.Login_Info_Reducer_State.Login_Info,
+  );
+  const hasAccess = accessCheck(loginInfo);
+
+  const nextDate = moment()
     .add(7, "days")
-    .clone()
     .startOf("isoWeek")
     .format("YYYY-MM-DD");
-  const [NowDate, setNowDate] = useState(
-    moment().clone().startOf("isoWeek").format("YYYY-MM-DD")
-  );
-  const [UserLists, setUserLists] = useState([]);
-  const [Now_Select_User, setNow_Select_User] = useState(null);
-  const [Select_Modes, setSelect_Modes] = useState("reading");
-  const Login_Info = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
-  );
-  useEffect(() => {
-    Getting_Team_Member_Lists();
-  }, [NowDate]);
 
-  const Getting_Team_Member_Lists = async () => {
-    const Getting_Team_Member_Lists_Axios = await Request_Get_Axios(
-      "/TeamLeaderManDay/Getting_Team_Member_Lists",
+  const { request: getTeamMember } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_TEAM_MEMBER_LIST,
+  );
+
+  const fetchTeamMembers = useCallback(() => {
+    getTeamMember(
+      { NowDate: nowDate },
       {
-        NowDate,
-      }
+        onSuccess: (data) => {
+          setUserLists(data);
+
+          if (nowSelectUser) {
+            const updatedUser = data?.find(
+              (item) => item.email === nowSelectUser.email,
+            );
+            setNowSelectUser(updatedUser || null);
+            setSelectMode("reading");
+          }
+        },
+      },
     );
-    if (Getting_Team_Member_Lists_Axios.status) {
-      setUserLists(Getting_Team_Member_Lists_Axios.data);
-      if (Now_Select_User) {
-        const [User_Select_Data] =
-          Getting_Team_Member_Lists_Axios?.data?.filter(
-            (item) => item.email === Now_Select_User.email
-          );
-        setNow_Select_User(User_Select_Data);
-        setSelect_Modes("reading");
-      }
-    } else {
-      toast.show({
-        title: `오류가 발생되었습니다. IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 4000,
-      });
-    }
+  }, [nowDate, nowSelectUser, getTeamMember]);
+
+  useEffect(() => {
+    fetchTeamMembers();
+    dispatch(Man_Day_Select_Option_fetchData());
+  }, [nowDate]);
+
+  const handleChangeDate = (direction) => {
+    setNowDate((prev) =>
+      moment(prev)
+        [direction === "minus" ? "subtract" : "add"](7, "days")
+        .startOf("isoWeek")
+        .format("YYYY-MM-DD"),
+    );
+    setSelectMode("reading");
   };
 
-  const HandleChangeDate = (Select_Menu) => {
-    if (Select_Menu === "minus")
-      setNowDate(
-        moment(NowDate)
-          .clone()
-          .subtract(7, "days")
-          .startOf("isoWeek")
-          .format("YYYY-MM-DD")
-      );
-    else
-      setNowDate(
-        moment(NowDate)
-          .clone()
-          .add(7, "days")
-          .startOf("isoWeek")
-          .format("YYYY-MM-DD")
-      );
+  const totalCount = userLists.length;
+  const inputtedCount = userLists.filter(
+    (item) => item.man_day_infos?.length > 0,
+  ).length;
+  const missingCount = totalCount - inputtedCount;
+
+  const renderRightContent = () => {
+    if (!hasAccess) {
+      return <ManDaySelect Now_Select_User={nowSelectUser} NowDate={nowDate} />;
+    }
+
+    if (!nowSelectUser)
+      return <div style={{ padding: "20px" }}>조회할 팀원을 선택해주세요.</div>;
+
+    switch (selectMode) {
+      case "updating":
+        return (
+          <UpdateModeMainPage
+            Now_Select_User={nowSelectUser}
+            NowDate={nowDate}
+            setSelect_Modes={setSelectMode}
+            Getting_Team_Member_Lists={fetchTeamMembers}
+          />
+        );
+      case "writing":
+        return (
+          <ManDayInsertMode
+            Now_Select_User={nowSelectUser}
+            NowDate={nowDate}
+            setSelect_Modes={setSelectMode}
+            Getting_Team_Member_Lists={fetchTeamMembers}
+          />
+        );
+      case "reading":
+      default:
+        return (
+          <Fragment>
+            <ManDaySelect Now_Select_User={nowSelectUser} NowDate={nowDate} />
+            <div className="Mode_Button_Containers">
+              {nowSelectUser.man_day_infos?.length === 0 ? (
+                <button onClick={() => setSelectMode("writing")}>
+                  Man_day 추가
+                </button>
+              ) : (
+                <button onClick={() => setSelectMode("updating")}>
+                  Man_day 수정
+                </button>
+              )}
+            </div>
+          </Fragment>
+        );
+    }
   };
 
   return (
     <SelectWeekMainPageMainDivBox>
       <div className="GetWeekOfMonth_Container">
         <div className="AminOnlyArrow">
-          {Login_Info.team === "개발운영팀" ||
-          Login_Info.id === "sjyoo@dhk.co.kr" ? (
+          {hasAccess && (
             <div
               className="Icon_Containers"
-              onClick={() => {
-                HandleChangeDate("minus");
-                setSelect_Modes("reading");
-              }}
+              onClick={() => handleChangeDate("minus")}
             >
               <IoIosArrowBack />
             </div>
-          ) : (
-            <></>
           )}
 
-          <div className="Title">{getWeekOfMonth(NowDate)}</div>
+          <div className="Title">{getWeekOfMonth(nowDate)}</div>
           <div className="Sub">
-            ( {moment(NowDate).clone().startOf("isoWeek").format("MM.DD")} ~{" "}
-            {moment(NowDate)
-              .clone()
-              .startOf("isoWeek")
-              .add(4, "days")
-              .format("MM.DD")}{" "}
+            ( {moment(nowDate).startOf("isoWeek").format("MM.DD")} ~{" "}
+            {moment(nowDate).startOf("isoWeek").add(4, "days").format("MM.DD")}{" "}
             )
           </div>
 
-          {(Login_Info.team === "개발운영팀" ||
-            Login_Info.id === "sjyoo@dhk.co.kr") &&
-          Next_Date !==
-            moment(NowDate).clone().startOf("isoWeek").format("YYYY-MM-DD") ? (
+          {hasAccess && nextDate !== nowDate && (
             <div
               style={{ marginLeft: "20px" }}
               className="Icon_Containers"
-              onClick={() => {
-                HandleChangeDate("plus");
-                setSelect_Modes("reading");
-              }}
+              onClick={() => handleChangeDate("plus")}
             >
               <IoIosArrowForward />
             </div>
-          ) : (
-            <></>
           )}
         </div>
       </div>
+
       <div>
         <div
           style={{
             display: "flex",
             width: "300px",
             justifyContent: "space-between",
+            fontWeight: "bold",
           }}
         >
           <div style={{ width: "100px", textAlign: "center" }}>전체인원</div>
@@ -266,83 +291,34 @@ const SelectWeekMainPage = () => {
           }}
         >
           <div style={{ width: "100px", textAlign: "center" }}>
-            {UserLists.length} 명
+            {totalCount} 명
           </div>
           <div style={{ width: "100px", textAlign: "center" }}>
-            {UserLists.filter((item) => item.man_day_infos.length > 0).length}{" "}
-            명
+            {inputtedCount} 명
           </div>
-          <div style={{ width: "100px", textAlign: "center" }}>
-            {UserLists.filter((item) => item.man_day_infos.length === 0).length}{" "}
-            명
+          <div
+            style={{
+              width: "100px",
+              textAlign: "center",
+              color: missingCount > 0 ? "red" : "black",
+            }}
+          >
+            {missingCount} 명
           </div>
         </div>
       </div>
+
       <div className="Left_Right_Containers">
         <div className="Left_Container">
           <UserListsComponent
-            UserLists={UserLists}
-            setNow_Select_User={(data) => setNow_Select_User(data)}
-            NowDate={NowDate}
-            Today_Date={Today_Date}
-            setSelect_Modes={(data) => setSelect_Modes(data)}
-          ></UserListsComponent>
+            UserLists={userLists}
+            setNow_Select_User={setNowSelectUser}
+            NowDate={nowDate}
+            Today_Date={todayDate}
+            setSelect_Modes={setSelectMode}
+          />
         </div>
-        <div className="Right_Container">
-          {Login_Info.team === "개발운영팀" ||
-          Login_Info.id === "sjyoo@dhk.co.kr" ? (
-            <div>
-              {Select_Modes === "reading" && Now_Select_User ? (
-                <>
-                  <ManDaySelect
-                    Now_Select_User={Now_Select_User}
-                    NowDate={NowDate}
-                  ></ManDaySelect>
-                  <div className="Mode_Button_Containers">
-                    {Now_Select_User?.man_day_infos.length === 0 ? (
-                      <button onClick={() => setSelect_Modes("writing")}>
-                        Man_day 추가
-                      </button>
-                    ) : (
-                      <button onClick={() => setSelect_Modes("updating")}>
-                        Man_day 수정
-                      </button>
-                    )}
-                  </div>
-                </>
-              ) : Select_Modes === "updating" ? (
-                <>
-                  <UpdateModeMainPage
-                    Now_Select_User={Now_Select_User}
-                    NowDate={NowDate}
-                    setSelect_Modes={(data) => setSelect_Modes(data)}
-                    Getting_Team_Member_Lists={() =>
-                      Getting_Team_Member_Lists()
-                    }
-                  ></UpdateModeMainPage>
-                </>
-              ) : Select_Modes === "writing" ? (
-                <>
-                  <ManDayInsertMode
-                    Now_Select_User={Now_Select_User}
-                    NowDate={NowDate}
-                    setSelect_Modes={(data) => setSelect_Modes(data)}
-                    Getting_Team_Member_Lists={() =>
-                      Getting_Team_Member_Lists()
-                    }
-                  ></ManDayInsertMode>
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
-          ) : (
-            <ManDaySelect
-              Now_Select_User={Now_Select_User}
-              NowDate={NowDate}
-            ></ManDaySelect>
-          )}
-        </div>
+        <div className="Right_Container">{renderRightContent()}</div>
       </div>
     </SelectWeekMainPageMainDivBox>
   );

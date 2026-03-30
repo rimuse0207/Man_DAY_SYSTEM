@@ -3,13 +3,14 @@ import { Modal, Overlay } from "./DepartmentMoveModal";
 import { UserModalMainDivBox } from "../../../User/Contents/UserModal";
 import { UserContentMainPageButtonContainer } from "../../../User/UserContentMainPage";
 import ParentTree from "../../TreeMenu/ParentTree";
-import { Request_Get_Axios } from "../../../../../API";
 import UserSelectTable from "./UserSelectTable";
 import { customStyles } from "../../../../ManDay/MainDayContainer/TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { Change_User_Search_Reducer } from "../../../../../Models/UserSearchReducer/UserSearchReducer";
 import { findItemByCode } from "../../DepartmentMainPage";
+import { useApi } from "../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../API/config";
 
 const UserAddModal = ({
   onClose,
@@ -19,7 +20,7 @@ const UserAddModal = ({
 }) => {
   const dispatch = useDispatch();
   const SearchInfo = useSelector(
-    (state) => state.Change_User_Search_Reducer_State
+    (state) => state.Change_User_Search_Reducer_State,
   );
   const [NowSelect, setNowSelect] = useState(null);
   const [Department_State, setDepartment_State] = useState([]);
@@ -28,45 +29,49 @@ const UserAddModal = ({
   const [Search_User_Name, setSearch_User_Name] = useState(null);
   const [User_Select_Options, setUser_Select_Options] = useState([]);
 
-  useEffect(() => {
-    Getting_Department_Data();
-  }, []);
+  const { request: getDepartmentList } = useApi(
+    API_CONFIG.UserAPI.GET_DEPARTMENT,
+  );
+  const { request: departmentIncludeUser } = useApi(
+    API_CONFIG.UserAPI.GET_DEPARTMENT_INCLUDE_USER,
+  );
 
-  const Getting_Department_Data = async () => {
-    const Getting_Department_Data_Axios = await Request_Get_Axios(
-      "/User/Getting_Department_Data",
+  useEffect(() => {
+    // 부서 리스트 조회
+    getDepartmentList(
+      { SearchInfo },
       {
-        SearchInfo,
-      }
+        onSuccess: (data) => {
+          setDepartment_State(data.Change_Tree_State);
+          setUser_Select_Options(data.Change_User_Options);
+        },
+      },
     );
-    if (Getting_Department_Data_Axios.status) {
-      setDepartment_State(Getting_Department_Data_Axios.data.Change_Tree_State);
-      setUser_Select_Options(
-        Getting_Department_Data_Axios.data.Change_User_Options
-      );
-    }
-  };
+  }, [SearchInfo]);
 
   useEffect(() => {
     if (NowSelect) Getting_Department_Users();
   }, [NowSelect]);
+
+  // 조직도 선택 별 부서 사용자 리스트 조회
   const Getting_Department_Users = async () => {
-    const Getting_Department_Users_Axios = await Request_Get_Axios(
-      "/User/Getting_Department_Users",
+    departmentIncludeUser(
+      { NowSelect: { itemCode: NowSelect.itemCode } },
       {
-        itemCode: NowSelect.itemCode,
-      }
+        onSuccess: (data) => {
+          const InsertCheckBox = data.map((list) => {
+            return {
+              ...list,
+              checked: Checked_user_lists.some(
+                (item) => item.email === list.email,
+              ),
+              disabled: User_Lists.some((item) => item.email === list.email),
+            };
+          });
+          setNowSelectedUser(InsertCheckBox);
+        },
+      },
     );
-    if (Getting_Department_Users_Axios.status) {
-      const a = Getting_Department_Users_Axios.data.map((list) => {
-        return {
-          ...list,
-          checked: Checked_user_lists.some((item) => item.email === list.email),
-          disabled: User_Lists.some((item) => item.email === list.email),
-        };
-      });
-      setNowSelectedUser(a);
-    }
   };
 
   const HandleChange_UserSearchStart = (e) => {
@@ -129,8 +134,6 @@ const UserAddModal = ({
             >
               <UserSelectTable
                 onClose={() => onClose()}
-                NowSelect={NowSelect}
-                User_Lists={User_Lists}
                 NowSelectedUser={NowSelectedUser}
                 setNowSelectedUser={(data) => setNowSelectedUser(data)}
                 setChecked_user_lists={(data) => setChecked_user_lists(data)}

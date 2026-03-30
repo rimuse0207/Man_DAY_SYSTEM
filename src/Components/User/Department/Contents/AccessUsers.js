@@ -1,62 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { UserInfoMainDivBox } from "./UsersInfo";
-import { Request_Get_Axios, Request_Post_Axios } from "../../../../API";
 import { FaRegCheckSquare, FaRegSquare } from "react-icons/fa";
 import UserAddModal from "./Modal/UserAddModal";
 import { toast } from "../../../ToastMessage/ToastManager";
+import { UserTableHeaderList } from "../../../Common/Utils/defaultArray";
+import { useApi } from "../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../API/config";
+import { useUserSelection } from "../../../Common/Hooks/User/useUserSelection";
 
-const AccessUsers = ({ Department_State, NowSelect, setDepartment_State }) => {
-  const [User_Lists, setUser_Lists] = useState([]);
-  const [Select_User_Lists, setSelect_User_Lists] = useState([]);
+const AccessUsers = ({ NowSelect }) => {
+  const {
+    userLists,
+    setUserLists,
+    selectedUsers,
+    setSelectedUsers,
+    handleUserToggle,
+  } = useUserSelection();
+
+  // const [User_Lists, setUser_Lists] = useState([]);
+  // const [Select_User_Lists, setSelect_User_Lists] = useState([]);
   const [UserModalIsOpen, setUserModalIsOpen] = useState(false);
-  useEffect(() => {
-    if (NowSelect) Department_Including_User_Data();
-  }, [NowSelect]);
-  const Department_Including_User_Data = async () => {
-    const Department_Including_User_Data_Axios = await Request_Get_Axios(
-      "/User/Department_Including_User_Data",
+  const { request: accessDepartmentUser } = useApi(
+    API_CONFIG.UserAPI.GET_DEPARTMENT_ACCESS_USER,
+  );
+  const { request: deleteAccessDepartmentUser } = useApi(
+    API_CONFIG.UserAPI.DELETE_DEPARTMENT_ACCESS_USER,
+  );
+
+  // 권한별 user 불러오기
+  const initRequestUserList = () => {
+    accessDepartmentUser(
       {
         itemCode: NowSelect?.itemCode,
-      }
-    );
-    if (Department_Including_User_Data_Axios.data) {
-      setUser_Lists(Department_Including_User_Data_Axios.data);
-    }
-  };
-
-  const HandleAddUser = (Select_User) => {
-    setSelect_User_Lists(Select_User_Lists.concat(Select_User));
-  };
-
-  const HandleDeleteUser = (Select_User) => {
-    setSelect_User_Lists(
-      Select_User_Lists.filter((item) => item.email !== Select_User.email)
-    );
-  };
-
-  const Delete_User_By_DepartMents = async () => {
-    const Delete_User_By_DepartMents_Axios = await Request_Post_Axios(
-      "/User/Delete_User_By_DepartMents",
+      },
       {
-        NowSelect,
-        Select_User_Lists,
-      }
+        onSuccess: (data) => {
+          setUserLists(data);
+        },
+      },
     );
-    if (Delete_User_By_DepartMents_Axios.status) {
-      setSelect_User_Lists([]);
-      await Department_Including_User_Data();
-      toast.show({
-        title: `${Select_User_Lists.length}명의 부서 조회 권한을 삭제처리 하였습니다.`,
-        successCheck: true,
-        duration: 6000,
-      });
-    } else {
-      toast.show({
-        title: `IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-    }
+  };
+
+  useEffect(() => {
+    if (NowSelect) initRequestUserList();
+  }, [NowSelect]);
+
+  // user 권한 삭제
+  const Delete_User_By_DepartMents = async () => {
+    deleteAccessDepartmentUser(
+      { NowSelect, Select_User_Lists: selectedUsers },
+      {
+        onSuccess: () => {
+          setSelectedUsers([]);
+          initRequestUserList();
+          toast.show({
+            title: `${selectedUsers.length}명의 부서 조회 권한을 삭제처리 하였습니다.`,
+            successCheck: true,
+            duration: 6000,
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -64,12 +68,12 @@ const AccessUsers = ({ Department_State, NowSelect, setDepartment_State }) => {
       <h4 style={{ marginBottom: "10px" }}>등록된 사용자 목록</h4>
       <div>
         <div>
-          {Select_User_Lists.length > 0 ? (
+          {selectedUsers.length > 0 ? (
             <div
               className="Open_Click_Modal_Container"
               style={{ color: "blue", fontSize: "0.8em" }}
             >
-              <div>선택된 인원 : {Select_User_Lists.length}</div>
+              <div>선택된 인원 : {selectedUsers.length}</div>
               <div className="Button_Container">
                 <button
                   onClick={() => {
@@ -81,7 +85,7 @@ const AccessUsers = ({ Department_State, NowSelect, setDepartment_State }) => {
               </div>
             </div>
           ) : NowSelect ? (
-            <div style={{ paddingBottom: "40px", textAlign: "end" }}>
+            <div style={{ textAlign: "end" }}>
               <button
                 style={{
                   padding: "8px 10px",
@@ -100,22 +104,18 @@ const AccessUsers = ({ Department_State, NowSelect, setDepartment_State }) => {
             <></>
           )}
         </div>
-        <table>
+        <table style={{ marginTop: "10px" }}>
           <thead>
             <tr>
               <th></th>
-              <th>이름</th>
-              <th>직급</th>
-              <th>부서</th>
-              <th>호봉</th>
-              <th>연차</th>
-              <th>ID</th>
-              <th>직군</th>
+              {UserTableHeaderList.map((list) => {
+                return <th key={list}>{list}</th>;
+              })}
               <th>소유 권한</th>
             </tr>
           </thead>
           <tbody>
-            {User_Lists.map((list) => {
+            {userLists.map((list) => {
               return (
                 <tr
                   key={list.email}
@@ -125,17 +125,17 @@ const AccessUsers = ({ Department_State, NowSelect, setDepartment_State }) => {
                 >
                   {list.code_type !== "original" ? (
                     <td></td>
-                  ) : Select_User_Lists.some(
-                      (item) => item.email === list.email
+                  ) : selectedUsers.some(
+                      (item) => item.email === list.email,
                     ) ? (
                     <td
                       style={{ color: "blue" }}
-                      onClick={() => HandleDeleteUser(list)}
+                      onClick={() => handleUserToggle(list)}
                     >
                       <FaRegCheckSquare />
                     </td>
                   ) : (
-                    <td onClick={() => HandleAddUser(list)}>
+                    <td onClick={() => handleUserToggle(list)}>
                       <FaRegSquare></FaRegSquare>
                     </td>
                   )}
@@ -153,17 +153,13 @@ const AccessUsers = ({ Department_State, NowSelect, setDepartment_State }) => {
           </tbody>
         </table>
       </div>
-      {UserModalIsOpen ? (
+      {UserModalIsOpen && (
         <UserAddModal
           onClose={() => setUserModalIsOpen(false)}
-          User_Lists={User_Lists}
+          User_Lists={userLists}
           Choose_Lists={NowSelect}
-          Department_Including_User_Data={() =>
-            Department_Including_User_Data()
-          }
+          Department_Including_User_Data={() => initRequestUserList()}
         ></UserAddModal>
-      ) : (
-        <></>
       )}
     </UserInfoMainDivBox>
   );

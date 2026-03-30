@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import TopNavigationMainPage from "../Navigation/TopNavigation/TopNavigationMainPage";
 import SideNavigationMainPage from "../Navigation/SideNavigation/SideNavigationMainPage";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import ManDaySelectMain from "./MainDayContainer/ManDaySelect/ManDaySelectMain";
 import { AllManDayItemfetchData } from "../../Models/ReduxThunks/ManDaySelectItemReducer";

@@ -1,17 +1,17 @@
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/esm/locale";
 import styled from "styled-components";
 import Select from "react-select";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import {
   Initial_Man_Day_Select_Reducer_State_Func,
   Insert_Man_Day_Select_Reducer_State_Func,
 } from "../../../../../Models/ManDayReducers/ManDaySelectFilterReducer";
-
 import { customStyles } from "../../TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter";
 import { toast } from "../../../../ToastMessage/ToastManager";
+import { generateOptions } from "../../../../Common/Utils/ManDay/sortingOptions";
 
 export const TableFilterMainDivBox = styled.div`
   h2 {
@@ -91,184 +91,162 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
   const dispatch = useDispatch();
 
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
+  );
+  const {
+    Depart_Option_Lists,
+    Sub_Depart_Option_Lists,
+    Divide_Depart_Option_Lists,
+  } = useSelector(
+    (state) => state.Man_Day_Select_Option_Lists_State,
+    shallowEqual,
   );
 
-  const Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists
-  );
-  const Sub_Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists
-  );
-  const Divide_Depart_Option_Lists = useSelector(
-    (state) =>
-      state.Man_Day_Select_Option_Lists_State.Divide_Depart_Option_Lists
+  const updateFilter = useCallback(
+    (updates) => {
+      dispatch(
+        Insert_Man_Day_Select_Reducer_State_Func({
+          ...Filter_State,
+          ...updates,
+        }),
+      );
+    },
+    [dispatch, Filter_State],
   );
 
+  const departOptions = useMemo(
+    () =>
+      Depart_Option_Lists.map((list) => ({
+        value: list.itemCode,
+        label: list.itemName,
+      })),
+    [Depart_Option_Lists],
+  );
+
+  const subDepartOptions = useMemo(
+    () => generateOptions(Sub_Depart_Option_Lists, Filter_State?.depart?.value),
+    [Sub_Depart_Option_Lists, Filter_State?.depart?.value],
+  );
+
+  const divideOptions = useMemo(
+    () =>
+      generateOptions(
+        Divide_Depart_Option_Lists,
+        Filter_State?.sub_depart?.value,
+      ),
+    [Divide_Depart_Option_Lists, Filter_State?.sub_depart?.value],
+  );
+
+  // 스페이스바 입력 방지
   const handleKeyDown = (event) => {
-    if (event.key === " ") {
-      event.preventDefault(); // 스페이스 입력 막기
+    if (event.key === " ") event.preventDefault();
+  };
+
+  const handleMenuOpenCheck = (dependency, message) => {
+    if (!dependency) {
+      toast.show({ title: message, successCheck: false, duration: 5000 });
     }
   };
+
   return (
     <TableFilterMainDivBox>
       <h2>조회</h2>
       <div className="Filter_Container">
+        {/* 기간 */}
         <div className="Filter_GR">
           <div className="Filter_Title">기간</div>
           <div
             className="Filter_Content"
             style={{ display: "flex", alignItems: "center" }}
           >
-            <div>
-              <DatePicker
-                locale={ko}
-                dateFormat="yyyy-MM-dd" // 날짜 형태
-                shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
-                minDate={new Date("2000-01-01")} // minDate 이전 날짜 선택 불가
-                maxDate={new Date()} // maxDate 이후 날짜 선택 불가
-                selected={Filter_State.period.start}
-                onChange={(e) => {
-                  dispatch(
-                    Insert_Man_Day_Select_Reducer_State_Func({
-                      ...Filter_State,
-                      period: { ...Filter_State.period, start: e },
-                    })
-                  );
-                }}
-              />
-            </div>{" "}
-            <div style={{ marginLeft: "10px", marginRight: "10px" }}>~</div>
-            <div>
-              {" "}
-              <DatePicker
-                locale={ko}
-                dateFormat="yyyy-MM-dd" // 날짜 형태
-                shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
-                minDate={new Date("2000-01-01")} // minDate 이전 날짜 선택 불가
-                selected={Filter_State.period.end}
-                onChange={(e) =>
-                  dispatch(
-                    Insert_Man_Day_Select_Reducer_State_Func({
-                      ...Filter_State,
-                      period: { ...Filter_State.period, end: e },
-                    })
-                  )
-                }
-              />
-            </div>
+            <DatePicker
+              locale={ko}
+              dateFormat="yyyy-MM-dd"
+              shouldCloseOnSelect
+              minDate={new Date("2000-01-01")}
+              maxDate={new Date()}
+              selected={Filter_State.period.start}
+              onChange={(e) =>
+                updateFilter({ period: { ...Filter_State.period, start: e } })
+              }
+            />
+            <div style={{ margin: "0 10px" }}>~</div>
+            <DatePicker
+              locale={ko}
+              dateFormat="yyyy-MM-dd"
+              shouldCloseOnSelect
+              minDate={new Date("2000-01-01")}
+              selected={Filter_State.period.end}
+              onChange={(e) =>
+                updateFilter({ period: { ...Filter_State.period, end: e } })
+              }
+            />
           </div>
         </div>
+
+        {/* 설비군 */}
         <div className="Filter_GR">
           <div className="Filter_Title">설비군</div>
           <div className="Filter_Content">
             <Select
               styles={customStyles}
               value={Filter_State.depart}
-              onChange={(e) => {
-                // Sub_Depart(e);
-                dispatch(
-                  Insert_Man_Day_Select_Reducer_State_Func({
-                    ...Filter_State,
-                    depart: e,
-                    sub_depart: null,
-                    divide: null,
-                  })
-                );
-              }}
-              isClearable
-              options={Depart_Option_Lists.map((list) => {
-                return { value: list.itemCode, label: list.itemName };
-              })}
+              options={departOptions}
               placeholder="선택해 주세요."
-            ></Select>
+              isClearable
+              onChange={(e) =>
+                updateFilter({ depart: e, sub_depart: null, divide: null })
+              }
+            />
           </div>
         </div>
+
+        {/* 설비명 */}
         <div className="Filter_GR">
           <div className="Filter_Title">설비명</div>
           <div className="Filter_Content">
             <Select
               styles={customStyles}
               value={Filter_State.sub_depart}
-              options={Sub_Depart_Option_Lists.filter(
-                (item) => item.itemParentCode === Filter_State?.depart?.value
-              )
-                .sort((a, b) => a.itemRank - b.itemRank)
-                .map((list) => {
-                  return {
-                    value: list.itemCode,
-                    label: list.itemName,
-                  };
-                })}
-              onMenuOpen={() => {
-                if (!Filter_State?.depart) {
-                  toast.show({
-                    title: `'설비군'을 먼저 선택 후 입력 가능합니다.`,
-                    successCheck: false,
-                    duration: 5000,
-                  });
-                }
-              }}
-              isClearable
-              onKeyDown={handleKeyDown}
-              onChange={(e) => {
-                if (Filter_State.depart?.value) {
-                  dispatch(
-                    Insert_Man_Day_Select_Reducer_State_Func({
-                      ...Filter_State,
-                      sub_depart: e,
-                      divide: null,
-                    })
-                  );
-                } else {
-                  toast.show({
-                    title: `설비군을 먼저 선택 후 선택 가능합니다.`,
-                    successCheck: false,
-                    duration: 6000,
-                  });
-                }
-              }}
+              options={subDepartOptions}
               placeholder="선택해 주세요."
-            ></Select>
+              isClearable
+              isDisabled={!Filter_State.depart}
+              onKeyDown={handleKeyDown}
+              onMenuOpen={() =>
+                handleMenuOpenCheck(
+                  Filter_State.depart,
+                  "'설비군'을 먼저 선택 후 입력 가능합니다.",
+                )
+              }
+              onChange={(e) => updateFilter({ sub_depart: e, divide: null })}
+            />
           </div>
         </div>
+
+        {/* 업무유형 */}
         <div className="Filter_GR">
           <div className="Filter_Title">업무 유형</div>
           <div className="Filter_Content">
             <Select
               styles={customStyles}
               value={Filter_State.divide}
+              options={divideOptions}
+              placeholder="선택해 주세요."
               isClearable
-              onChange={(e) =>
-                dispatch(
-                  Insert_Man_Day_Select_Reducer_State_Func({
-                    ...Filter_State,
-                    divide: e,
-                  })
+              isDisabled={!Filter_State.sub_depart}
+              onMenuOpen={() =>
+                handleMenuOpenCheck(
+                  Filter_State.sub_depart,
+                  "'설비명'을 먼저 선택 후 입력 가능합니다.",
                 )
               }
-              options={Divide_Depart_Option_Lists.filter(
-                (item) =>
-                  item.itemParentCode === Filter_State?.sub_depart?.value
-              )
-                .sort((a, b) => a.itemRank - b.itemRank)
-                .map((list) => {
-                  return { value: list.itemCode, label: list.itemName };
-                })}
-              onMenuOpen={() => {
-                if (!Filter_State?.sub_depart) {
-                  toast.show({
-                    title: `'설비명'을 먼저 선택 후 입력 가능합니다.`,
-                    successCheck: false,
-                    duration: 5000,
-                  });
-                }
-              }}
-              placeholder="선택해 주세요."
-            ></Select>
+              onChange={(e) => updateFilter({ divide: e })}
+            />
           </div>
         </div>
       </div>
+
       <div className="Filter_Button_Group">
         <div className="Filter_Button_Container">
           <div className="Update_Button_Container">
@@ -284,9 +262,7 @@ const TableFilter = ({ Getting_Man_Day_Info_Data_Lists }) => {
           <div className="Save_Button_Container">
             <button
               style={{ background: "green" }}
-              onClick={() => {
-                Getting_Man_Day_Info_Data_Lists();
-              }}
+              onClick={() => Getting_Man_Day_Info_Data_Lists()}
             >
               조회
             </button>

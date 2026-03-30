@@ -124,14 +124,7 @@ const EventBar = styled.div`
   }
 `;
 
-const Calendar = ({
-  year,
-  month,
-  Select_Month_UI,
-  events,
-  Change_Color_State,
-  EventType,
-}) => {
+const Calendar = ({ year, month, Select_Month_UI, events, EventType }) => {
   const { hoveredEvent, popupPosition, handleMouseEnter, handleMouseLeave } =
     useCalendarEventHooks();
   const [ChooseDate, setChooseDate] = useState(moment().format("YYYY-MM-DD"));
@@ -179,7 +172,7 @@ const Calendar = ({
     const date = new Date(
       year,
       month + 1,
-      days.length - daysInMonth - startDay + 1
+      days.length - daysInMonth - startDay + 1,
     );
     days.push({
       day: days.length - daysInMonth - startDay + 1,

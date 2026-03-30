@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import moment from "moment";
 import { IoIosArrowDown } from "react-icons/io";
@@ -70,15 +70,20 @@ export const HomeClockStatusMainPageMainDivBox = styled.div`
   }
 `;
 const HomeClock = () => {
-  let timer = null;
+  const timerRef = useRef(null);
+
   const [time, setTime] = useState(moment());
   const [workStatusMenuBar, setWorkStatusMenuBar] = useState(true);
+
   useEffect(() => {
-    timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setTime(moment());
     }, 1000);
+
     return () => {
-      clearInterval(timer);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
   }, []);
   return (

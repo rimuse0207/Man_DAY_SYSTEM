@@ -1,52 +1,45 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Contents/Table";
-import { Request_Get_Axios, Request_Post_Axios } from "../../../../API";
 import TableFilter from "./Contents/TableFilter";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../../Loader/Loader";
 import {
   initState,
   Initial_Man_Day_Select_Reducer_State_Func,
 } from "../../../../Models/ManDayReducers/ManDaySelectFilterReducer";
 import { Man_Day_Select_Option_fetchData } from "../../../../Models/ReduxThunks/ManDaySelectOptionReducer";
+import { useApi } from "../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../API/config";
+
 const ManDaySelectMain = () => {
   const dispatch = useDispatch();
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
   const [Table_State, setTable_State] = useState([]);
-  const [Loading_Check, setLoading_Check] = useState(false);
+
+  const { request: getManDayInfo } = useApi(
+    API_CONFIG.ManDayAPI.GET_MAN_DAY_INFO,
+  );
+
   useEffect(() => {
     Getting_Man_Day_Info_Data_Lists();
     dispatch(Man_Day_Select_Option_fetchData());
     dispatch(Initial_Man_Day_Select_Reducer_State_Func());
   }, []);
 
-  const Getting_Man_Day_Info_Data_Lists = async (data) => {
-    setLoading_Check(true);
-    if (data === "initial") {
-      const Getting_Man_Day_Info_Data_Lists_Axios = await Request_Post_Axios(
-        "/ManDayInfo/Getting_Man_Day_Info_Data_Lists",
-        {
-          Filter_State: initState.Filters_State,
-        }
-      );
-      if (Getting_Man_Day_Info_Data_Lists_Axios.status) {
-        setTable_State(Getting_Man_Day_Info_Data_Lists_Axios.data);
-      }
-    } else {
-      const Getting_Man_Day_Info_Data_Lists_Axios = await Request_Post_Axios(
-        "/ManDayInfo/Getting_Man_Day_Info_Data_Lists",
-        {
-          Filter_State,
-        }
-      );
-      if (Getting_Man_Day_Info_Data_Lists_Axios.status) {
-        setTable_State(Getting_Man_Day_Info_Data_Lists_Axios.data);
-      }
-    }
-
-    setLoading_Check(false);
+  // Man-day 조회에서 필터 별 사용자 기록 조회
+  const Getting_Man_Day_Info_Data_Lists = async (chooseInitial) => {
+    getManDayInfo(
+      {
+        Filter_State:
+          chooseInitial === "initial" ? initState.Filters_State : Filter_State,
+      },
+      {
+        onSuccess: (data) => {
+          setTable_State(data);
+        },
+      },
+    );
   };
 
   return (
@@ -57,7 +50,6 @@ const ManDaySelectMain = () => {
         }
       ></TableFilter>
       <Table Table_State={Table_State}></Table>
-      <Loader loading={Loading_Check}></Loader>
     </div>
   );
 };

@@ -1,22 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { IoNewspaperOutline } from "react-icons/io5";
-import { BsCalendarCheck } from "react-icons/bs";
-import { RiBookletLine, RiMailCheckLine } from "react-icons/ri";
-import { FiCheckCircle } from "react-icons/fi";
-import { TbHomeStats } from "react-icons/tb";
-import { BsPersonWorkspace } from "react-icons/bs";
-import {
-  MdOutlineGroups,
-  MdOutlineSettingsInputComposite,
-} from "react-icons/md";
-import { Link } from "react-router-dom";
-import { GiMeal } from "react-icons/gi";
-import { FaTools, FaVideo } from "react-icons/fa";
-import { GrLicense } from "react-icons/gr";
-import { TbCalendarClock } from "react-icons/tb";
-import { FaUserCog } from "react-icons/fa";
+import { NaviLists } from "../NaviList";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
 const HomeNavigationMainPageMainDivBox = styled.div`
   .BodyMenbar {
     font-size: 0.8em;
@@ -86,64 +73,26 @@ const HomeNavigationMainPageMainDivBox = styled.div`
 
 const IconNavigationMainPage = () => {
   const Login_Info_State = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
+    (state) => state.Login_Info_Reducer_State.Login_Info,
   );
-  const [Icon_Nav_Info, setIcon_Nav_Info] = useState([
-    {
-      path: "/Man_day",
-      icon: <TbCalendarClock></TbCalendarClock>,
-      name: "Man_day",
-      role: "all",
+
+  const filteredNav = NaviLists.filter((item) => item.name !== "Home").filter(
+    (navItem) => {
+      return (
+        navItem.role === "all" ||
+        Login_Info_State?.user_access?.some(
+          (access) => access.accessMenuCode === navItem.role,
+        )
+      );
     },
-    {
-      path: "/User_Manage/user",
-      icon: <FaUserCog />,
-      name: "Admin",
-      role: "user",
-    },
-  ]);
-  const [UserIconNav, setUserIconNav] = useState([
-    {
-      path: "/Video_Upload",
-      icon: <FaVideo />,
-      name: "Video",
-      role: "user",
-      accessUsers: [
-        "jiseop.kim@exicon.co.kr",
-        "hsoh@exicon.co.kr",
-        "sooyoung.chung@exicon.co.kr",
-        "sjyoo@dhk.co.kr",
-        "jiseop.kim@yccorp.com",
-        "sooyoung.chung@yccorp.com",
-      ],
-    },
-  ]);
-  const filteredNav = Icon_Nav_Info.filter((navItem) => {
-    return (
-      navItem.role === "all" ||
-      Login_Info_State?.user_access?.some(
-        (access) => access.accessMenuCode === navItem.role
-      )
-    );
-  });
+  );
+
   return (
     <HomeNavigationMainPageMainDivBox>
       <div className="BodyMenbar">
         <div className="BodyContentBox">
           <ul className="BodyContnetListsShow">
             {filteredNav.map((nav) => {
-              return (
-                <li key={nav.path}>
-                  <Link to={nav.path}>
-                    <div className="BodyContentIcons">{nav.icon}</div>
-                    <div className="BodyContentText">{nav.name}</div>
-                  </Link>
-                </li>
-              );
-            })}
-            {UserIconNav.filter((item) =>
-              item.accessUsers.includes(Login_Info_State.id)
-            ).map((nav) => {
               return (
                 <li key={nav.path}>
                   <Link to={nav.path}>

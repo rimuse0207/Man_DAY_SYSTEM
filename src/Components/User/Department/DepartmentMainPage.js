@@ -7,16 +7,13 @@ import { toast } from "../../ToastMessage/ToastManager";
 import Select from "react-select";
 import { Change_User_Search_Reducer } from "../../../Models/UserSearchReducer/UserSearchReducer";
 import { useDispatch, useSelector } from "react-redux";
+import UserHeader from "../Public/UserHeader";
+import { useApi } from "../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../API/config";
 
 export const DepartmentMainPageMainDivBox = styled.div`
   .All_Container {
     height: calc(100vh - 160px);
-    /* overflow: auto; */
-    /* ::after {
-            display: block;
-            content: '';
-            clear: both;
-        } */
     display: flex;
     flex-flow: wrap;
     .Left_Content {
@@ -24,7 +21,6 @@ export const DepartmentMainPageMainDivBox = styled.div`
       border-left: 1px solid lightgray;
       width: 20%;
       padding: 10px;
-      /* float: left; */
       height: calc(100vh - 160px);
       overflow: auto;
       .Button_Containers {
@@ -63,27 +59,27 @@ const customStyles = {
     fontSize: "12px",
     padding: "0 4px",
     display: "flex",
-    alignItems: "center", // 수직 정렬
-    lineHeight: "1.2", // 줄 높이 조정
+    alignItems: "center",
+    lineHeight: "1.2",
   }),
   valueContainer: (provided) => ({
     ...provided,
     height: "40px",
     padding: "0 4px",
     display: "flex",
-    alignItems: "center", // 수직 정렬
+    alignItems: "center",
   }),
   indicatorsContainer: (provided) => ({
     ...provided,
     height: "40px",
     display: "flex",
-    alignItems: "center", // 아이콘도 정렬
+    alignItems: "center",
   }),
   singleValue: (provided) => ({
     ...provided,
     display: "flex",
     alignItems: "center",
-    lineHeight: "1.2", // 선택된 값 줄 높이
+    lineHeight: "1.2",
   }),
   option: (provided) => ({
     ...provided,
@@ -109,7 +105,7 @@ export const findItemByCode = (nodes, targetCode) => {
 const DepartmentMainPage = () => {
   const dispatch = useDispatch();
   const SearchInfo = useSelector(
-    (state) => state.Change_User_Search_Reducer_State
+    (state) => state.Change_User_Search_Reducer_State,
   );
   const [Department_State, setDepartment_State] = useState([]);
   const [NowSelect, setNowSelect] = useState(null);
@@ -119,51 +115,44 @@ const DepartmentMainPage = () => {
   const [Search_User_Name, setSearch_User_Name] = useState(null);
   const [User_Select_Options, setUser_Select_Options] = useState([]);
 
-  useEffect(() => {
-    Getting_Department_Data();
-  }, [SearchInfo]);
+  const { request: getDepartmentList } = useApi(
+    API_CONFIG.UserAPI.GET_DEPARTMENT,
+  );
+  const { request: addDepartment } = useApi(API_CONFIG.UserAPI.ADD_DEPARTMENT);
 
-  // 부서 조직도 불러오기
-  const Getting_Department_Data = async () => {
-    const Getting_Department_Data_Axios = await Request_Get_Axios(
-      "/User/Getting_Department_Data",
+  //부서 조회
+  const initFunc = () => {
+    getDepartmentList(
+      { SearchInfo },
       {
-        SearchInfo,
-      }
+        onSuccess: (data) => {
+          setDepartment_State(data.Change_Tree_State);
+          setUser_Select_Options(data.Change_User_Options);
+        },
+      },
     );
-    if (Getting_Department_Data_Axios.status) {
-      setDepartment_State(Getting_Department_Data_Axios.data.Change_Tree_State);
-      setUser_Select_Options(
-        Getting_Department_Data_Axios.data.Change_User_Options
-      );
-    }
   };
+  useEffect(() => {
+    initFunc();
+  }, [SearchInfo, getDepartmentList]);
 
   // 부서 추가
   const Add_Department_Data = async () => {
-    const Add_Department_Data_Axios = await Request_Post_Axios(
-      "/User/Add_Department_Data",
+    addDepartment(
+      { New_DepartMent_State, NowSelect },
       {
-        New_DepartMent_State,
-        NowSelect,
-      }
+        onSuccess: () => {
+          toast.show({
+            title: `${New_DepartMent_State}의 부서를 추가하였습니다.`,
+            successCheck: true,
+            duration: 6000,
+          });
+          setUpdate_Mode(false);
+          initFunc();
+          setNew_DepartMent_State("");
+        },
+      },
     );
-    if (Add_Department_Data_Axios.status) {
-      toast.show({
-        title: `${New_DepartMent_State}의 부서를 추가하였습니다.`,
-        successCheck: true,
-        duration: 6000,
-      });
-      setUpdate_Mode(false);
-      Getting_Department_Data();
-      setNew_DepartMent_State("");
-    } else {
-      toast.show({
-        title: `오류가 발생하였습니다. IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-    }
   };
 
   const HandleChange_UserSearchStart = (e) => {
@@ -177,18 +166,14 @@ const DepartmentMainPage = () => {
 
   return (
     <DepartmentMainPageMainDivBox>
-      <div
-        style={{ borderBottom: "1px solid lightgray", paddingBottom: "10px" }}
-      >
-        <h2>부서</h2>
-        <div style={{ fontSize: "0.8em", marginTop: "10px", color: "gray" }}>
-          부서 정보를 조회/관리할 수 있습니다.
-        </div>
-      </div>
+      <UserHeader
+        title={"부서"}
+        subDescript={"부서 정보를 조회/관리할 수 있습니다."}
+      ></UserHeader>
       <div className="All_Container">
         <div className="Left_Content">
           <form onSubmit={(e) => HandleChange_UserSearchStart(e)}>
-            {Select_Menus === "user" ? (
+            {Select_Menus === "user" && (
               <div className="Button_Containers">
                 <div style={{ width: "calc(100% - 60px)", textAlign: "start" }}>
                   <Select
@@ -210,8 +195,6 @@ const DepartmentMainPage = () => {
                   검 색{" "}
                 </button>
               </div>
-            ) : (
-              <></>
             )}
           </form>
           <ParentTree

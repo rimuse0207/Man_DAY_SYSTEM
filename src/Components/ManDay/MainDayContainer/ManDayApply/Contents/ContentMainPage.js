@@ -3,20 +3,20 @@ import moment from "moment";
 import "moment/locale/ko";
 import InputPage from "./InputPage";
 import styled from "styled-components";
-import { Request_Get_Axios, Request_Post_Axios } from "../../../../../API";
 import { toast } from "../../../../ToastMessage/ToastManager";
 import { useSelector } from "react-redux";
-import Loader from "../../../../Loader/Loader";
 import ReadingBoxs from "./ReadingBoxs";
-import {
-  MdOutlineArrowBackIosNew,
-  MdOutlineArrowForwardIos,
-} from "react-icons/md";
+import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
-import { getWeekOfMonth } from "../../CommonFunc/CommonFunc";
+import {
+  getWeekOfMonth,
+  validateWeeklyManDay,
+} from "../../CommonFunc/CommonFunc";
 import { BsFillQuestionSquareFill } from "react-icons/bs";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { useApi } from "../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../API/config";
 moment.locale("ko");
 
 export const ContentMainPageMainDivBox = styled.div`
@@ -146,91 +146,55 @@ export const ContentMainPageMainDivBox = styled.div`
 `;
 
 const ContentMainPage = () => {
-  const Today_Date = moment().clone().startOf("isoWeek").format("YYYY-MM-DD");
-  const Next_Date = moment()
+  const Login_Info = useSelector(
+    (state) => state.Login_Info_Reducer_State.Login_Info,
+  );
+
+  const todayIsoWeek = moment().startOf("isoWeek").format("YYYY-MM-DD");
+  const nextIsoWeek = moment()
     .add(7, "days")
-    .clone()
     .startOf("isoWeek")
     .format("YYYY-MM-DD");
-  const Login_Info = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
-  );
-  const [Select_Date, setSelect_Date] = useState(
-    moment().clone().startOf("isoWeek").format("YYYY-MM-DD")
-  );
+
+  const [Select_Date, setSelect_Date] = useState(todayIsoWeek);
+
   const [WeekContainer, setWeekContainer] = useState({
-    represent_Date: moment().clone().startOf("isoWeek").format("YYYY-MM-DD"),
+    represent_Date: todayIsoWeek,
     Mode: "writing",
     Before_key: null,
-    Date_Lists: [
-      {
-        date: moment().clone().startOf("isoWeek").format("YYYY-MM-DD"),
-        child: [
-          {
-            index: 1,
-            depart: null,
-            sub_depart: null,
-            divide: null,
-            man_day: 0,
-            date: moment().clone().startOf("isoWeek").format("YYYY-MM-DD"),
-          },
-        ],
-      },
-      {
-        date: moment().clone().isoWeekday(2).format("YYYY-MM-DD"),
-        child: [
-          {
-            index: 1,
-            depart: null,
-            sub_depart: null,
-            divide: null,
-            man_day: 0,
-            date: moment().clone().isoWeekday(2).format("YYYY-MM-DD"),
-          },
-        ],
-      },
-      {
-        date: moment().clone().isoWeekday(3).format("YYYY-MM-DD"),
-        child: [
-          {
-            index: 1,
-            depart: null,
-            sub_depart: null,
-            divide: null,
-            man_day: 0,
-            date: moment().clone().isoWeekday(3).format("YYYY-MM-DD"),
-          },
-        ],
-      },
-      {
-        date: moment().clone().isoWeekday(4).format("YYYY-MM-DD"),
-        child: [
-          {
-            index: 1,
-            depart: null,
-            sub_depart: null,
-            divide: null,
-            man_day: 0,
-            date: moment().clone().isoWeekday(4).format("YYYY-MM-DD"),
-          },
-        ],
-      },
-      {
-        date: moment().clone().isoWeekday(5).format("YYYY-MM-DD"),
-        child: [
-          {
-            index: 1,
-            depart: null,
-            sub_depart: null,
-            divide: null,
-            man_day: 0,
-            date: moment().clone().isoWeekday(5).format("YYYY-MM-DD"),
-          },
-        ],
-      },
-    ],
+    Date_Lists: [],
   });
-  const [Loading_Check, setLoadin_Check] = useState(false);
+
+  // 주별 MANDAY 조회
+  const { request: getManDayBeforeData } = useApi(
+    API_CONFIG.ManDayAPI.GET_MAN_DAY_BEFORE_APPLY_DATA,
+  );
+  // MANDAY 저장
+  const { request: addManDayData } = useApi(
+    API_CONFIG.ManDayAPI.ADD_MAN_DAY_DATA,
+  );
+
+  // 한달 이내의 최근 MANDAY 가져오기
+  const { request: getManDayDataRecentOneMonth } = useApi(
+    API_CONFIG.ManDayAPI.GET_MAN_DAY_DATA_RECENT_ONE_MONTH,
+  );
+
+  // 임시 저장된 MANDAY 데이터 가져오기
+  const { request: getTemporaryManDayData } = useApi(
+    API_CONFIG.ManDayAPI.GET_TEMPORARY_MAN_DAY_DATA,
+  );
+
+  // MANDAY 데이터 임시 저장
+  const { request: addTemporaryManDayData } = useApi(
+    API_CONFIG.ManDayAPI.ADD_TEMPORARY_MAN_DAY_DATA,
+  );
+
+  const isCurrentOrNextWeek =
+    Select_Date === todayIsoWeek || Select_Date === nextIsoWeek;
+
+  const isWritingOrUpdating =
+    WeekContainer.Mode === "writing" || WeekContainer.Mode === "updating";
+  const showLoadButtons = isWritingOrUpdating && isCurrentOrNextWeek;
 
   useEffect(() => {
     Getting_Man_Day_Info_Befroe_Data();
@@ -238,32 +202,39 @@ const ContentMainPage = () => {
 
   // 이전 데이터 불러오기
   const Getting_Man_Day_Info_Befroe_Data = async () => {
-    const Getting_Man_Day_Info_Before_Data_Axios = await Request_Get_Axios(
-      `/ManDayInfo/Getting_Man_Day_Info_Before_Data`,
+    getManDayBeforeData(
+      { Select_Date },
       {
-        Select_Date,
-      }
+        onSuccess: (data) => {
+          setWeekContainer(data);
+        },
+      },
     );
+  };
 
-    if (Getting_Man_Day_Info_Before_Data_Axios.status) {
-      if (Getting_Man_Day_Info_Before_Data_Axios.data.Date_Lists.length > 0) {
-        setWeekContainer(Getting_Man_Day_Info_Before_Data_Axios.data);
-      }
+  const Save_Man_Day_Data = async () => {
+    const errorMessage = validateWeeklyManDay(WeekContainer.Date_Lists);
+    if (errorMessage) {
+      toast.show({ title: errorMessage, successCheck: false, duration: 6000 });
+      return;
     }
+
+    addManDayData(
+      { WeekContainer, Login_Info },
+      {
+        onSuccess: async () => {
+          toast.show({
+            title: `금주 Man_day 데이터가 ${WeekContainer.Mode === "updating" ? "수정" : "입력"}되었습니다.`,
+            successCheck: true,
+            duration: 6000,
+          });
+          await Getting_Man_Day_Info_Befroe_Data();
+        },
+      },
+    );
   };
 
-  // 수정모드로 변경
-  const Change_the_Mode = () => {
-    toast.show({
-      title: `수정모드로 변경 처리되었습니다.`,
-      successCheck: true,
-      duration: 2000,
-    });
-    setWeekContainer({ ...WeekContainer, Mode: "updating" });
-  };
-
-  // 수정모드 취소
-  const Cancel_Man_Day_Data = async () => {
+  const Cancel_Man_Day_Data = () => {
     confirmAlert({
       title: "정말 취소 하시겠습니까?",
       message: "취소하시면 저장되지 않은 데이터는 삭제됩니다.",
@@ -273,189 +244,138 @@ const ContentMainPage = () => {
           onClick: async () => {
             await Getting_Man_Day_Info_Befroe_Data();
             toast.show({
-              title: `수정모드가 취소되었습니다.`,
+              title: "수정모드가 취소되었습니다.",
               successCheck: true,
               duration: 2000,
             });
           },
         },
-        {
-          label: "아니오",
-        },
+        { label: "아니오" },
       ],
     });
   };
 
-  // man_day 저장
-  const Save_Man_Day_Data = async () => {
-    /// 일별로 항목이 공란이 있는지 확인
-    const ChcekNull = WeekContainer.Date_Lists.map((list) => {
-      return list.child.filter(
-        (item) =>
-          !item.depart ||
-          !item.sub_depart ||
-          item.divide === "nothing" ||
-          item.man_day === ""
-      );
-    }).filter((item) => item.length > 0);
-    if (ChcekNull.length > 0) {
-      toast.show({
-        title: `설비군/설비명/업무 유형을 전부 입력 해야 저장이 가능합니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-      return;
-    }
-    const factor = 100000;
-    const expectedTotal = factor * 8; // 800000
-    const tolerance = 0;
-    /// 일별로 Man_Day가 1이 되는지 체크
-    const Sum_Check = WeekContainer.Date_Lists.filter(
-      (item) => item.child.length > 0
-    )
-      .map((list) => {
-        const total = list.child
-          .map((child) => Math.round(Number(child.man_day) * factor))
-          .reduce((a, b) => a + b, 0);
-        return total;
-      })
-      .filter((total) => Math.abs(total - expectedTotal) > tolerance); // 800000이 아니면 필터됨
-
-    if (Sum_Check.length > 0) {
-      toast.show({
-        title: `Man-day(시간)는 일별 합산이 8이 되어야 합니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-      return;
-    }
-
-    /// 일별로 Man_Day가 0이 있는지 체크
-    const Man_Day_Check = WeekContainer.Date_Lists.some((list) => {
-      return list.child.some((pre) => pre.man_day === 0);
-    });
-    if (Man_Day_Check) {
-      toast.show({
-        title: `Man-day(시간)는 0이상만 저장 됩니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-      return;
-    }
-
-    setLoadin_Check(true);
-    const Sending_Man_Day_Real_Data = await Request_Post_Axios(
-      "/ManDayInfo/Sending_Man_Day_Real_Data",
-      {
-        WeekContainer,
-        Login_Info,
-      }
-    );
-    if (Sending_Man_Day_Real_Data.status) {
-      toast.show({
-        title: `금주 Man_day 데이터가 ${
-          WeekContainer.Mode === "updating"
-            ? `수정되었습니다.`
-            : `입력되었습니다.`
-        } `,
-        successCheck: true,
-        duration: 6000,
-      });
-      await Getting_Man_Day_Info_Befroe_Data();
-    }
-    setLoadin_Check(false);
-  };
-
   // 한달 이내의 이전 데이터 가져오기
   const Handle_Getting_Before_Data = async () => {
-    const Handle_Getting_Before_Man_Day_Data = await Request_Get_Axios(
-      `/ManDayInfo/Handle_Getting_Before_Man_Day_Data`,
-      { Select_Date }
+    getManDayDataRecentOneMonth(
+      {
+        Select_Date,
+      },
+      {
+        onSuccess: (data) => {
+          console.log("DADAD", data);
+          if (data.Have_Previous_data) {
+            setWeekContainer(data.data);
+            toast.show({
+              title: `이전주의 저장한 데이터를 불러왔습니다.`,
+              successCheck: true,
+              duration: 3000,
+            });
+          } else {
+            toast.show({
+              title: `이전주의 저장한 데이터가 없습니다.`,
+              successCheck: false,
+              duration: 5000,
+            });
+          }
+        },
+      },
     );
-    if (Handle_Getting_Before_Man_Day_Data.status) {
-      if (Handle_Getting_Before_Man_Day_Data.data.Have_Previous_data) {
-        setWeekContainer(Handle_Getting_Before_Man_Day_Data.data.data);
-        toast.show({
-          title: `이전주의 저장한 데이터를 불러왔습니다.`,
-          successCheck: true,
-          duration: 3000,
-        });
-      } else {
-        toast.show({
-          title: `이전주의 저장한 데이터가 없습니다.`,
-          successCheck: false,
-          duration: 5000,
-        });
-      }
-    } else {
-      toast.show({
-        title: `오류 발생. IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 5000,
-      });
-    }
   };
 
   // 임시 저장
   const Save_Temporarily_Man_Data_Info_Data = async () => {
-    const Save_Temporarily_Man_Dat_Info_Data_Axios = await Request_Post_Axios(
-      "/ManDayInfo/Save_Temporarily_Man_Dat_Info_Data",
+    addTemporaryManDayData(
       {
         WeekContainer,
-      }
+      },
+      {
+        onSuccess: () => {
+          toast.show({
+            title: `데이터를 임시저장하였습니다.`,
+            successCheck: true,
+            duration: 5000,
+          });
+        },
+      },
     );
-    if (Save_Temporarily_Man_Dat_Info_Data_Axios.status) {
-      toast.show({
-        title: `데이터를 임시저장하였습니다.`,
-        successCheck: true,
-        duration: 5000,
-      });
-    } else {
-      toast.show({
-        title: `데이터 임시저장에 실패하였습니다.`,
-        successCheck: false,
-        duration: 5000,
-      });
-    }
   };
 
   // 임시 저장 된 데이터 불러오기
   const Handle_Getting_Save_Temporarily_Man_Dat_Data = async () => {
-    const Handle_Getting_Save_Temporarily_Man_Dat_Data =
-      await Request_Get_Axios(
-        `/ManDayInfo/Handle_Getting_Save_Temporarily_Man_Dat_Data`,
-        {
-          Select_Date,
-        }
-      );
+    getTemporaryManDayData(
+      { Select_Date },
+      {
+        onSuccess: (data) => {
+          if (data.Have_Temporarily_Data) {
+            setWeekContainer({
+              ...WeekContainer,
+              Date_Lists: data.data.Date_Lists,
+            });
+            toast.show({
+              title: `임시 저장한 데이터를 불러왔습니다.`,
+              successCheck: true,
+              duration: 3000,
+            });
+          } else {
+            toast.show({
+              title: `임시 저장한 데이터가 없습니다.`,
+              successCheck: false,
+              duration: 3000,
+            });
+          }
+        },
+      },
+    );
+  };
 
-    if (Handle_Getting_Save_Temporarily_Man_Dat_Data.status) {
-      if (
-        Handle_Getting_Save_Temporarily_Man_Dat_Data.data.Have_Temporarily_Data
-      ) {
-        setWeekContainer({
-          ...WeekContainer,
-          Date_Lists:
-            Handle_Getting_Save_Temporarily_Man_Dat_Data.data.data.Date_Lists,
-        });
-        toast.show({
-          title: `임시 저장한 데이터를 불러왔습니다.`,
-          successCheck: true,
-          duration: 3000,
-        });
-      } else {
-        toast.show({
-          title: `임시 저장한 데이터가 없습니다.`,
-          successCheck: false,
-          duration: 3000,
-        });
-      }
-    } else {
-      toast.show({
-        title: `오류 발생. IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 5000,
-      });
+  const renderActionButtons = () => {
+    if (!isCurrentOrNextWeek) return null; // 주차 아니면 버튼 삭제
+
+    switch (WeekContainer.Mode) {
+      case "reading":
+        return (
+          <div className="Update_Button_Container">
+            <button
+              onClick={() =>
+                setWeekContainer({ ...WeekContainer, Mode: "updating" })
+              }
+            >
+              수정
+            </button>
+          </div>
+        );
+      case "updating":
+        return (
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <div className="Cancel_Button_Container">
+              <button onClick={Cancel_Man_Day_Data}>취소</button>
+            </div>
+            <div className="Update_Button_Container">
+              <button onClick={Save_Temporarily_Man_Data_Info_Data}>
+                임시 저장
+              </button>
+            </div>
+            <div className="Save_Button_Container">
+              <button onClick={Save_Man_Day_Data}>수정 완료</button>
+            </div>
+          </div>
+        );
+      case "writing":
+        return (
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <div className="Update_Button_Container">
+              <button onClick={Save_Temporarily_Man_Data_Info_Data}>
+                임시 저장
+              </button>
+            </div>
+            <div className="Save_Button_Container">
+              <button onClick={Save_Man_Day_Data}>저장</button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
@@ -466,22 +386,21 @@ const ContentMainPage = () => {
           display: "flex",
           alignItems: "center",
           width: "100%",
+          padding: "20px 0",
           borderBottom: "1px solid lightgray",
-          paddingBottom: "20px",
-          paddingTop: "20px",
           position: "sticky",
-          top: "0px",
+          top: 0,
           background: "#fff",
         }}
       >
         <div
           className="Change_Date_Container"
-          style={{ marginRight: "20px", lineHeight: "" }}
-          onClick={() => {
+          style={{ marginRight: "20px" }}
+          onClick={() =>
             setSelect_Date(
-              moment(Select_Date).subtract(7, "days").format("YYYY-MM-DD")
-            );
-          }}
+              moment(Select_Date).subtract(7, "days").format("YYYY-MM-DD"),
+            )
+          }
         >
           <MdOutlineArrowBackIosNew />
         </div>
@@ -492,37 +411,35 @@ const ContentMainPage = () => {
             window.open(
               "/Man_Day/Example",
               "입력 예시",
-              "menubar=no, toolbar=no, location=no, scrollbars=no, status=no, width=1200px, height=800px"
+              "menubar=no, width=1200px, height=800px",
             )
           }
         >
           <BsFillQuestionSquareFill />
         </h2>
-        {Next_Date === Select_Date ? (
-          ""
-        ) : (
+        {Select_Date !== nextIsoWeek && (
           <div
             className="Change_Date_Container"
-            style={{ marginLeft: "20px", lineHeight: "" }}
-            onClick={() => {
+            style={{ marginLeft: "20px" }}
+            onClick={() =>
               setSelect_Date(
-                moment(Select_Date).add(7, "days").format("YYYY-MM-DD")
-              );
-            }}
+                moment(Select_Date).add(7, "days").format("YYYY-MM-DD"),
+              )
+            }
           >
             <MdArrowForwardIos />
           </div>
         )}
       </div>
-      {(WeekContainer?.Mode === "writing" ||
-        WeekContainer?.Mode === "updating") &&
-      (Today_Date === Select_Date || Next_Date === Select_Date) ? (
+
+      {/* 불러오기 버튼 */}
+      {showLoadButtons && (
         <div className="Button_Group">
           <ul>
             <li>
               <button
                 style={{ backgroundColor: "green" }}
-                onClick={() => Handle_Getting_Save_Temporarily_Man_Dat_Data()}
+                onClick={Handle_Getting_Save_Temporarily_Man_Dat_Data}
               >
                 임시저장 불러오기
               </button>
@@ -530,80 +447,33 @@ const ContentMainPage = () => {
             <li>
               <button
                 style={{ backgroundColor: "orange" }}
-                onClick={() => Handle_Getting_Before_Data()}
+                onClick={Handle_Getting_Before_Data}
               >
                 이전 주 데이터 불러오기
               </button>
             </li>
           </ul>
         </div>
-      ) : (
-        <></>
       )}
 
-      <div>
-        <div className="Input_Cotainer">
-          {WeekContainer.Date_Lists.map((list) => {
-            return WeekContainer.Mode === "reading" ? (
-              <ReadingBoxs
-                List_Items={list}
-                key={list.date}
-                WeekContainer={WeekContainer}
-                setWeekContainer={(data) => setWeekContainer(data)}
-              ></ReadingBoxs>
-            ) : (
-              <InputPage
-                List_Items={list}
-                key={list.date}
-                WeekContainer={WeekContainer}
-                setWeekContainer={(data) => setWeekContainer(data)}
-                Select_Date={Select_Date}
-                Today_Date={Today_Date}
-                Next_Date={Next_Date}
-              ></InputPage>
-            );
-          })}
-        </div>
-        {WeekContainer.Mode === "reading" &&
-        (Today_Date === Select_Date || Next_Date === Select_Date) ? (
-          Today_Date === Select_Date || Next_Date === Select_Date ? (
-            <div className="Update_Button_Container">
-              <button onClick={() => Change_the_Mode()}>수정</button>
-            </div>
+      {/* 메인 리스트 */}
+      <div className="Input_Cotainer">
+        {WeekContainer.Date_Lists.map((list) =>
+          WeekContainer.Mode === "reading" ? (
+            <ReadingBoxs key={list.date} List_Items={list} />
           ) : (
-            <></>
-          )
-        ) : WeekContainer.Mode === "updating" &&
-          (Today_Date === Select_Date || Next_Date === Select_Date) ? (
-          <div style={{ display: "flex", justifyContent: "end" }}>
-            <div className="Cancel_Button_Container">
-              <button onClick={() => Cancel_Man_Day_Data()}>취소</button>
-            </div>
-            <div className="Update_Button_Container">
-              <button onClick={() => Save_Temporarily_Man_Data_Info_Data()}>
-                임시 저장
-              </button>
-            </div>
-            <div className="Save_Button_Container">
-              <button onClick={() => Save_Man_Day_Data()}>수정 완료</button>
-            </div>
-          </div>
-        ) : Today_Date === Select_Date || Next_Date === Select_Date ? (
-          <div style={{ display: "flex", justifyContent: "end" }}>
-            <div className="Update_Button_Container">
-              <button onClick={() => Save_Temporarily_Man_Data_Info_Data()}>
-                임시 저장
-              </button>
-            </div>
-            <div className="Save_Button_Container">
-              <button onClick={() => Save_Man_Day_Data()}>저장</button>
-            </div>
-          </div>
-        ) : (
-          <></>
+            <InputPage
+              key={list.date}
+              List_Items={list}
+              setWeekContainer={setWeekContainer}
+              isEditableWeek={isCurrentOrNextWeek}
+            />
+          ),
         )}
       </div>
-      <Loader loading={Loading_Check}></Loader>
+
+      {/* 하단 저장/수정/취소 버튼  */}
+      {renderActionButtons()}
     </ContentMainPageMainDivBox>
   );
 };

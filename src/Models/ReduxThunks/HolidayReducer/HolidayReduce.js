@@ -18,16 +18,14 @@ export const HolidayfetchDataFailure = (error) => ({
 
 export const Holiday_Date_Lists_Fethcing = () => {
   return async (dispatch) => {
-    dispatch(HolidayfetchDataRequest()); // 요청 시작
+    dispatch(HolidayfetchDataRequest());
 
     try {
-      const response = await Request_Get_Axios("/Home/Getting_Holiday_Lists"); // Axios API 호출
-      console.log(response);
-      if (response.status)
-        dispatch(HolidayfetchDataSuccess(response.data)); // 성공 시 데이터 저장
+      const response = await Request_Get_Axios("/Home/Getting_Holiday_Lists");
+      if (response.status) dispatch(HolidayfetchDataSuccess(response.data));
       else dispatch(HolidayfetchDataFailure("error"));
     } catch (error) {
-      dispatch(HolidayfetchDataFailure(error.message)); // 실패 시 에러 저장
+      dispatch(HolidayfetchDataFailure(error.message));
     }
   };
 };

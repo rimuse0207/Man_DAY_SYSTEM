@@ -1,20 +1,16 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import NavigationMainPage from '../Navigation/NavigationMainPage';
-import IconNavigationMainPage from '../Navigation/IconNavigation/IconNavigationMainPage';
+import React, { useEffect } from "react";
+import NavigationMainPage from "../Navigation/NavigationMainPage";
+import IconNavigationMainPage from "../Navigation/IconNavigation/IconNavigationMainPage";
 
-import HomeContainer from './HomeContainer/HomeContainer';
-import axios from 'axios';
-
-const HomeMainPageMainDivBox = styled.div``;
+import HomeContainer from "./HomeContainer/HomeContainer";
 
 const HomeMainPage = () => {
-    return (
-        <HomeMainPageMainDivBox>
-            <NavigationMainPage></NavigationMainPage>
-            <IconNavigationMainPage></IconNavigationMainPage>
-            <HomeContainer></HomeContainer>
-        </HomeMainPageMainDivBox>
-    );
+  return (
+    <div>
+      <NavigationMainPage></NavigationMainPage>
+      <IconNavigationMainPage></IconNavigationMainPage>
+      <HomeContainer></HomeContainer>
+    </div>
+  );
 };
 export default HomeMainPage;

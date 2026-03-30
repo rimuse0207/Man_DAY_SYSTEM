@@ -12,6 +12,7 @@ import { MdLogout } from "react-icons/md";
 import { FaKey } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Logout_Inistate_State_Func } from "../../../Models/LoginInfoReducer/LoginInfoReduce";
+import { NaviLists } from "../NaviList";
 
 const NavigationMainPageMainDivBox = styled.div`
   position: sticky;
@@ -122,41 +123,9 @@ const TopNavigationMainPage = () => {
   };
 
   const Login_Info_State = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
+    (state) => state.Login_Info_Reducer_State.Login_Info,
   );
-  const [Nav_Select_Options_Menus, setNav_Select_Options_Menus] = useState([
-    {
-      value: "/Home",
-      label: "Home",
-      role: "all",
-    },
-    {
-      value: "/Man_day",
-      label: "Man_day",
-      role: "all",
-    },
-    {
-      value: "/User_Manage",
-      label: "Admin",
-      role: "user",
-    },
-  ]);
-  const [Second_Nav_Select_Options, setSecond_Nav_Select_Options] = useState([
-    {
-      value: "/Video_Upload",
-      label: "Video",
-      role: "user",
-      accessUsers: [
-        "jiseop.kim@exicon.co.kr",
-        "hsoh@exicon.co.kr",
-        "sooyoung.chung@exicon.co.kr",
-        "sjyoo@dhk.co.kr",
-        "jiseop.kim@yccorp.com",
-        "sooyoung.chung@yccorp.com",
-      ],
-    },
-  ]);
-  const [Now_Select, setNow_Select] = useState({ value: location.pathname });
+
   const [open, setOpen] = useState(false);
   const Handle_Change_Move_To_Go = (e) => {
     Navigate(e.target.value);
@@ -173,11 +142,11 @@ const TopNavigationMainPage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const filteredNav = Nav_Select_Options_Menus.filter((navItem) => {
+  const filteredNav = NaviLists.filter((navItem) => {
     return (
       navItem.role === "all" ||
       Login_Info_State?.user_access?.some(
-        (access) => access.accessMenuCode === navItem.role
+        (access) => access.accessMenuCode === navItem.role,
       )
     );
   });
@@ -210,15 +179,6 @@ const TopNavigationMainPage = () => {
                 onChange={(event) => Handle_Change_Move_To_Go(event)}
               >
                 {filteredNav?.map((list) => {
-                  return (
-                    <MenuItem value={list.value} key={list.value}>
-                      {list.label}
-                    </MenuItem>
-                  );
-                })}
-                {Second_Nav_Select_Options.filter((item) =>
-                  item.accessUsers.includes(Login_Info_State.id)
-                ).map((list) => {
                   return (
                     <MenuItem value={list.value} key={list.value}>
                       {list.label}

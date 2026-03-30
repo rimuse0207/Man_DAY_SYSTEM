@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import styled from "styled-components";
 import { toast } from "../../../../ToastMessage/ToastManager";
 import OptionSelect from "./OptionSelect/OptionSelect";
@@ -34,197 +34,94 @@ export const SelectBoxsMainDivBox = styled.div`
     }
   }
 `;
-
-const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
-  const Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Depart_Option_Lists
+const SelectBoxs = ({ setWeekContainer, Now_Data }) => {
+  const { Depart_Option_Lists, Sub_Depart_Option_Lists } = useSelector(
+    (state) => state.Man_Day_Select_Option_Lists_State,
+    shallowEqual,
   );
-  const Sub_Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists
-  );
-  const [ReadOnlySetting, setReadOnlySetting] = useState(false);
 
-  const handleFieldChange = async (
-    depart,
-    fieldName,
-    subDepart,
-    fieldName2,
-    divide,
-    fieldName3
-  ) => {
-    setWeekContainer((prev) => {
-      const updatedDateLists = prev.Date_Lists.map((dayItem) => {
-        if (dayItem.date === Now_Data.date) {
-          const updatedChildren = dayItem.child.map((childItem) => {
-            if (childItem.index === Now_Data.index) {
-              return {
-                ...childItem,
-                depart: depart, // 동적으로 키 설정
-                sub_depart: subDepart, // 동적으로 키 설정
-                divide: divide, // 동적으로 키 설정
-              };
+  const isReadOnly = ["BB07", "BB12", "BB08"].includes(Now_Data.divide);
+
+  const filteredSubDepartOptions = useMemo(() => {
+    return Sub_Depart_Option_Lists.filter(
+      (item) => item.itemParentCode === Now_Data.depart,
+    ).sort((a, b) => a.itemRank - b.itemRank);
+  }, [Sub_Depart_Option_Lists, Now_Data.depart]);
+
+  const updateCurrentChild = (newValuesObj) => {
+    setWeekContainer((prev) => ({
+      ...prev,
+      Date_Lists: prev.Date_Lists.map((dayItem) =>
+        dayItem.date === Now_Data.date
+          ? {
+              ...dayItem,
+              child: dayItem.child.map((childItem) =>
+                childItem.index === Now_Data.index
+                  ? { ...childItem, ...newValuesObj }
+                  : childItem,
+              ),
             }
-            return childItem;
-          });
+          : dayItem,
+      ),
+    }));
+  };
 
-          return {
-            ...dayItem,
-            child: updatedChildren,
-          };
-        }
-        return dayItem;
-      });
+  const handleFieldChange = ({ depart, sub_depart, divide }) => {
+    let updates = { depart, sub_depart, divide };
 
-      return {
-        ...prev,
-        Date_Lists: updatedDateLists,
-      };
-    });
     if (divide && divide !== "nothing") {
       if (divide === "BB07" || divide === "BB12") {
-        setReadOnlySetting(true);
-        // Man_Fixed(8);
-        setWeekContainer((prev) => {
-          const updatedDateLists = prev.Date_Lists.map((dayItem) => {
-            if (dayItem.date === Now_Data.date) {
-              const updatedChildren = dayItem.child.map((childItem) => {
-                if (childItem.index === Now_Data.index) {
-                  return {
-                    ...childItem,
-                    man_day: 8, // 동적으로 키 설정
-                    depart: depart, // 동적으로 키 설정
-                    sub_depart: subDepart, // 동적으로 키 설정
-                    divide: divide, // 동적으로 키 설정
-                  };
-                }
-                return childItem;
-              });
-
-              return {
-                ...dayItem,
-                child: updatedChildren,
-              };
-            }
-            return dayItem;
-          });
-
-          return {
-            ...prev,
-            Date_Lists: updatedDateLists,
-          };
-        });
+        updates.man_day = 8;
         toast.show({
           title: `Man-day(시간)는 8로 고정됩니다.`,
           successCheck: true,
           duration: 3000,
         });
       } else if (divide === "BB08") {
-        setReadOnlySetting(true);
-        setWeekContainer((prev) => {
-          const updatedDateLists = prev.Date_Lists.map((dayItem) => {
-            if (dayItem.date === Now_Data.date) {
-              const updatedChildren = dayItem.child.map((childItem) => {
-                if (childItem.index === Now_Data.index) {
-                  return {
-                    ...childItem,
-                    man_day: 4, // 동적으로 키 설정
-                    depart: depart, // 동적으로 키 설정
-                    sub_depart: subDepart, // 동적으로 키 설정
-                    divide: divide, // 동적으로 키 설정
-                  };
-                }
-                return childItem;
-              });
-
-              return {
-                ...dayItem,
-                child: updatedChildren,
-              };
-            }
-            return dayItem;
-          });
-
-          return {
-            ...prev,
-            Date_Lists: updatedDateLists,
-          };
-        });
-
+        updates.man_day = 4;
         toast.show({
           title: `Man-day(시간)는 4로 고정됩니다.`,
           successCheck: true,
           duration: 3000,
         });
-      } else {
-        setReadOnlySetting(false);
       }
-    } else {
-      setReadOnlySetting(false);
     }
+
+    updateCurrentChild(updates);
   };
 
-  const Man_Fixed = (e, Man_Days) => {
-    if (Man_Days === "") {
-      setWeekContainer((prev) => {
-        const updatedDateLists = prev.Date_Lists.map((dayItem) => {
-          if (dayItem.date === Now_Data.date) {
-            const updatedChildren = dayItem.child.map((childItem) => {
-              if (childItem.index === Now_Data.index) {
-                return {
-                  ...childItem,
-                  man_day: "", // 동적으로 키 설정
-                };
-              }
-              return childItem;
-            });
+  const handleManDayChange = (e) => {
+    const val = e.target.value;
 
-            return {
-              ...dayItem,
-              child: updatedChildren,
-            };
-          }
-          return dayItem;
-        });
-
-        return {
-          ...prev,
-          Date_Lists: updatedDateLists,
-        };
-      });
+    if (val === "") {
+      updateCurrentChild({ man_day: "" });
       return;
     }
 
-    const num = Number(Man_Days);
-
-    // 숫자인지 확인하고, 0~8 사이일 때만 반영
+    const num = Number(val);
     if (!isNaN(num) && Number.isInteger(num) && num >= 0 && num <= 8) {
-      setWeekContainer((prev) => {
-        const updatedDateLists = prev.Date_Lists.map((dayItem) => {
-          if (dayItem.date === Now_Data.date) {
-            const updatedChildren = dayItem.child.map((childItem) => {
-              if (childItem.index === Now_Data.index) {
-                return {
-                  ...childItem,
-                  man_day: num, // 동적으로 키 설정
-                };
-              }
-              return childItem;
-            });
-
-            return {
-              ...dayItem,
-              child: updatedChildren,
-            };
-          }
-          return dayItem;
-        });
-
-        return {
-          ...prev,
-          Date_Lists: updatedDateLists,
-        };
-      });
+      updateCurrentChild({ man_day: num });
     }
+  };
+
+  const handleDepartSelect = (e) => {
+    const selectedDepart = e.target.value;
+    let selectedSubDepart = null;
+
+    const autoMap = {
+      AA99: "AA9901",
+      AA08: "AA0801",
+      AA09: "AA0901",
+    };
+    if (autoMap[selectedDepart]) {
+      selectedSubDepart = autoMap[selectedDepart];
+    }
+
+    handleFieldChange({
+      depart: selectedDepart,
+      sub_depart: selectedSubDepart,
+      divide: "nothing",
+    });
   };
 
   return (
@@ -232,110 +129,49 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
       <div className="Input_GR">
         <div className="Title">설비군</div>
         <div className="Answer">
-          <select
-            name="depart"
-            value={Now_Data.depart}
-            onChange={(e) => {
-              if (e?.target?.value === "AA99") {
-                handleFieldChange(
-                  e.target.value,
-                  "depart",
-                  "AA9901",
-                  "sub_depart",
-                  "nothing",
-                  "divide"
-                );
-              } else if (e?.target?.value === "AA08") {
-                handleFieldChange(
-                  e.target.value,
-                  "depart",
-                  "AA0801",
-                  "sub_depart",
-                  "nothing",
-                  "divide"
-                );
-              } else if (e?.target?.value === "AA09") {
-                handleFieldChange(
-                  e.target.value,
-                  "depart",
-                  "AA0901",
-                  "sub_depart",
-                  "nothing",
-                  "divide"
-                );
-              } else {
-                handleFieldChange(
-                  e.target.value,
-                  "depart",
-                  null,
-                  "sub_depart",
-                  "nothing",
-                  "divide"
-                );
-              }
-            }}
-          >
-            <option value={null}></option>
-
-            {Depart_Option_Lists.map((list) => {
-              return (
-                <option
-                  value={list.itemCode}
-                  data-name={list.itemName}
-                  key={list.itemCode}
-                >
-                  {list.itemName}
-                </option>
-              );
-            })}
+          <select value={Now_Data.depart || ""} onChange={handleDepartSelect}>
+            <option value=""></option>
+            {Depart_Option_Lists.map((list) => (
+              <option value={list.itemCode} key={list.itemCode}>
+                {list.itemName}
+              </option>
+            ))}
           </select>
         </div>
       </div>
+
       <div className="Input_GR">
         <div className="Title">설비명</div>
         <div className="Answer">
           <select
-            name="sub_depart"
-            value={Now_Data.sub_depart}
-            onChange={(e) => {
-              handleFieldChange(
-                Now_Data.depart,
-                "depart",
-                e.target.value,
-                "sub_depart",
-                "nothing",
-                "divide"
-              );
-            }}
+            value={Now_Data.sub_depart || ""}
+            onChange={(e) =>
+              handleFieldChange({
+                depart: Now_Data.depart,
+                sub_depart: e.target.value,
+                divide: "nothing",
+              })
+            }
           >
-            <option value={null}></option>
-            {Sub_Depart_Option_Lists.filter(
-              (item) => item.itemParentCode === Now_Data.depart
-            )
-              .sort((a, b) => a.itemRank - b.itemRank)
-              .map((list) => {
-                return (
-                  <option
-                    value={list.itemCode}
-                    data-name={list.itemName}
-                    key={list.itemCode}
-                  >
-                    {list.itemName}
-                  </option>
-                );
-              })}
+            <option value=""></option>
+            {filteredSubDepartOptions.map((list) => (
+              <option value={list.itemCode} key={list.itemCode}>
+                {list.itemName}
+              </option>
+            ))}
           </select>
         </div>
       </div>
+
       <div className="Input_GR">
         <div className="Title">업무 유형</div>
         <div className="Answer">
           <OptionSelect
             Now_Data={Now_Data}
-            handleFieldChange={(data, data1, data2, data3, data4, data5) =>
-              handleFieldChange(data, data1, data2, data3, data4, data5)
+            handleFieldChange={(depart, sub_depart, divide) =>
+              handleFieldChange({ depart, sub_depart, divide })
             }
-          ></OptionSelect>
+          />
         </div>
       </div>
 
@@ -348,9 +184,9 @@ const SelectBoxs = ({ WeekContainer, setWeekContainer, Now_Data }) => {
             min={0}
             max={8}
             step={1}
-            onChange={(e) => Man_Fixed(e, e.target.value)}
-            readOnly={ReadOnlySetting}
-          ></input>
+            onChange={handleManDayChange}
+            readOnly={isReadOnly}
+          />
         </div>
       </div>
     </SelectBoxsMainDivBox>

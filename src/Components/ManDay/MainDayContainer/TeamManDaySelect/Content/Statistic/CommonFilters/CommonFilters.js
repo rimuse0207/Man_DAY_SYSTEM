@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   customStyles,
   SelectAllFilterMainDivBox,
@@ -11,261 +11,184 @@ import {
 } from "../../../../../../../Models/ManDayReducers/ManDaySelectFilterReducer";
 import Select from "react-select";
 import { ko } from "date-fns/esm/locale";
-import styled from "styled-components";
 import DatePicker from "react-datepicker";
-import { Request_Get_Axios } from "../../../../../../../API";
 import { TbHierarchy3 } from "react-icons/tb";
 import PersonSelectModal from "./PersonSelectModal/PersonSelectModal";
 import DepartSelectModal from "./DepartSelectModal/DepartSelectModal";
+import { useApi } from "../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../API/config";
 
 const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
   const dispatch = useDispatch();
-  const [PersonFilterOptions, setPersonFilterOptions] = useState([]);
-  const [DepartmentFilterOptions, setDepartmentFilterOptions] = useState([]);
-  const Input_Title_Lists = useSelector(
-    (state) => state.Man_Day_Select_Items_State.Equipment_Lists_data
+
+  const [personFilterOptions, setPersonFilterOptions] = useState([]);
+  const [statisticEquipmentOptions, setStatisticEquipmentOptions] = useState(
+    [],
   );
-  const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+
+  const [personSelectModalIsOpen, setPersonSelectModalIsOpen] = useState(false);
+  const [departSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
+
+  const filterState = useSelector(
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
-  const [Equipment_Options, setEquipment_Options] = useState([]);
-  const [StatisticEquipmentOptions, setStatisticEquipmentOptions] = useState(
-    []
+
+  const { request: getEquipmentListOptions } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_EQUIPMENT_LIST_FOR_OPTION,
   );
-  const Sub_Depart_Option_Lists = useSelector(
-    (state) => state.Man_Day_Select_Option_Lists_State.Sub_Depart_Option_Lists
+  const { request: getMemberListOptions } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_MEMBER_LIST_FOR_OPTIONS,
   );
-  const [PersonSelectModalIsOpen, setPersonSelectModalIsOpen] = useState(false);
-  const [DepartSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
 
   useEffect(() => {
-    Getting_Team_Member_Lists();
-    Getting_Equipments_Lists_For_Using_Filter_Options();
-    const a = Sub_Depart_Option_Lists?.flatMap((list) => {
-      return {
-        value: list.itemCode,
-        label: list.itemName,
-        parentCode: list.itemParentCode,
-      };
-    });
-
-    setEquipment_Options(a);
+    fetchEquipmentLists();
+    fetchTeamMemberLists();
   }, []);
 
-  const Getting_Equipments_Lists_For_Using_Filter_Options = async () => {
-    const Getting_Equipments_Lists_For_Using_Filter_Options_Axios =
-      await Request_Get_Axios(
-        "/TeamLeaderManDay/Getting_Equipments_Lists_For_Using_Filter_Options"
-      );
-    if (Getting_Equipments_Lists_For_Using_Filter_Options_Axios.status) {
-      setStatisticEquipmentOptions(
-        Getting_Equipments_Lists_For_Using_Filter_Options_Axios.data
-      );
-    }
-  };
-
-  const Getting_Team_Member_Lists = async () => {
-    const Getting_Team_Member_Lists_Axios = await Request_Get_Axios(
-      "/TeamLeaderManDay/Getting_Team_Member_All_Lists_For_Using_Filter_Options"
+  const fetchEquipmentLists = () => {
+    getEquipmentListOptions(
+      {},
+      {
+        onSuccess: (data) => setStatisticEquipmentOptions(data),
+      },
     );
-    if (Getting_Team_Member_Lists_Axios.status) {
-      setPersonFilterOptions(
-        Getting_Team_Member_Lists_Axios.data.Person_Options
-          ? Getting_Team_Member_Lists_Axios.data.Person_Options
-          : []
-      );
-      setDepartmentFilterOptions(
-        Getting_Team_Member_Lists_Axios.data.Team_Options
-          ? Getting_Team_Member_Lists_Axios.data.Team_Options
-          : []
-      );
-    }
   };
 
-  const HandleClickModalsForPerson = async () => {
-    setPersonSelectModalIsOpen(true);
+  const fetchTeamMemberLists = () => {
+    getMemberListOptions(
+      {},
+      {
+        onSuccess: (data) => setPersonFilterOptions(data.Person_Options || []),
+      },
+    );
   };
+
+  const updateFilter = (updates) => {
+    dispatch(
+      Insert_Man_Day_Select_Reducer_State_Func({ ...filterState, ...updates }),
+    );
+  };
+
+  const filteredEquipmentOptions = useMemo(() => {
+    if (!filterState.equipment_company?.value) return [];
+    return statisticEquipmentOptions.filter(
+      (item) => item.company === filterState.equipment_company.value,
+    );
+  }, [statisticEquipmentOptions, filterState.equipment_company]);
 
   return (
     <SelectAllFilterMainDivBox style={{ height: "200px" }}>
       <TableFilterMainDivBox>
         <h2>조회</h2>
         <div className="Filter_Container">
+          {/* 기간 필터 (공통) */}
           <div className="Filter_GR">
             <div className="Filter_Title">기간</div>
             <div
               className="Filter_Content"
               style={{ display: "flex", alignItems: "center" }}
             >
-              <div>
-                <DatePicker
-                  locale={ko}
-                  dateFormat="yyyy-MM-dd" // 날짜 형태
-                  shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
-                  minDate={new Date("2000-01-01")} // minDate 이전 날짜 선택 불가
-                  maxDate={new Date()} // maxDate 이후 날짜 선택 불가
-                  selected={Filter_State.period.start}
-                  onChange={(e) => {
-                    dispatch(
-                      Insert_Man_Day_Select_Reducer_State_Func({
-                        ...Filter_State,
-                        period: { ...Filter_State.period, start: e },
-                      })
-                    );
-                  }}
-                />
-              </div>{" "}
-              <div style={{ marginLeft: "10px", marginRight: "10px" }}>~</div>
-              <div>
-                {" "}
-                <DatePicker
-                  locale={ko}
-                  dateFormat="yyyy-MM-dd" // 날짜 형태
-                  shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
-                  minDate={new Date("2000-01-01")} // minDate 이전 날짜 선택 불가
-                  maxDate={new Date()} // maxDate 이후 날짜 선택 불가
-                  selected={Filter_State.period.end}
-                  onChange={(e) =>
-                    dispatch(
-                      Insert_Man_Day_Select_Reducer_State_Func({
-                        ...Filter_State,
-                        period: { ...Filter_State.period, end: e },
-                      })
-                    )
-                  }
-                />
-              </div>
+              <DatePicker
+                locale={ko}
+                dateFormat="yyyy-MM-dd"
+                shouldCloseOnSelect
+                minDate={new Date("2000-01-01")}
+                maxDate={new Date()}
+                selected={filterState.period.start}
+                onChange={(e) =>
+                  updateFilter({ period: { ...filterState.period, start: e } })
+                }
+              />
+              <div style={{ margin: "0 10px" }}>~</div>
+              <DatePicker
+                locale={ko}
+                dateFormat="yyyy-MM-dd"
+                shouldCloseOnSelect
+                minDate={new Date("2000-01-01")}
+                maxDate={new Date()}
+                selected={filterState.period.end}
+                onChange={(e) =>
+                  updateFilter({ period: { ...filterState.period, end: e } })
+                }
+              />
             </div>
           </div>
 
-          {menuCode === "Team" ? (
+          {menuCode === "Team" && (
             <div className="Filter_GR">
               <div className="Filter_Title">팀, 파트</div>
               <div className="Filter_Content">
                 <input
-                  value={
-                    Filter_State.statisticTeam?.itemName
-                      ? Filter_State.statisticTeam?.itemName
-                      : null
-                  }
+                  value={filterState.statisticTeam?.itemName || ""}
                   placeholder="선택된 팀,파트가 없습니다."
                   onClick={() => setDepartSelectModalIsOpen(true)}
                   readOnly
-                ></input>
-                {/* <div>
-                                    <div>
-                                        {Filter_State.statisticTeam?.itemName
-                                            ? Filter_State.statisticTeam?.itemName
-                                            : '선택된 팀,파트가 없습니다.'}
-                                    </div>
-                                </div> */}
+                />
               </div>
             </div>
-          ) : (
-            <></>
           )}
 
-          {menuCode === "Person" ? (
+          {menuCode === "Person" && (
             <div className="Filter_GR">
               <div className="Filter_Title">이름</div>
+              <div className="Filter_Content" style={{ display: "flex" }}>
+                <div style={{ flex: 1 }}>
+                  <Select
+                    styles={customStyles}
+                    value={filterState.name}
+                    isClearable
+                    options={personFilterOptions}
+                    onChange={(e) => updateFilter({ name: e })}
+                    placeholder="선택 해 주세요."
+                  />
+                </div>
+
+                <div
+                  className="Search_Icon_Container"
+                  onClick={() => setPersonSelectModalIsOpen(true)}
+                >
+                  <TbHierarchy3 />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {menuCode === "Company" && (
+            <div className="Filter_GR">
+              <div className="Filter_Title">회사명</div>
               <div className="Filter_Content">
                 <Select
                   styles={customStyles}
-                  value={Filter_State.name}
-                  isClearable
-                  options={PersonFilterOptions}
-                  onChange={(e) =>
-                    dispatch(
-                      Insert_Man_Day_Select_Reducer_State_Func({
-                        ...Filter_State,
-                        name: e,
-                      })
-                    )
-                  }
+                  value={filterState.company}
+                  options={[
+                    { value: "all", label: "전체" },
+                    { value: "YC", label: "와이씨(YC)" },
+                    { value: "EXICON", label: "엑시콘(EXICON)" },
+                  ]}
+                  onChange={(e) => updateFilter({ company: e })}
                   placeholder="선택 해 주세요."
-                ></Select>
-              </div>
-              <div
-                className="Search_Icon_Container"
-                onClick={() => HandleClickModalsForPerson()}
-              >
-                <TbHierarchy3 />
+                />
               </div>
             </div>
-          ) : (
-            <></>
           )}
 
-          {menuCode === "Company" ? (
+          {(menuCode === "Equipments" || menuCode === "Salary") && (
             <>
-              {" "}
               <div className="Filter_GR">
                 <div className="Filter_Title">회사명</div>
                 <div className="Filter_Content">
                   <Select
                     styles={customStyles}
-                    value={Filter_State.company}
+                    value={filterState.equipment_company}
                     options={[
-                      {
-                        value: "all",
-                        label: "전체",
-                      },
-                      {
-                        value: "YC",
-                        label: "와이씨(YC)",
-                      },
-                      {
-                        value: "EXICON",
-                        label: "엑시콘(EXICON)",
-                      },
+                      { value: "YC", label: "와이씨(YC)" },
+                      { value: "EXICON", label: "엑시콘(EXICON)" },
                     ]}
                     onChange={(e) =>
-                      dispatch(
-                        Insert_Man_Day_Select_Reducer_State_Func({
-                          ...Filter_State,
-                          company: e,
-                        })
-                      )
+                      updateFilter({ equipment_company: e, sub_depart: null })
                     }
                     placeholder="선택 해 주세요."
-                  ></Select>
-                </div>
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
-
-          {menuCode === "Equipments" || menuCode === "Salary" ? (
-            <>
-              {" "}
-              <div className="Filter_GR">
-                <div className="Filter_Title">회사명</div>
-                <div className="Filter_Content">
-                  <Select
-                    styles={customStyles}
-                    value={Filter_State.equipment_company}
-                    options={[
-                      {
-                        value: "YC",
-                        label: "와이씨(YC)",
-                      },
-                      {
-                        value: "EXICON",
-                        label: "엑시콘(EXICON)",
-                      },
-                    ]}
-                    onChange={(e) =>
-                      dispatch(
-                        Insert_Man_Day_Select_Reducer_State_Func({
-                          ...Filter_State,
-                          equipment_company: e,
-                          sub_depart: null,
-                        })
-                      )
-                    }
-                    placeholder="선택 해 주세요."
-                  ></Select>
+                  />
                 </div>
               </div>
               <div className="Filter_GR">
@@ -273,50 +196,27 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
                 <div className="Filter_Content">
                   <Select
                     styles={customStyles}
-                    value={Filter_State.sub_depart}
-                    options={StatisticEquipmentOptions.filter(
-                      (item) =>
-                        item.company === Filter_State.equipment_company.value
-                    )}
+                    value={filterState.sub_depart}
+                    options={filteredEquipmentOptions}
+                    isDisabled={!filterState.equipment_company}
                     isClearable
-                    onChange={(e) =>
-                      dispatch(
-                        Insert_Man_Day_Select_Reducer_State_Func({
-                          ...Filter_State,
-                          sub_depart: e,
-                        })
-                      )
-                    }
+                    onChange={(e) => updateFilter({ sub_depart: e })}
                     placeholder="선택 해 주세요."
-                  ></Select>
+                  />
                 </div>
               </div>
             </>
-          ) : (
-            <></>
           )}
-
-          {/* <div className="Filter_GR">
-                        <div className="Filter_Title">설비명</div>
-                        <div className="Filter_Content">
-                            <Select
-                                styles={customStyles}
-                                value={Filter_State.sub_depart}
-                                options={sub_Depart_options}
-                                isClearable
-                                onChange={e => dispatch(Insert_Man_Day_Select_Reducer_State_Func({ ...Filter_State, sub_depart: e }))}
-                                placeholder="선택 해 주세요."
-                            ></Select>
-                        </div>
-                    </div> */}
         </div>
+
+        {/* 하단 버튼 영역 */}
         <div className="Filter_Button_Group">
           <div className="Filter_Button_Container">
             <div className="Update_Button_Container">
               <button
-                onClick={async () => {
-                  dispatch(Initial_Man_Day_Select_Reducer_State_Func());
-                }}
+                onClick={() =>
+                  dispatch(Initial_Man_Day_Select_Reducer_State_Func())
+                }
               >
                 초기화
               </button>
@@ -324,9 +224,7 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
             <div className="Save_Button_Container">
               <button
                 style={{ background: "green" }}
-                onClick={() => {
-                  Getting_Person_Bar_State();
-                }}
+                onClick={Getting_Person_Bar_State}
               >
                 조회
               </button>
@@ -334,19 +232,13 @@ const CommonFilters = ({ menuCode, Getting_Person_Bar_State }) => {
           </div>
         </div>
       </TableFilterMainDivBox>
-      {PersonSelectModalIsOpen ? (
-        <PersonSelectModal
-          onClose={() => setPersonSelectModalIsOpen(false)}
-        ></PersonSelectModal>
-      ) : (
-        <></>
+
+      {personSelectModalIsOpen && (
+        <PersonSelectModal onClose={() => setPersonSelectModalIsOpen(false)} />
       )}
-      {DepartSelectModalIsOpen ? (
-        <DepartSelectModal
-          onClose={() => setDepartSelectModalIsOpen(false)}
-        ></DepartSelectModal>
-      ) : (
-        <></>
+
+      {departSelectModalIsOpen && (
+        <DepartSelectModal onClose={() => setDepartSelectModalIsOpen(false)} />
       )}
     </SelectAllFilterMainDivBox>
   );

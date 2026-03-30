@@ -1,104 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { SelectBoxsMainDivBox } from '../../../../../ManDayApply/Contents/SelectBoxs';
-import { InputPageMainDivBox } from '../../../../../ManDayApply/Contents/InputPage';
-import moment from 'moment';
-import styled from 'styled-components';
+import React, { useMemo } from "react";
+import { SelectBoxsMainDivBox } from "../../../../../ManDayApply/Contents/SelectBoxs";
+import { InputPageMainDivBox } from "../../../../../ManDayApply/Contents/InputPage";
+import moment from "moment";
+import "moment/locale/ko";
+import SelectInput from "../../../../../SelectInput";
 
-const ManDaySelect = ({ Now_Select_User, NowDate, setSelect_Modes }) => {
-    const [WeekContainer, setWeekContainer] = useState([
-        {
-            date: moment(NowDate).clone().startOf('isoWeek').format('YYYY-MM-DD'),
-        },
-        {
-            date: moment(NowDate).clone().isoWeekday(2).format('YYYY-MM-DD'),
-        },
-        {
-            date: moment(NowDate).clone().isoWeekday(3).format('YYYY-MM-DD'),
-        },
-        {
-            date: moment(NowDate).clone().isoWeekday(4).format('YYYY-MM-DD'),
-        },
-        {
-            date: moment(NowDate).clone().isoWeekday(5).format('YYYY-MM-DD'),
-        },
-    ]);
-    useEffect(() => {
-        setWeekContainer([
-            {
-                date: moment(NowDate).clone().startOf('isoWeek').format('YYYY-MM-DD'),
-            },
-            {
-                date: moment(NowDate).clone().isoWeekday(2).format('YYYY-MM-DD'),
-            },
-            {
-                date: moment(NowDate).clone().isoWeekday(3).format('YYYY-MM-DD'),
-            },
-            {
-                date: moment(NowDate).clone().isoWeekday(4).format('YYYY-MM-DD'),
-            },
-            {
-                date: moment(NowDate).clone().isoWeekday(5).format('YYYY-MM-DD'),
-            },
-        ]);
-    }, [NowDate]);
-    return (
-        <div>
-            <h3 style={{ textAlign: 'center' }}>
-                {Now_Select_User ? `${Now_Select_User.departmentName} ${Now_Select_User.name} ${Now_Select_User.position}` : ''}
-            </h3>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em' }}>
-                {Now_Select_User ? (
-                    WeekContainer.map(list => {
-                        return (
-                            <InputPageMainDivBox>
-                                <div style={{ textAlign: 'center', fontWeight: 'bolder', marginTop: '10px', marginBottom: '10px' }}>
-                                    {moment(list.date).format('MM.DD dddd')}
-                                </div>
-                                {Now_Select_User?.man_day_infos
-                                    .filter(item => item.date === list.date)
-                                    .map(item => {
-                                        return (
-                                            <div key={item.index}>
-                                                <div>
-                                                    <SelectBoxsMainDivBox>
-                                                        <div className="Input_GR">
-                                                            <div className="Title">설비군</div>
-                                                            <div className="Answer" style={{ textAlign: 'center' }}>
-                                                                {item.depart}
-                                                            </div>
-                                                        </div>
-                                                        <div className="Input_GR">
-                                                            <div className="Title">설비명</div>
-                                                            <div className="Answer" style={{ textAlign: 'center' }}>
-                                                                {item.sub_depart}
-                                                            </div>
-                                                        </div>
-                                                        <div className="Input_GR">
-                                                            <div className="Title">업무 유형</div>
-                                                            <div className="Answer" style={{ textAlign: 'center' }}>
-                                                                {item.divideCode}
-                                                            </div>
-                                                        </div>
-                                                        <div className="Input_GR">
-                                                            <div className="Title">Man-day(시간)</div>
-                                                            <div className="Answer" style={{ textAlign: 'center' }}>
-                                                                {item.manDay.toFixed(0)} 시간
-                                                            </div>
-                                                        </div>
-                                                    </SelectBoxsMainDivBox>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                            </InputPageMainDivBox>
-                        );
-                    })
-                ) : (
-                    <></>
-                )}
-            </div>
-        </div>
-    );
+const ManDaySelect = ({ Now_Select_User, NowDate }) => {
+  const weekDays = useMemo(() => {
+    return Array.from({ length: 5 }, (_, index) => {
+      return {
+        date: moment(NowDate)
+          .clone()
+          .isoWeekday(index + 1)
+          .format("YYYY-MM-DD"),
+      };
+    });
+  }, [NowDate]);
+
+  if (!Now_Select_User) return null;
+
+  return (
+    <div>
+      <h3 style={{ textAlign: "center", marginBottom: "20px" }}>
+        {Now_Select_User.departmentName} {Now_Select_User.name}{" "}
+        {Now_Select_User.position}
+      </h3>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: "0.9em",
+        }}
+      >
+        {weekDays.map((list) => {
+          const matchedManDays =
+            Now_Select_User.man_day_infos?.filter(
+              (item) => item.date === list.date,
+            ) || [];
+
+          return (
+            <InputPageMainDivBox key={list.date}>
+              <div
+                style={{
+                  textAlign: "center",
+                  fontWeight: "bolder",
+                  margin: "10px 0",
+                }}
+              >
+                {moment(list.date).format("MM.DD dddd")}
+              </div>
+
+              {matchedManDays.map((item) => (
+                <div key={item.index}>
+                  <SelectBoxsMainDivBox>
+                    <SelectInput
+                      title={"설비군"}
+                      answer={item.depart}
+                    ></SelectInput>
+                    <SelectInput
+                      title={"설비명"}
+                      answer={item.sub_depart}
+                    ></SelectInput>
+                    <SelectInput
+                      title={"업무 유형"}
+                      answer={item.divideCode}
+                    ></SelectInput>
+                    <SelectInput
+                      title={"Man-day(시간)"}
+                      answer={`${Number(item.manDay || 0).toFixed(0)} 시간`}
+                    ></SelectInput>
+                  </SelectBoxsMainDivBox>
+                </div>
+              ))}
+            </InputPageMainDivBox>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 export default ManDaySelect;

@@ -4,32 +4,16 @@ import {
   Overlay,
 } from "../../Department/Contents/Modal/DepartmentMoveModal";
 import Select from "react-select";
-import { Request_Get_Axios, Request_Post_Axios } from "../../../../API";
-import { toast } from "../../../ToastMessage/ToastManager";
 import { UserModalMainDivBox } from "../../User/Contents/UserModal";
 import { UserContentMainPageButtonContainer } from "../../User/UserContentMainPage";
 import ParentTree from "../../Department/TreeMenu/ParentTree";
-import SelectDepartment from "../../Department/Contents/SelectDepartment";
 import UserTable from "./UserTable";
 import { useDispatch, useSelector } from "react-redux";
 import { customStyles } from "../../../ManDay/MainDayContainer/TeamManDaySelect/Content/SelectAll/Top/SelectAllFilter";
 import { Change_User_Search_Reducer } from "../../../../Models/UserSearchReducer/UserSearchReducer";
 import { findItemByCode } from "../../Department/DepartmentMainPage";
-
-const styles = {
-  control: (provided) => ({
-    ...provided,
-    height: "40px",
-  }),
-  valueContainer: (provided) => ({
-    ...provided,
-    height: "40px",
-  }),
-  indicatorsContainer: (provided) => ({
-    ...provided,
-    height: "40px",
-  }),
-};
+import { useApi } from "../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../API/config";
 
 const AccessUserModal = ({
   onClose,
@@ -38,30 +22,30 @@ const AccessUserModal = ({
 }) => {
   const dispatch = useDispatch();
   const SearchInfo = useSelector(
-    (state) => state.Change_User_Search_Reducer_State
+    (state) => state.Change_User_Search_Reducer_State,
   );
   const [NowSelect, setNowSelect] = useState(null);
   const [Department_State, setDepartment_State] = useState([]);
   const [Search_User_Name, setSearch_User_Name] = useState(null);
   const [User_Select_Options, setUser_Select_Options] = useState([]);
-  useEffect(() => {
-    Getting_Department_Data();
-  }, [SearchInfo]);
 
-  const Getting_Department_Data = async () => {
-    const Getting_Department_Data_Axios = await Request_Get_Axios(
-      "/User/Getting_Department_Data",
+  const { request: getDepartmentList } = useApi(
+    API_CONFIG.UserAPI.GET_DEPARTMENT,
+  );
+
+  useEffect(() => {
+    getDepartmentList(
       {
         SearchInfo,
-      }
+      },
+      {
+        onSuccess: (data) => {
+          setDepartment_State(data.Change_Tree_State);
+          setUser_Select_Options(data.Change_User_Options);
+        },
+      },
     );
-    if (Getting_Department_Data_Axios.status) {
-      setDepartment_State(Getting_Department_Data_Axios.data.Change_Tree_State);
-      setUser_Select_Options(
-        Getting_Department_Data_Axios.data.Change_User_Options
-      );
-    }
-  };
+  }, [SearchInfo, getDepartmentList]);
 
   const HandleChange_UserSearchStart = (e) => {
     e.preventDefault();

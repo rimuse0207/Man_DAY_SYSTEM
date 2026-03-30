@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { MdKeyboardArrowUp } from "react-icons/md";
 import { AiFillCalendar } from "react-icons/ai";
-import { FaCalendarAlt } from "react-icons/fa";
-import { BsBarChartFill } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import { RiListOrdered2 } from "react-icons/ri";
 import { FaVideo } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 export const AnnualLeaveNavigationMainPageMainDivBox = styled.div`
   border-right: 1px solid lightgray;
@@ -102,7 +98,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
   const { pathname } = useLocation();
   const Navigate = useNavigate();
   const Login_Info = useSelector(
-    (state) => state.Login_Info_Reducer_State.Login_Info
+    (state) => state.Login_Info_Reducer_State.Login_Info,
   );
   const [User_Side_Menu_List, setUser_Side_Menu_List] = useState([
     {
@@ -131,48 +127,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
         },
       ],
     },
-    {
-      Menu_Select: "board",
-      Menu_List: [
-        {
-          menu_name: "관리자 Tool 리스트",
-          menu_path: "/Tool/Administrator/Select",
-          menu_title: "/Tool",
-        },
-      ],
-    },
   ]);
-  const [videoUploadMenuLists, setVideoUploadMenuLists] = useState([
-    {
-      Menu_Select: "Video_Upload",
-      Menu_List: [
-        {
-          menu_name: "비디오 업로드",
-          menu_path: "/Video_Upload",
-          menu_title: "/Video_Upload",
-          menu_show_access: "user",
-          menu_icon: <FaVideo />,
-        },
-      ],
-      accessUsers: [
-        "jiseop.kim@exicon.co.kr",
-        "hsoh@exicon.co.kr",
-        "sooyoung.chung@exicon.co.kr",
-        "jiseop.kim@yccorp.com",
-        "sooyoung.chung@yccorp.com",
-      ],
-    },
-  ]);
-
-  useEffect(() => {}, [NavState]);
-
-  const Nav_List_Change = (Select_Menu) => {
-    const Get_Data = Select_Menu.filter((item) =>
-      item.Menu_Select === NavState ? item : ""
-    );
-
-    return Get_Data[0];
-  };
 
   return (
     <AnnualLeaveNavigationMainPageMainDivBox>
@@ -181,7 +136,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
           className="PersonalNavigation_ApplyPage"
           onClick={() => {
             Navigate(
-              NavState === "Video_Upload" ? "/Video_Upload" : "/Man_day/Apply"
+              NavState === "Video_Upload" ? "/Video_Upload" : "/Man_day/Apply",
             );
           }}
         >
@@ -195,7 +150,7 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
           <div style={{ marginBottom: "30px" }}>
             <ul className="PersonalNavigation_WorkStatus_ListsShow">
               {User_Side_Menu_List.filter(
-                (item) => item.Menu_Select === NavState
+                (item) => item.Menu_Select === NavState,
               ).map((item) =>
                 item.Menu_List.map((list) => {
                   return (
@@ -216,18 +171,18 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                       <span>{list.menu_name}</span>
                     </li>
                   );
-                })
+                }),
               )}
             </ul>
           </div>
           {Login_Info.admin_access.some(
-            (list) => list.accessMenuCode === NavState?.toLowerCase()
-          ) ? (
+            (list) => list.accessMenuCode === NavState?.toLowerCase(),
+          ) && (
             <div style={{ borderTop: "2px solid lightgray" }}>
               <div style={{ marginTop: "20px" }}>관리자</div>
               <ul className="PersonalNavigation_WorkStatus_ListsShow">
                 {Admin_Side_Menu_List.filter(
-                  (item) => item.Menu_Select === NavState?.toLowerCase()
+                  (item) => item.Menu_Select === NavState?.toLowerCase(),
                 ).map((item) =>
                   item.Menu_List.map((list) => {
                     return (
@@ -248,12 +203,10 @@ const SideNavigationMainPage = ({ NavState, setHistoryPageOpen }) => {
                         <span>{list.menu_name}</span>
                       </li>
                     );
-                  })
+                  }),
                 )}
               </ul>
             </div>
-          ) : (
-            <></>
           )}
         </div>
       </div>

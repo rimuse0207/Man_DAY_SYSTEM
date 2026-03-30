@@ -6,7 +6,10 @@ import Man_Day_Select_Filter_Reducer_State from "./ManDayReducers/ManDaySelectFi
 import Change_User_Search_Reducer_State from "./UserSearchReducer/UserSearchReducer";
 import Man_Day_Select_Option_Lists_State from "./ReduxThunks/ManDaySelectOptionReducer";
 import HolidayThunkReducer from "./ReduxThunks/HolidayReducer/HolidayReduce";
+import Loading_Reducer_State from "./LoadingReducer/LoadingReduce";
+
 const rootReducer = combineReducers({
+  Loading_Reducer_State,
   Login_Info_Reducer_State,
   Now_Path_Reducer_State,
   Man_Day_Select_Items_State,

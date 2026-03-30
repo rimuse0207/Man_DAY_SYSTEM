@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DepartmentMainPageMainDivBox } from "../Department/DepartmentMainPage";
 import { UserInfoMainDivBox } from "../Department/Contents/UsersInfo";
-import { Request_Get_Axios } from "../../../API";
 import styled from "styled-components";
 import UserModal from "./Contents/UserModal";
 import AddUserModal from "./Contents/AddUserModal";
+import { useApi } from "../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../API/config";
+import UserHeader from "../Public/UserHeader";
+import TableHeader from "../Public/TableHeader";
 
 export const UserContentMainPageButtonContainer = styled.div`
   text-align: end;
@@ -27,6 +30,37 @@ export const UserContentMainPageButtonContainer = styled.div`
   }
 `;
 
+const UserSearchContainer = styled.div`
+  font-size: 0.9em;
+  .SpanBox {
+    margin-left: 20px;
+  }
+  .SearchInput {
+    border: 1px solid lightgray;
+    height: 30px;
+    padding-left: 10px;
+    border-radius: 5px;
+    width: 300px;
+  }
+`;
+
+const TableContainer = styled.div`
+  height: calc(100vh - 250px);
+  overflow: auto;
+  table {
+    font-size: 0.9em;
+    thead {
+      position: sticky;
+      top: -1px;
+      height: 30px;
+      z-index: 10;
+      tr {
+        background-color: RGB(239, 244, 252);
+      }
+    }
+  }
+`;
+
 const UserContentMainPage = () => {
   const [User_Lists_State, setUser_Lists_State] = useState([]);
   const [SearchInput, setSearchInput] = useState("");
@@ -34,134 +68,139 @@ const UserContentMainPage = () => {
   const [User_Modal_IsOpen, setUser_Modal_IsOpen] = useState(false);
   const [Update_Mode, setUpdate_Mode] = useState(false);
   const [AddUserModalOpen, setAddUserModalOpen] = useState(false);
-  useEffect(() => {
-    Getting_All_User_Info();
-  }, []);
-  const Getting_All_User_Info = async () => {
-    const Getting_All_User_Info_Axios = await Request_Get_Axios(
-      "/User/Getting_All_User_Info"
+
+  const { request: requestUser } = useApi(API_CONFIG.UserAPI.GET_USER);
+
+  const initFunc = () => {
+    requestUser(
+      {},
+      {
+        onSuccess: (data) => {
+          setUser_Lists_State(data);
+        },
+      },
     );
-    if (Getting_All_User_Info_Axios.status) {
-      setUser_Lists_State(Getting_All_User_Info_Axios.data);
-    }
   };
+
+  useEffect(() => {
+    initFunc();
+  }, []);
+
+  const filteredUsers = useMemo(() => {
+    const searchLower = SearchInput?.toLowerCase() || "";
+
+    return User_Lists_State.filter((user) => {
+      return (
+        user?.name?.toLowerCase().includes(searchLower) ||
+        user?.email?.toLowerCase().includes(searchLower) ||
+        user?.user_department?.toLowerCase().includes(searchLower)
+      );
+    });
+  }, [User_Lists_State, SearchInput]);
+
+  const UserRow = React.memo(({ user, isSelected, onClick }) => {
+    const rowStyle = {
+      opacity: user.inservice === 0 ? 0.5 : 1,
+      backgroundColor: isSelected ? "RGB(239, 244, 252)" : "transparent",
+      cursor: "pointer",
+    };
+
+    return (
+      <tr style={rowStyle} onClick={() => onClick(user)}>
+        <td>{user.name}</td>
+        <td>{user.user_position}</td>
+        <td>{user.user_department}</td>
+        <td>{user.user_salarygrade}</td>
+        <td>{user.user_gradebounce}</td>
+        <td>{user.email}</td>
+        <td>{user.user_occupational}</td>
+        <td>{user.readOnly === 1 ? "O" : "X"}</td>
+      </tr>
+    );
+  });
+
   return (
     <DepartmentMainPageMainDivBox>
-      <div
-        style={{ borderBottom: "1px solid lightgray", paddingBottom: "10px" }}
-      >
-        <h2>사용자</h2>
-        <div style={{ fontSize: "0.8em", marginTop: "10px", color: "gray" }}>
-          사용자 정보를 조회/관리할 수 있습니다.
-        </div>
-      </div>
+      <UserHeader
+        title={"사용자"}
+        subDescript={"사용자 정보를 조회/관리할 수 있습니다."}
+      ></UserHeader>
       <UserInfoMainDivBox>
         <div>
-          <div style={{ fontSize: "0.9em" }}>
+          <UserSearchContainer>
             <span>사용자 수 ({User_Lists_State.length})</span>
-            <span style={{ marginLeft: "20px" }}>
+            <span className="SpanBox">
               <input
+                className="SearchInput"
                 value={SearchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                style={{
-                  border: "1px solid lightgray",
-                  height: "30px",
-                  paddingLeft: "10px",
-                  borderRadius: "5px",
-                  width: "300px",
-                }}
                 placeholder="검색..."
               ></input>
             </span>
-          </div>
+          </UserSearchContainer>
 
           <UserContentMainPageButtonContainer>
             <button onClick={() => setAddUserModalOpen(true)}>추 가</button>
           </UserContentMainPageButtonContainer>
         </div>
-        <div style={{ height: "calc(100vh - 250px)", overflow: "auto" }}>
-          <table style={{ fontSize: "0.9em" }}>
-            <thead style={{ position: "sticky", top: "-1px", height: "30px" }}>
-              <tr style={{ backgroundColor: "RGB(239, 244, 252)" }}>
-                <th>이름</th>
-                <th>직급</th>
-                <th>부서</th>
-                <th>호봉</th>
-                <th>연차</th>
-                <th>ID</th>
-                <th>직군</th>
-                <th>읽기전용 체크</th>
-              </tr>
-            </thead>
+
+        <TableContainer>
+          <table>
+            <TableHeader
+              headerList={[
+                "이름",
+                "직급",
+                "부서",
+                "호봉",
+                "연차",
+                "ID",
+                "직군",
+                "읽기전용 체크",
+              ]}
+            ></TableHeader>
             <tbody>
-              {User_Lists_State.filter(
-                (item) =>
-                  item?.name
-                    ?.toLowerCase()
-                    .includes(SearchInput?.toLowerCase()) ||
-                  item?.email
-                    ?.toLowerCase()
-                    .includes(SearchInput?.toLowerCase()) ||
-                  item?.user_department
-                    ?.toLowerCase()
-                    .includes(SearchInput?.toLowerCase())
-              ).map((list) => {
-                return (
-                  <tr
-                    key={list.email}
-                    onClick={() => {
-                      setSelect_User(list);
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <UserRow
+                    key={user.email}
+                    user={user}
+                    isSelected={user.email === Select_User?.email}
+                    onClick={(selectedUser) => {
+                      setSelect_User(selectedUser);
                       setUser_Modal_IsOpen(true);
                     }}
-                    style={
-                      list.inservice === 0
-                        ? { opacity: "0.5" }
-                        : list.email === Select_User?.email
-                        ? { backgroundColor: "RGB(239, 244, 252)" }
-                        : {}
-                    }
-                  >
-                    <td>{list.name}</td>
-                    <td>{list.user_position}</td>
-                    <td>{list.user_department}</td>
-                    <td>{list.user_salarygrade}</td>
-                    <td>{list.user_gradebounce}</td>
-                    <td>{list.email}</td>
-                    <td>{list.user_occupational}</td>
-                    <td>{list.readOnly === 1 ? "O" : "X"}</td>
-                  </tr>
-                );
-              })}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8">검색 결과가 없습니다.</td>
+                </tr>
+              )}
             </tbody>
           </table>
-          <div style={{ marginBottom: "50px" }}></div>
-        </div>
+        </TableContainer>
       </UserInfoMainDivBox>
-      {User_Modal_IsOpen ? (
+      {User_Modal_IsOpen && (
         <UserModal
-          Getting_All_User_Info={() => Getting_All_User_Info()}
+          Getting_All_User_Info={() => initFunc()}
           Select_User={Select_User}
           setSelect_User={(data) => setSelect_User(data)}
           isOpen={User_Modal_IsOpen}
-          onClose={(data) => {
+          onClose={() => {
             setUser_Modal_IsOpen(false);
             setSelect_User(null);
           }}
           Update_Mode={Update_Mode}
           setUpdate_Mode={(data) => setUpdate_Mode(data)}
         ></UserModal>
-      ) : (
-        <></>
       )}
-      {AddUserModalOpen ? (
+      {AddUserModalOpen && (
         <AddUserModal
-          Getting_All_User_Info={() => Getting_All_User_Info()}
-          onClose={(data) => {
+          Getting_All_User_Info={() => initFunc()}
+          onClose={() => {
             setAddUserModalOpen(false);
           }}
         ></AddUserModal>
-      ) : (
-        <></>
       )}
     </DepartmentMainPageMainDivBox>
   );

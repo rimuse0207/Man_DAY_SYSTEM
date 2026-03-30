@@ -4,6 +4,8 @@ import { Request_Get_Axios } from "../../../../../../../API";
 import { useSelector } from "react-redux";
 import BarGraph from "./BarGraph";
 import styled from "styled-components";
+import { useApi } from "../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../API/config";
 
 export const PersonMainPageMainDivBox = styled.div`
   padding-right: 20px;
@@ -26,33 +28,36 @@ const PersonMainPage = ({ menuCode }) => {
   const [Bar_State, setBar_State] = useState([]);
   const [User_Info_State, setUser_Info_State] = useState(null);
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
-  useEffect(() => {
-    Getting_Person_Bar_State();
-  }, []);
-  const Getting_Person_Bar_State = async () => {
-    if (Filter_State.name) {
-      const Getting_Person_Bar_State_Axios = await Request_Get_Axios(
-        "/TeamLeaderManDay/Getting_Person_Bar_State",
-        {
-          Filter_State,
-        }
-      );
 
-      if (Getting_Person_Bar_State_Axios.status) {
-        setBar_State(Getting_Person_Bar_State_Axios.data.BarGraphData);
-        setUser_Info_State(
-          Getting_Person_Bar_State_Axios.data.Personal_Infos_SQL
-        );
-      }
+  const { request: getPersonalBar } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_PERSON_INFO_BAR,
+  );
+
+  useEffect(() => {
+    initPersonalBarState();
+  }, []);
+
+  const initPersonalBarState = () => {
+    if (Filter_State.name) {
+      getPersonalBar(
+        { Filter_State },
+        {
+          onSuccess: (data) => {
+            setBar_State(data.BarGraphData);
+            setUser_Info_State(data.Personal_Infos_SQL);
+          },
+        },
+      );
     }
   };
+
   return (
     <PersonMainPageMainDivBox>
       <CommonFilters
         menuCode={menuCode}
-        Getting_Person_Bar_State={() => Getting_Person_Bar_State()}
+        Getting_Person_Bar_State={() => initPersonalBarState()}
       ></CommonFilters>
       <div className="User_Info_Container">
         <div className="User_Content_Container">

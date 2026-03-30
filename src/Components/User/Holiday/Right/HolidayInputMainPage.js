@@ -3,8 +3,9 @@ import DatePicker from "react-datepicker";
 import styled from "styled-components";
 import { ko } from "date-fns/esm/locale";
 import { toast } from "../../../ToastMessage/ToastManager";
-import { Request_Post_Axios } from "../../../../API";
 import moment from "moment";
+import { useApi } from "../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../API/config";
 const HolidayInputMainPageMainDivBox = styled.div`
   padding-left: 10px;
   padding-right: 5px;
@@ -40,6 +41,11 @@ const HolidayInputMainPage = ({ Getting_Holiday_Lists }) => {
   const [Select_Date, setSelect_Date] = useState(new Date());
   const [Input_Name, setInput_Name] = useState("");
 
+  const { request: addHolidayList } = useApi(
+    API_CONFIG.UserAPI.ADD_HOLIDAY_LISTS,
+  );
+
+  // 공휴일 수기 등록
   const Handle_Add_Holiday_Data = async () => {
     if (Input_Name === "") {
       toast.show({
@@ -49,46 +55,35 @@ const HolidayInputMainPage = ({ Getting_Holiday_Lists }) => {
       });
       return;
     }
-
-    const Handle_Add_Holiday_Data_Axios = await Request_Post_Axios(
-      "/User/Handle_Add_Holiday_Data",
+    addHolidayList(
+      { Select_Date, Input_Name },
       {
-        Select_Date,
-        Input_Name,
-      }
+        onSuccess: async (data) => {
+          if (data.dupleChecking) {
+            toast.show({
+              title: `공휴일이 이미 등록되어 있습니다. 다시 확인 바랍니다.`,
+              successCheck: false,
+              duration: 6000,
+            });
+            return;
+          }
+          await Getting_Holiday_Lists();
+          toast.show({
+            title: `${moment(Select_Date).format(
+              "YYYY-MM-DD",
+            )}를 공휴일로 지정하였습니다.`,
+            successCheck: true,
+            duration: 6000,
+          });
+          setInput_Name("");
+        },
+      },
     );
-
-    if (Handle_Add_Holiday_Data_Axios.status) {
-      if (Handle_Add_Holiday_Data_Axios.data.dupleChecking) {
-        toast.show({
-          title: `공휴일이 이미 등록되어 있습니다. 다시 확인 바랍니다.`,
-          successCheck: false,
-          duration: 6000,
-        });
-        return;
-      } else {
-        await Getting_Holiday_Lists();
-        toast.show({
-          title: `${moment(Select_Date).format(
-            "YYYY-MM-DD"
-          )}를 공휴일로 지정하였습니다.`,
-          successCheck: true,
-          duration: 6000,
-        });
-        setInput_Name("");
-      }
-    } else {
-      toast.show({
-        title: `오류발생. IT팀에 문의바랍니다.`,
-        successCheck: false,
-        duration: 6000,
-      });
-    }
   };
 
   return (
     <HolidayInputMainPageMainDivBox>
-      <h3>공휴일 수기 등록</h3>
+      <h3 style={{ marginTop: "10px" }}>공휴일 수기 등록</h3>
       <div className="Input_Containers">
         <div className="Input_Box">
           <div>날짜선택</div>

@@ -5,17 +5,21 @@ import { Request_Get_Axios } from "../../../../../../../API";
 import { useSelector } from "react-redux";
 import BarGraph from "../Person/BarGraph";
 import PieGraph from "../Company/PieGraph";
-import Loader from "../../../../../../Loader/Loader";
+import { useApi } from "../../../../../../Common/Hooks/useApi";
+import { API_CONFIG } from "../../../../../../../API/config";
 
 const TeamMainPage = ({ menuCode }) => {
   const Filter_State = useSelector(
-    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State
+    (state) => state.Man_Day_Select_Filter_Reducer_State.Filters_State,
   );
   const [Bar_State, setBar_State] = useState([]);
   const [Pie_State, setPie_State] = useState([]);
   const [grade_bounce_Pie_State, setgrade_bounce_Pie_State] = useState([]);
   const [TextInfo, setTextInfo] = useState(null);
-  const [Loading_Check, setLoading_Check] = useState(false);
+
+  const { request: getTeamPartBar } = useApi(
+    API_CONFIG.TeamLeaderAPI.GET_TEAM_PART_BAR,
+  );
 
   useEffect(() => {
     if (Filter_State.statisticTeam) {
@@ -23,23 +27,18 @@ const TeamMainPage = ({ menuCode }) => {
     }
   }, []);
 
-  const Getting_Team_Part_Bar_State = async () => {
-    setLoading_Check(true);
-    const Getting_Person_Bar_State_Axios = await Request_Get_Axios(
-      "/TeamLeaderManDay/Getting_Team_Part_Bar_State",
+  const Getting_Team_Part_Bar_State = () => {
+    getTeamPartBar(
+      { Filter_State },
       {
-        Filter_State,
-      }
+        onSuccess: (data) => {
+          setBar_State(data.Bar_Data);
+          setPie_State(data.Pie_Data);
+          setgrade_bounce_Pie_State(data.Grade_Bounce_Pie_Data);
+          setTextInfo(Filter_State.statisticTeam);
+        },
+      },
     );
-    if (Getting_Person_Bar_State_Axios.status) {
-      setBar_State(Getting_Person_Bar_State_Axios.data.Bar_Data);
-      setPie_State(Getting_Person_Bar_State_Axios.data.Pie_Data);
-      setgrade_bounce_Pie_State(
-        Getting_Person_Bar_State_Axios.data.Grade_Bounce_Pie_Data
-      );
-      setTextInfo(Filter_State.statisticTeam);
-    }
-    setLoading_Check(false);
   };
   return (
     <PersonMainPageMainDivBox>
@@ -59,9 +58,6 @@ const TeamMainPage = ({ menuCode }) => {
         <BarGraph Bar_State={Bar_State}></BarGraph>
       </div>
       <div style={{ display: "flex" }}>
-        {/* <div style={{ width: '50%' }}>
-                    <PieGraph Pie_State={Pie_State}></PieGraph>
-                </div> */}
         {TextInfo?.itemName ? (
           TextInfo?.divideType === "PART" ? (
             <></>
@@ -82,7 +78,6 @@ const TeamMainPage = ({ menuCode }) => {
         </div>
       </div>
       <div style={{ padding: "20px" }}></div>
-      <Loader loading={Loading_Check}></Loader>
     </PersonMainPageMainDivBox>
   );
 };
