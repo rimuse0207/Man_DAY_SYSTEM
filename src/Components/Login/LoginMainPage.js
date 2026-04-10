@@ -104,7 +104,7 @@ const LoginMainPage = () => {
           <div className="login-form-right-side">
             <div className="top-logo-wrap"></div>
             <h1>MAN-DAY 시스템</h1>
-            <p>* 문의사항은 개발운영팀에게 문의바랍니다.</p>
+            <p>* 문의사항은 jiseop.kim@exicon.co.kr에게 문의바랍니다.</p>
           </div>
 
           {isPasswordChangeMode ? (
