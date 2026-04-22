@@ -8,7 +8,10 @@ export const generateOptions = (sourceList, parentCode) => {
 };
 
 export const accessCheck = (LoginInfo) => {
-  if (LoginInfo.team === "개발운영팀" || LoginInfo.id === "sjyoo@dhk.co.kr") {
+  if (
+    LoginInfo.id === "jiseop.kim@yccorp.com" ||
+    LoginInfo.id === "sjyoo@dhk.co.kr"
+  ) {
     return true;
   } else {
     return false;

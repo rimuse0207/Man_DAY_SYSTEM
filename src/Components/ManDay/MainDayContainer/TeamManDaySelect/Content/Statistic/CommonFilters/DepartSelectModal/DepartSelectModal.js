@@ -46,7 +46,14 @@ const DepartSelectModal = ({
   );
 
   useEffect(() => {
-    departTree({}, { onSuccess: (data) => setDepartment_State(data) });
+    departTree(
+      {},
+      {
+        onSuccess: (data) => {
+          setDepartment_State(data);
+        },
+      },
+    );
   }, [departTree]);
 
   const Selected_Team_Part_Data = async () => {
