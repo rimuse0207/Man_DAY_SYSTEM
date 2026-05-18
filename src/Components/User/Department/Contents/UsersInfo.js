@@ -12,7 +12,7 @@ import { useUserSelection } from "../../../Common/Hooks/User/useUserSelection";
 export const UserInfoMainDivBox = styled.div`
   width: 100%;
   padding: 5px 10px;
-  height: calc(100vh - 300px);
+
   overflow: auto;
   table {
     width: 100%;

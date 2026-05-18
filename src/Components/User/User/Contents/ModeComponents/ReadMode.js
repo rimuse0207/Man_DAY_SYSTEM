@@ -4,6 +4,7 @@ import UserHeader from "../../../Public/UserHeader";
 import { UserContentMainPageButtonContainer } from "../../UserContentMainPage";
 
 const ReadMode = ({ Select_User, onClose, setUpdate_Mode }) => {
+  console.log(Select_User);
   const BASE_USER_INFO = [
     { label: "ID", value: Select_User.email },
     { label: "이름", value: Select_User.name },
@@ -13,6 +14,7 @@ const ReadMode = ({ Select_User, onClose, setUpdate_Mode }) => {
     { label: "호봉", value: Select_User.user_salarygrade },
     { label: "직군", value: Select_User.user_occupational },
     { label: "일급(만원)", value: Select_User.dailyExpense },
+    { label: "입사일", value: Select_User.enterDate },
     {
       label: "읽기전용",
       value: Select_User.readOnly === 1 ? "읽기전용" : "쓰기/읽기",

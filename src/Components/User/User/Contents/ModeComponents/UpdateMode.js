@@ -145,6 +145,12 @@ const UpdateMode = ({
       step: 10,
     },
     {
+      id: "enterDate",
+      label: "입사일",
+      type: "input",
+      inputType: "date",
+    },
+    {
       id: "SelectreadOnly",
       label: "읽기전용",
       type: "select",

@@ -8,6 +8,7 @@ import { useApi } from "../../Common/Hooks/useApi";
 import { API_CONFIG } from "../../../API/config";
 import UserHeader from "../Public/UserHeader";
 import TableHeader from "../Public/TableHeader";
+import moment from "moment/moment";
 
 export const UserContentMainPageButtonContainer = styled.div`
   text-align: end;
@@ -114,6 +115,9 @@ const UserContentMainPage = () => {
         <td>{user.user_gradebounce}</td>
         <td>{user.email}</td>
         <td>{user.user_occupational}</td>
+        <td>
+          {user.enterDate ? moment(user.enterDate).format("YYYY-MM-DD") : "-"}
+        </td>
         <td>{user.readOnly === 1 ? "O" : "X"}</td>
       </tr>
     );
@@ -155,6 +159,7 @@ const UserContentMainPage = () => {
                 "연차",
                 "ID",
                 "직군",
+                "입사일",
                 "읽기전용 체크",
               ]}
             ></TableHeader>

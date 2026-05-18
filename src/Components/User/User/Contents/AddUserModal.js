@@ -24,6 +24,7 @@ const initial_state = {
   gradebounce: null,
   position: null,
   dailyExpense: 0,
+  enterDate: new Date(),
 };
 
 const USER_FORM_CONFIG = [
@@ -67,6 +68,13 @@ const USER_FORM_CONFIG = [
     type: "input",
     inputType: "number",
     step: 10,
+  },
+  {
+    id: "enterDate",
+    label: "입사일",
+    type: "input",
+    inputType: "date",
+    placeholder: "2026.10.31",
   },
 ];
 
