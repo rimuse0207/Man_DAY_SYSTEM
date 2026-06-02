@@ -430,8 +430,11 @@ const ContentMainPage = () => {
             <MdArrowForwardIos />
           </div>
         )}
-        <div style={{ textAlign: "end" }}>
-          * YC 중국향 설비는 MT3000으로 입력 바랍니다. ( Wafer - MT3000 ){" "}
+        <div style={{ textAlign: "start" }}>
+          <div style={{ marginBottom: "10px" }}>
+            * YC 중국향 설비는 MT3000으로 입력 바랍니다. ( Wafer - MT3000 ){" "}
+          </div>
+          <div>* 불량대응(VoC)은 Revision으로 용어가 변경됩니다. </div>
         </div>
       </div>
 
