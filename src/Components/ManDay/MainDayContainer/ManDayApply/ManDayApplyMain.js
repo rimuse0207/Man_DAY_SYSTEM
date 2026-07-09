@@ -5,6 +5,7 @@ import SideNavigationMainPage from "../../../Navigation/SideNavigation/SideNavig
 import ContentMainPage from "./Contents/ContentMainPage";
 import { useDispatch } from "react-redux";
 import { Man_Day_Select_Option_fetchData } from "../../../../Models/ReduxThunks/ManDaySelectOptionReducer";
+import NoticePopup from "../../../Common/PopUp/NoticePopup";
 
 const ManDayApplyMain = () => {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const ManDayApplyMain = () => {
   }, []);
   return (
     <AnnualLeaveContainerMainPageMainDivBox>
+      <NoticePopup></NoticePopup>
       <TopNavigationMainPage></TopNavigationMainPage>
       <div className="Personal_Main_Float">
         <div className="Personal_Main_Float_Left">
