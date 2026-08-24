@@ -44,44 +44,21 @@ const NoticePopup = () => {
             <UpdateItem>
               <div className="badge">New</div>
               <div className="content">
-                <strong>설비명 SUZAKU Card 추가</strong>
-                {/* <p>YC 중국향 설비는 MT3000으로 입력 바랍니다.</p> */}
+                <strong>설비명 SIRIUS 추가</strong>
                 <span className="location">
-                  위치: 설비군 : SSD {">"} 설비명 : SUZAKU Card
+                  위치: 설비군 : Wafer {">"} 설비명 : SIRIUS
                 </span>
               </div>
             </UpdateItem>
             <UpdateItem>
               <div className="badge">New</div>
               <div className="content">
-                <strong>설비명 ST660H 추가</strong>
-                {/* <p>YC 중국향 설비는 MT3000으로 입력 바랍니다.</p> */}
+                <strong>설비명 SST128KF 추가</strong>
                 <span className="location">
-                  위치: 설비군 : SSD {">"} 설비명 : ST660H
+                  위치: 설비군 : SSD {">"} 설비명 : SST128KF
                 </span>
               </div>
             </UpdateItem>
-            {/* <UpdateItem>
-              <div className="badge">New</div>
-              <div className="content">
-                <strong>설비명 MT3000 추가</strong>
-                <p>YC 중국향 설비는 MT3000으로 입력 바랍니다.</p>
-                <span className="location">
-                  위치: 설비군 : Wafter {">"} 설비명 : MT3000
-                </span>
-              </div>
-            </UpdateItem>
-
-            <UpdateItem>
-              <div className="badge">Update</div>
-              <div className="content">
-                <strong>업무 유형 용어 변경</strong>
-                <p>불량대응(VoC)은 'Revision'으로 용어가 변경됩니다.</p>
-                 <span className="location">
-                   위치: 설비군 {">"} 설
-                </span> 
-              </div>
-            </UpdateItem> */}
           </UpdateList>
         </PopupBody>
 
