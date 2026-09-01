@@ -14,6 +14,7 @@ import { API_CONFIG } from "../../../../../../../../API/config";
 
 const ButtonContainer = styled.div`
   text-align: end;
+  margin-top: 10px;
   button {
     padding: 8px 13px;
     border: 1px solid lightgray;
@@ -95,7 +96,7 @@ const DepartSelectModal = ({
 
   return (
     <Overlay>
-      <Modal style={{ width: "40%" }}>
+      <Modal style={{ width: "40%", height: "auto", overflow: "hidden" }}>
         <UserModalMainDivBox>
           <div className="Float_Top_Container">
             <UserContentMainPageButtonContainer>
@@ -105,16 +106,14 @@ const DepartSelectModal = ({
             </UserContentMainPageButtonContainer>
           </div>
           <div></div>
-          <div
-            className="All_Container"
-            style={{ height: "calc(90vh - 100px)" }}
-          >
+          <div className="All_Container" style={{ height: "auto" }}>
             <div
               className="Left_Content"
               style={{
-                height: "calc(90vh - 200px)",
+                height: "calc(80vh )",
                 width: "100%",
-                overflow: "auto",
+                // overflow: "auto",
+                border: "1px solid lightgray",
               }}
             >
               <ParentTree

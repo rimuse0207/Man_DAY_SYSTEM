@@ -23,7 +23,7 @@ export const Modal = styled.div`
   padding-top: 0px;
   border-radius: 10px;
   width: 80%;
-  height: 90vh;
+  /* height: 90vh; */
   text-align: center;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease-in-out;

@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import UserHeader from "../../../Public/UserHeader";
 import { UserModalMainDivBox } from "../UserModal";
 import { UserContentMainPageButtonContainer } from "../../UserContentMainPage";
@@ -7,6 +7,8 @@ import { useApi } from "../../../../Common/Hooks/useApi";
 import { API_CONFIG } from "../../../../../API/config";
 import { toast } from "../../../../ToastMessage/ToastManager";
 import { SelectStyles } from "../../../../Common/Styled";
+import { TbHierarchy3 } from "react-icons/tb";
+import DepartSelectModal from "../../../../ManDay/MainDayContainer/TeamManDaySelect/Content/Statistic/CommonFilters/DepartSelectModal/DepartSelectModal";
 
 const UpdateMode = ({
   Select_User,
@@ -18,6 +20,7 @@ const UpdateMode = ({
   onClose,
   setInput_User_Info,
 }) => {
+  const [DepartSelectModalIsOpen, setDepartSelectModalIsOpen] = useState(false);
   const { request: updateUserInfoApi } = useApi(API_CONFIG.UserAPI.UPDATE_USER);
   const { request: resetPasswordApi } = useApi(
     API_CONFIG.UserAPI.RESET_PASSWORD,
@@ -118,6 +121,7 @@ const UpdateMode = ({
       label: "부서",
       type: "select",
       options: options.department,
+      hasSearchIcon: true,
     },
     {
       id: "gradebounce",
@@ -214,15 +218,47 @@ const UpdateMode = ({
                   )}
 
                   {field.type === "select" && (
-                    <Select
-                      value={Input_User_Info[field.id]}
-                      onChange={(selectedOption) =>
-                        handleInputChange(field.id, selectedOption)
+                    <div
+                      style={
+                        field.hasSearchIcon
+                          ? { display: "flex", gap: "5px" }
+                          : {}
                       }
-                      isClearable
-                      options={field.options}
-                      styles={SelectStyles}
-                    />
+                    >
+                      <div
+                        style={
+                          field.hasSearchIcon ? { flex: 1 } : { width: "100%" }
+                        }
+                      >
+                        <Select
+                          value={Input_User_Info[field.id]}
+                          onChange={(selectedOption) =>
+                            handleInputChange(field.id, selectedOption)
+                          }
+                          isClearable
+                          options={field.options}
+                          styles={SelectStyles}
+                        />
+                      </div>
+                      {field.hasSearchIcon && (
+                        <div
+                          style={{
+                            border: "1px solid lightgray",
+                            borderRadius: "5px",
+                            width: "40px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            fontSize: "1.3em",
+                            cursor: "pointer",
+                          }}
+                          className="Search_Icon_Container"
+                          onClick={() => setDepartSelectModalIsOpen(true)}
+                        >
+                          <TbHierarchy3 />
+                        </div>
+                      )}
+                    </div>
                   )}
                 </td>
               </tr>
@@ -234,6 +270,14 @@ const UpdateMode = ({
       <UserContentMainPageButtonContainer style={{ marginTop: "20px" }}>
         <button onClick={Handle_Update_User_Info_Data}>수정</button>
       </UserContentMainPageButtonContainer>
+      {DepartSelectModalIsOpen && (
+        <DepartSelectModal
+          onClose={() => setDepartSelectModalIsOpen(false)}
+          Select_Types={"user"}
+          Input_User_Info={Input_User_Info}
+          setInput_User_Info={(data) => setInput_User_Info(data)}
+        ></DepartSelectModal>
+      )}
     </UserModalMainDivBox>
   );
 };
