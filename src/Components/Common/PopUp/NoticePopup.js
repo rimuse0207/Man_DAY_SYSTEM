@@ -44,6 +44,15 @@ const NoticePopup = () => {
             <UpdateItem>
               <div className="badge">New</div>
               <div className="content">
+                <strong>설비군 HFT 및 설비명 HFT 추가</strong>
+                <span className="location">
+                  위치: 설비군 : HFT {">"} 설비명 : HFT
+                </span>
+              </div>
+            </UpdateItem>
+            <UpdateItem>
+              <div className="badge">New</div>
+              <div className="content">
                 <strong>설비명 MT8313 추가</strong>
                 <span className="location">
                   위치: 설비군 : Wafer {">"} 설비명 : MT8313
